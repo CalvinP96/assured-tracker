@@ -301,9 +301,9 @@ export default function App() {
     let newStage = projectData.stage;
     if (projectData.invoiceSubmittedDate) {
       newStage = "Closed";
-    } else if (projectData.lastInstallDate) {
+    } else if (projectData.lastInstallDate && projectData.lastInstallDate <= now) {
       newStage = "Install Complete";
-    } else if (projectData.installDate || projectData.nextInstallDate) {
+    } else if (projectData.installDate || projectData.nextInstallDate || projectData.lastInstallDate) {
       newStage = "Install Scheduled";
     } else if (projectData.riApprovedDate) {
       newStage = "RI Approved";
@@ -807,7 +807,7 @@ export default function App() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
                 {/* Empty leading cells */}
                 {Array.from({ length: calMonthDays.firstDay }, (_, i) => (
-                  <div key={`empty-${i}`} style={{ minHeight: 80, borderBottom: `1px solid ${t.cardBorder}`, borderRight: `1px solid ${t.cardBorder}`, background: t.bg + "66" }} />
+                  <div key={`empty-${i}`} style={{ minHeight: 120, borderBottom: `1px solid ${t.cardBorder}`, borderRight: `1px solid ${t.cardBorder}`, background: t.bg + "66" }} />
                 ))}
                 {/* Actual day cells */}
                 {Array.from({ length: calMonthDays.daysInMonth }, (_, i) => {
@@ -820,7 +820,7 @@ export default function App() {
                     <div key={day}
                       onClick={() => setCalSelectedDay(day === calSelectedDay ? null : day)}
                       style={{
-                        minHeight: 80, padding: "4px 6px",
+                        minHeight: 120, padding: "4px 6px",
                         borderBottom: `1px solid ${t.cardBorder}`,
                         borderRight: `1px solid ${t.cardBorder}`,
                         cursor: "pointer",
@@ -848,11 +848,11 @@ export default function App() {
                           </span>
                         )}
                       </div>
-                      {/* Event dots - show up to 4, then +N */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                        {dayEvents.slice(0, 3).map((ev, idx) => (
+                      {/* Event dots - show up to 5, then +N */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        {dayEvents.slice(0, 5).map((ev, idx) => (
                           <div key={idx} style={{
-                            fontSize: 9, lineHeight: 1.2, padding: "1px 4px", borderRadius: 4,
+                            fontSize: 10, lineHeight: 1.3, padding: "2px 5px", borderRadius: 4,
                             background: EVENT_TYPES[ev.type]?.color + "22",
                             color: EVENT_TYPES[ev.type]?.color,
                             whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
@@ -861,9 +861,9 @@ export default function App() {
                             {EVENT_TYPES[ev.type]?.icon} {ev.customerName.split(" ")[0]}
                           </div>
                         ))}
-                        {dayEvents.length > 3 && (
+                        {dayEvents.length > 5 && (
                           <div style={{ fontSize: 9, color: t.textMuted, fontWeight: 600, paddingLeft: 4 }}>
-                            +{dayEvents.length - 3} more
+                            +{dayEvents.length - 5} more
                           </div>
                         )}
                       </div>
