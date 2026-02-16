@@ -624,6 +624,9 @@ export default function App() {
 
               if (isASIProg) {
                 const installed = ps.filter(p=>p.installDate || p.lastInstallDate).length;
+                const invoiced = ps.filter(p=>p.invoiceSubmittedDate).length;
+                const needsInvoice = ps.filter(p=>p.installDate&&!p.invoiceSubmittedDate).length;
+                const revenue = ps.reduce((s,p)=>s+(parseFloat(p.totalJobPrice)||0),0);
                 const onHoldN = ps.filter(p=>p.onHold).length;
                 const custWait = ps.filter(p=>p.holdParty==="Customer" || p.nextActionOwner==="Customer").length;
                 return (
@@ -631,14 +634,16 @@ export default function App() {
                     <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                       <span style={{ fontSize: 18, fontWeight: 800, color: pc }}>ASI</span>
                       <Badge label={`${ps.length} projects`} color={pc} />
-                      <span style={{ fontSize:11, color:t.textMuted, fontStyle:"italic" }}>RISE Private Pay — Simplified Tracking</span>
+                      <span style={{ fontSize:11, color:t.textMuted, fontStyle:"italic" }}>RISE Private Pay</span>
                     </div>
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                       <Stat t={t} label="Total" value={ps.length} color={pc} />
                       <Stat t={t} label="Installed" value={installed} color={COLORS.ok} />
                       <Stat t={t} label="Pending Install" value={ps.length - installed} color={COLORS.warn} />
+                      <Stat t={t} label="Invoiced" value={invoiced} color={COLORS.purple} />
+                      <Stat t={t} label="Needs Invoice" value={needsInvoice} color={needsInvoice>0?COLORS.warn:COLORS.gray} />
+                      <Stat t={t} label="Revenue" value={revenue > 0 ? `$${revenue.toLocaleString()}` : "$0"} color={COLORS.asi} />
                       <Stat t={t} label="On Hold" value={onHoldN} color={COLORS.hold} />
-                      <Stat t={t} label="Customer Wait" value={custWait} color={COLORS.warn} />
                     </div>
                   </div>
                 );
@@ -983,6 +988,9 @@ export default function App() {
                       <>
                         <Stat t={t} label="Installed" value={installed} color={COLORS.ok} />
                         <Stat t={t} label="Pending" value={ps.length - installed} color={COLORS.warn} />
+                        <Stat t={t} label="Invoiced" value={ps.filter(x=>x.invoiceSubmittedDate).length} color={COLORS.purple} />
+                        <Stat t={t} label="Needs Invoice" value={ps.filter(x=>x.installDate&&!x.invoiceSubmittedDate).length} color={COLORS.warn} />
+                        <Stat t={t} label="Revenue" value={ps.reduce((s,x)=>s+(parseFloat(x.totalJobPrice)||0),0) > 0 ? `$${ps.reduce((s,x)=>s+(parseFloat(x.totalJobPrice)||0),0).toLocaleString()}` : "$0"} color={COLORS.asi} />
                         <Stat t={t} label="On Hold" value={ps.filter(x=>x.onHold).length} color={COLORS.hold} />
                       </>
                     ) : (
@@ -1031,7 +1039,10 @@ export default function App() {
               {isASI ? (
                 <>
                   <Stat t={t} label="Installed" value={filtered.filter(p=>p.installDate||p.lastInstallDate).length} color={COLORS.ok} />
-                  <Stat t={t} label="Pending" value={filtered.filter(p=>!p.installDate&&!p.lastInstallDate).length} color={COLORS.warn} />
+                  <Stat t={t} label="Pending Install" value={filtered.filter(p=>!p.installDate&&!p.lastInstallDate).length} color={COLORS.warn} />
+                  <Stat t={t} label="Invoiced" value={filtered.filter(p=>p.invoiceSubmittedDate).length} color={COLORS.purple} />
+                  <Stat t={t} label="Needs Invoice" value={filtered.filter(p=>p.installDate&&!p.invoiceSubmittedDate).length} color={COLORS.warn} />
+                  <Stat t={t} label="Revenue" value={filtered.reduce((s,p)=>s+(parseFloat(p.totalJobPrice)||0),0) > 0 ? `$${filtered.reduce((s,p)=>s+(parseFloat(p.totalJobPrice)||0),0).toLocaleString()}` : "$0"} color={COLORS.asi} />
                   <Stat t={t} label="On Hold" value={metrics.onHoldCount} color={COLORS.hold} />
                   <Stat t={t} label="Customer Wait" value={metrics.customerWaitCount} color={COLORS.warn} />
                 </>
@@ -1127,7 +1138,8 @@ export default function App() {
                       {p.program === "ASI" ? (
                         <>
                           <Badge label="ASI" color={COLORS.asi} small />
-                          {(p.installDate || p.lastInstallDate) ? <Badge label="Installed" color={COLORS.ok} small /> : <Badge label="Pending" color={COLORS.warn} small />}
+                          {(p.installDate || p.lastInstallDate) ? <Badge label="Installed" color={COLORS.ok} small /> : <Badge label="Pending Install" color={COLORS.warn} small />}
+                          {p.invoiceSubmittedDate ? <Badge label="Invoiced" color={COLORS.purple} small /> : (p.installDate ? <Badge label="Needs Invoice" color={COLORS.warn} small /> : null)}
                         </>
                       ) : (
                         <>
@@ -1166,6 +1178,9 @@ export default function App() {
                     {p.program !== "ASI" && <span style={{ fontSize:11, color:t.textMuted }}>📋 Docs: <b style={{ color: docPct===100?COLORS.ok:docPct>50?COLORS.warn:COLORS.danger }}>{dc.done}/{dc.total}</b></span>}
                     {p.program === "ASI" && p.installDate && <span style={{ fontSize:11, color:t.textMuted }}>🔧 Install: <b style={{color:COLORS.ok}}>{fmt(p.installDate)}</b></span>}
                     {p.program === "ASI" && !p.installDate && <span style={{ fontSize:11, color:COLORS.warn }}>⏳ No install date yet</span>}
+                    {p.program === "ASI" && p.invoiceSubmittedDate && <span style={{ fontSize:11, color:t.textMuted }}>🧾 Invoiced: <b style={{color:COLORS.purple}}>{fmt(p.invoiceSubmittedDate)}</b></span>}
+                    {p.program === "ASI" && p.installDate && !p.invoiceSubmittedDate && <span style={{ fontSize:11, color:COLORS.warn }}>🧾 Not invoiced</span>}
+                    {p.program === "ASI" && p.totalJobPrice && <span style={{ fontSize:11, color:t.textMuted }}>💰 <b style={{color:COLORS.asi}}>${parseFloat(p.totalJobPrice).toLocaleString()}</b></span>}
                     {p.program !== "ASI" && p.assessmentDate && <span style={{ fontSize:11, color:t.textMuted }}>🔍 Assessed: <b style={{color:t.text}}>{fmt(p.assessmentDate)}</b></span>}
                     {p.program !== "ASI" && p.lastInstallDate && <span style={{ fontSize:11, color:t.textMuted }}>🔧 Last Install: <b style={{color:t.text}}>{fmt(p.lastInstallDate)}</b></span>}
                     {p.program !== "ASI" && p.nextInstallDate && p.nextInstallDate >= today() && <span style={{ fontSize:11, color: tabColor }}>📅 Next Install: <b>{fmt(p.nextInstallDate)}</b></span>}
@@ -1201,6 +1216,9 @@ export default function App() {
                 {form.program !== "ASI" && <Row t={t} k="Stage" v={<Badge label={form.stage} color={tabColor} small />} />}
                 <Row t={t} k="Address" v={form.address||"—"} />
                 {form.program === "ASI" && <Row t={t} k="Install Date" v={form.installDate ? <b style={{color:COLORS.ok}}>{fmt(form.installDate)}</b> : <span style={{color:COLORS.warn}}>Not scheduled</span>} />}
+                {form.program === "ASI" && <Row t={t} k="Invoice Submitted" v={form.invoiceSubmittedDate ? <b style={{color:COLORS.purple}}>{fmt(form.invoiceSubmittedDate)}</b> : <span style={{color:COLORS.warn}}>Not invoiced</span>} />}
+                {form.program === "ASI" && form.installDate && form.invoiceSubmittedDate && <Row t={t} k="Install → Invoice" v={<b style={{color:COLORS.asi}}>{diffDays(form.installDate, form.invoiceSubmittedDate)} days</b>} />}
+                {form.program === "ASI" && <Row t={t} k="Total Job Price" v={form.totalJobPrice ? <b style={{color:COLORS.asi,fontSize:14}}>${parseFloat(form.totalJobPrice).toLocaleString()}</b> : "—"} />}
                 {form.program !== "ASI" && <Row t={t} k="Total Job Price" v={form.totalJobPrice ? <b style={{color:COLORS.whe,fontSize:14}}>${parseFloat(form.totalJobPrice).toLocaleString()}</b> : "—"} />}
                 {form.program !== "ASI" && form.invoiceable && form.lastInstallDate && form.lastInstallDate <= today() && (
                   <div style={{background:COLORS.purple+"22",border:`1px solid ${COLORS.purple}`,borderRadius:8,padding:"8px 10px",marginTop:6}}>
@@ -1460,10 +1478,17 @@ export default function App() {
                   </>
                 )}
                 {form.program === "ASI" && (
-                  <Field t={t} label="Install Date">
-                    <input type="date" value={form.installDate||""} onChange={e=>setForm({...form,installDate:e.target.value})} style={inputStyle} />
-                    <div style={{fontSize:10,color:t.textMuted,marginTop:2}}>Only date tracked for ASI projects</div>
-                  </Field>
+                  <>
+                    <Field t={t} label="Install Date">
+                      <input type="date" value={form.installDate||""} onChange={e=>setForm({...form,installDate:e.target.value})} style={inputStyle} />
+                    </Field>
+                    <Field t={t} label="Invoice Submitted Date">
+                      <input type="date" value={form.invoiceSubmittedDate||""} onChange={e=>setForm({...form,invoiceSubmittedDate:e.target.value})} style={inputStyle} />
+                    </Field>
+                    <Field t={t} label="Total Job Price ($)">
+                      <input type="number" step="0.01" value={form.totalJobPrice} onChange={e=>setForm({...form,totalJobPrice:e.target.value})} style={inputStyle} placeholder="e.g., 5000.00" />
+                    </Field>
+                  </>
                 )}
               </Section>
 
