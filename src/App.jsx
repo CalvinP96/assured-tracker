@@ -1032,7 +1032,7 @@ export default function App() {
         )}
 
         {/* ── PROGRAM TABS (WHE SF / HES IE) ── */}
-        {(tab === "WHE SF" || tab === "HES IE") && view === "list" && (
+        {prog && view === "list" && (
           <>
             <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
               <Stat t={t} label="Total" value={metrics.total} />
