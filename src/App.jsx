@@ -504,6 +504,7 @@ export default function App() {
     if (!p.assessmentDate) return COLORS.gray;
     if (p.riseSubmitDate) return diffBizDays(p.assessmentDate, p.riseSubmitDate) <= 2 ? COLORS.ok : COLORS.warn;
     const d = bizDaysSince(p.assessmentDate);
+    if (d < 1) return COLORS.gray;
     if (d > 2) return COLORS.danger;
     return COLORS.warn;
   };
@@ -511,9 +512,11 @@ export default function App() {
     if (!p.assessmentDate) return "No Assessment";
     if (p.riseSubmitDate) {
       const d = diffBizDays(p.assessmentDate, p.riseSubmitDate);
+      if (d < 1) return "✓ Same day";
       return d <= 2 ? `✓ ${d}bd` : `⚠ ${d}bd`;
     }
     const d = bizDaysSince(p.assessmentDate);
+    if (d < 1) return "RISE due";
     return d > 2 ? `! ${d}bd pending` : `${d}bd pending`;
   };
   const progColor = p => p === "WHE SF" ? COLORS.whe : p === "HES IE" ? COLORS.hes : p === "ASI" ? COLORS.asi : COLORS.purple;
