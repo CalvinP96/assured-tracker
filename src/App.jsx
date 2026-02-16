@@ -590,7 +590,7 @@ export default function App() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "20px 16px" }}>
+      <div style={{ maxWidth: tab === "Calendar" ? 1600 : 1100, margin: "0 auto", padding: "20px 16px" }}>
 
         {/* DB error toast */}
         {dbError && (
