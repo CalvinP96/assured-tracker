@@ -1221,7 +1221,7 @@ export default function App() {
                   )}
                 </div>
               )}
-              {form.program !== "ASI" && (
+              {form.program !== "ASI" && (<>
               <div style={{ background:t.cardBg, borderRadius:12, padding:"16px", boxShadow:t.cardShadow, border:`1px solid ${t.cardBorder}` }}>
                 <div style={{ fontWeight:700, fontSize:13, marginBottom:10, color: tabColor }}>Key Dates & Turnarounds</div>
                 <Row t={t} k="Lead Date" v={fmt(form.leadDate)} />
@@ -1371,7 +1371,7 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              )}
+              </>)}
               {form.stageHistory?.length > 0 && form.program !== "ASI" && (
                 <div style={{ background:t.cardBg, borderRadius:12, padding:"16px", boxShadow:t.cardShadow, border:`1px solid ${t.cardBorder}` }}>
                   <div style={{ fontWeight:700, fontSize:13, marginBottom:10, color: tabColor }}>Stage History</div>
