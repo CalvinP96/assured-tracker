@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { supabase } from "./supabaseClient";
+
+// Context so App.jsx can access logout and user info
+export const AuthContext = createContext(null);
+export const useAuth = () => useContext(AuthContext);
 
 /**
  * Auth wrapper — shows a login screen until the user is authenticated.
@@ -137,8 +141,3 @@ export default function Auth({ children }) {
     </AuthContext.Provider>
   );
 }
-
-// Context so App.jsx can access logout and user info
-import { createContext, useContext } from "react";
-export const AuthContext = createContext(null);
-export const useAuth = () => useContext(AuthContext);
