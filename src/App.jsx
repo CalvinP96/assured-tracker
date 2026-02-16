@@ -337,7 +337,7 @@ export default function App() {
     });
   }, [dbLoading]);
 
-  const prog = tab === "Overview" || tab === "KPIs" || tab === "Calendar" ? null : tab;
+  const prog = tab === "Overview" || tab === "KPIs" || tab === "Calendar" || tab === "Action Items" ? null : tab;
   const isASI = prog === "ASI";
   const docs = prog === "WHE SF" ? DOCS_WHE : DOCS_HES;
 
@@ -528,7 +528,7 @@ export default function App() {
 
   const inputStyle = { padding:"8px 12px", border:`1px solid ${t.inputBorder}`, borderRadius:8, fontSize:13, width:"100%", background:t.inputBg, color:t.text };
 
-  const TAB_ORDER = ["Overview","WHE SF","HES IE","ASI","Calendar","KPIs"];
+  const TAB_ORDER = ["Overview","WHE SF","HES IE","ASI","Action Items","Calendar","KPIs"];
 
   return (
     <div style={{ minHeight: "100vh", background: t.bg, fontFamily: "system-ui,sans-serif" }}>
@@ -562,8 +562,8 @@ export default function App() {
           <div style={{ width: 1, height: 28, background: t.cardBorder, margin: "0 4px" }} />
           <ThemeToggle theme={theme} setTheme={setTheme} />
           <div style={{ width: 1, height: 28, background: t.cardBorder, margin: "0 4px" }} />
-          {["Overview","WHE SF","HES IE","ASI","Calendar"].map(tName => (
-            <button key={tName} onClick={()=>{setTab(tName);setView("list");}} style={{
+          {["Overview","WHE SF","HES IE","ASI","Action Items","Calendar"].map(tName => (
+            <button key={tName} onClick={()=>{setTab(tName);setView("list");setSearch("");}} style={{
               padding: "8px 18px", borderRadius: 8,
               border: tab===tName ? "2px solid #991b1b" : `2px solid ${t.tabInactiveBg}`,
               cursor: "pointer", fontWeight: 800, fontSize: 13,
@@ -961,10 +961,132 @@ export default function App() {
           </div>
         )}
 
+        {/* ── ACTION ITEMS TAB ── */}
+        {tab === "Action Items" && (
+          <div>
+            <h2 style={{ fontWeight: 800, color: t.text, margin: "0 0 16px" }}>🎯 Action Items</h2>
+            <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
+              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search customer / address…" style={{ flex:1, minWidth:180, ...inputStyle }} />
+            </div>
+            {(() => {
+              // Gather all actionable items
+              let items = [];
+              projects.forEach(p => {
+                const matchSearch = !search || (p.customerName + p.address).toLowerCase().includes(search.toLowerCase());
+                if (!matchSearch) return;
+                // Next action assigned to Us
+                if (p.nextAction && p.nextActionOwner === "Us") {
+                  items.push({ project: p, type: "action", sortDate: p.nextActionDate || "9999-12-31", label: p.nextAction, date: p.nextActionDate, overdue: p.nextActionDate && p.nextActionDate < today() });
+                }
+                // On hold where we are the hold party
+                if (p.onHold && p.holdParty === "Us") {
+                  items.push({ project: p, type: "hold", sortDate: p.holdDate || "9999-12-31", label: p.holdReason || "On hold — resolve", date: p.holdDate, overdue: false });
+                }
+                // RISE submission overdue (our responsibility)
+                if (p.assessmentDate && !p.riseSubmitDate && bizDaysSince(p.assessmentDate) > 2 && p.program !== "ASI") {
+                  items.push({ project: p, type: "rise", sortDate: p.assessmentDate, label: "RISE scope overdue", date: p.assessmentDate, overdue: true });
+                }
+                // Installed but not invoiced (our responsibility)
+                if (p.invoiceable && p.lastInstallDate && p.lastInstallDate <= today() && !p.invoiceSubmittedDate && p.program !== "ASI") {
+                  items.push({ project: p, type: "invoice", sortDate: p.lastInstallDate, label: "Ready to invoice", date: p.lastInstallDate, overdue: daysSince(p.lastInstallDate) > 3 });
+                }
+                // ASI installed but not invoiced
+                if (p.program === "ASI" && p.installDate && !p.invoiceSubmittedDate) {
+                  items.push({ project: p, type: "invoice", sortDate: p.installDate, label: "ASI — needs invoice", date: p.installDate, overdue: daysSince(p.installDate) > 3 });
+                }
+              });
+              // Sort: overdue first, then by date
+              items.sort((a, b) => {
+                if (a.overdue && !b.overdue) return -1;
+                if (!a.overdue && b.overdue) return 1;
+                return a.sortDate > b.sortDate ? 1 : -1;
+              });
+
+              const typeIcon = { action: "➡️", hold: "⏸", rise: "⚠️", invoice: "🧾" };
+              const typeColor = { action: COLORS.whe, hold: COLORS.hold, rise: COLORS.danger, invoice: COLORS.purple };
+
+              if (items.length === 0) return (
+                <div style={{ textAlign:"center", color:t.textMuted, padding:40, background:t.cardBg, borderRadius:12, border:`1px solid ${t.cardBorder}` }}>
+                  <div style={{ fontSize:32, marginBottom:8 }}>✅</div>
+                  <div style={{ fontSize:15, fontWeight:700 }}>All caught up!</div>
+                  <div style={{ fontSize:13, marginTop:4 }}>No action items waiting on your team right now.</div>
+                </div>
+              );
+
+              return (
+                <div>
+                  <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:14 }}>
+                    <Stat t={t} label="Total Items" value={items.length} color={COLORS.brand} />
+                    <Stat t={t} label="Overdue" value={items.filter(i=>i.overdue).length} color={COLORS.danger} />
+                    <Stat t={t} label="Next Actions" value={items.filter(i=>i.type==="action").length} color={COLORS.whe} />
+                    <Stat t={t} label="RISE Overdue" value={items.filter(i=>i.type==="rise").length} color={COLORS.danger} />
+                    <Stat t={t} label="Needs Invoice" value={items.filter(i=>i.type==="invoice").length} color={COLORS.purple} />
+                    <Stat t={t} label="Our Holds" value={items.filter(i=>i.type==="hold").length} color={COLORS.hold} />
+                  </div>
+                  {items.map((item, idx) => (
+                    <div key={idx} onClick={()=>{setTab(item.project.program);openDetail(item.project);}}
+                      style={{ background:t.cardBg, borderRadius:10, padding:"12px 16px", marginBottom:8, boxShadow:t.cardShadow,
+                        border:`1px solid ${item.overdue ? COLORS.danger+"66" : t.cardBorder}`,
+                        borderLeft:`4px solid ${typeColor[item.type]}`,
+                        cursor:"pointer", transition:"box-shadow .15s" }}
+                      onMouseOver={e=>e.currentTarget.style.boxShadow=t.cardHover}
+                      onMouseOut={e=>e.currentTarget.style.boxShadow=t.cardShadow}
+                    >
+                      <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
+                        <span style={{ fontSize:16 }}>{typeIcon[item.type]}</span>
+                        <div style={{ flex:1, minWidth:160 }}>
+                          <div style={{ fontWeight:700, fontSize:14, color:t.text }}>{item.project.customerName || "Unnamed"}</div>
+                          <div style={{ fontSize:12, color:t.textSecondary }}>{item.label}</div>
+                        </div>
+                        <Badge label={item.project.program} color={progColor(item.project.program)} small />
+                        {item.overdue && <Badge label="OVERDUE" color={COLORS.danger} small />}
+                        {item.date && (
+                          <span style={{ fontSize:12, color: item.overdue ? COLORS.danger : t.textMuted, fontWeight:600 }}>
+                            {item.overdue ? `${daysSince(item.date)}d overdue` : fmt(item.date)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
         {/* ── OVERVIEW TAB ── */}
         {tab === "Overview" && (
           <div>
-            <h2 style={{ fontWeight: 800, color: t.text, margin: "0 0 16px" }}>Program Overview</h2>
+            <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16, flexWrap:"wrap" }}>
+              <h2 style={{ fontWeight: 800, color: t.text, margin: 0, flex:1 }}>Program Overview</h2>
+              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search customer / address…" style={{ ...inputStyle, width:"auto", minWidth:250 }} />
+            </div>
+            {(() => {
+              const searchedProjects = search ? projects.filter(p => (p.customerName + p.address).toLowerCase().includes(search.toLowerCase())) : null;
+              if (searchedProjects && searchedProjects.length > 0) {
+                return (
+                  <div style={{ background:t.cardBg, borderRadius:12, padding:"16px", marginBottom:16, boxShadow:t.cardShadow, border:`1px solid ${t.cardBorder}` }}>
+                    <div style={{ fontWeight:700, fontSize:13, marginBottom:10, color:t.text }}>🔍 Search Results ({searchedProjects.length})</div>
+                    {searchedProjects.map(p => (
+                      <div key={p.id} onClick={()=>{setTab(p.program);openDetail(p);}} style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 6px", borderBottom:`1px solid ${t.rowBorder}`, cursor:"pointer", borderRadius:6, transition:"background .1s" }}
+                        onMouseOver={e=>e.currentTarget.style.background=t.inputBg}
+                        onMouseOut={e=>e.currentTarget.style.background="transparent"}
+                      >
+                        <Badge label={p.program} color={progColor(p.program)} small />
+                        <span style={{ fontWeight:700, fontSize:13, color:t.text, flex:1 }}>{p.customerName || "Unnamed"}</span>
+                        <span style={{ fontSize:12, color:t.textSecondary }}>{p.address}</span>
+                        <Badge label={p.program === "ASI" ? (p.installDate ? "Installed" : "Pending") : p.stage} color={tabColor} small />
+                        {p.onHold && <span style={{ fontSize:9, fontWeight:800, color:"#fff", background:COLORS.hold, borderRadius:3, padding:"1px 5px" }}>HOLD</span>}
+                      </div>
+                    ))}
+                  </div>
+                );
+              }
+              if (searchedProjects && searchedProjects.length === 0) {
+                return <div style={{ textAlign:"center", color:t.textMuted, padding:20, marginBottom:16 }}>No projects match "{search}"</div>;
+              }
+              return null;
+            })()}
             {["WHE SF","HES IE","ASI"].map(p => {
               const ps = projects.filter(x => x.program === p);
               const isASIProg = p === "ASI";
