@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, Fragment } from "react";
 import { useProjects } from "./useProjects";
 import { useAuth } from "./Auth";
 
@@ -590,7 +590,7 @@ export default function App() {
         </div>
       </div>
 
-      <div style={{ maxWidth: tab === "Calendar" ? 1600 : 1100, margin: "0 auto", padding: "20px 16px" }}>
+      <div style={{ maxWidth: (tab === "Calendar" || tab === "KPIs") ? 1600 : 1100, margin: "0 auto", padding: "20px 16px" }}>
 
         {/* DB error toast */}
         {dbError && (
@@ -614,116 +614,192 @@ export default function App() {
         {/* ── KPI TAB ── */}
         {tab === "KPIs" && (
           <div>
-            <h2 style={{ fontWeight: 800, color: t.text, margin: "0 0 20px", fontSize: 22 }}>📊 Quarterly Performance KPIs</h2>
+            <h2 style={{ fontWeight: 800, color: t.text, margin: "0 0 20px", fontSize: 22 }}>📊 Monthly & Quarterly KPIs</h2>
 
             {["HES IE", "WHE SF", "ASI"].map(program => {
-              const ps = projects.filter(p => p.program === program);
+              const allPs = projects.filter(p => p.program === program);
               const isHES = program === "HES IE";
               const isASIProg = program === "ASI";
               const pc = program === "WHE SF" ? COLORS.whe : program === "ASI" ? COLORS.asi : COLORS.hes;
 
-              if (isASIProg) {
-                const installed = ps.filter(p=>p.installDate || p.lastInstallDate).length;
-                const invoiced = ps.filter(p=>p.invoiceSubmittedDate).length;
-                const needsInvoice = ps.filter(p=>p.installDate&&!p.invoiceSubmittedDate).length;
-                const revenue = ps.reduce((s,p)=>s+(parseFloat(p.totalJobPrice)||0),0);
-                const onHoldN = ps.filter(p=>p.onHold).length;
-                const custWait = ps.filter(p=>p.holdParty==="Customer" || p.nextActionOwner==="Customer").length;
+              // Determine month for a project based on key date
+              const getMonth = (p) => {
+                const d = isASIProg ? (p.installDate || p.createdAt) : (p.assessmentDate || p.leadDate || p.createdAt);
+                if (!d) return null;
+                return d.substring(0, 7); // "YYYY-MM"
+              };
+
+              // Build month list from earliest to current
+              const monthSet = new Set();
+              allPs.forEach(p => { const m = getMonth(p); if (m) monthSet.add(m); });
+              const sorted = [...monthSet].sort();
+              if (sorted.length === 0) {
                 return (
                   <div key={program} style={{ background: t.cardBg, borderRadius: 14, padding: "20px 24px", marginBottom: 20, boxShadow: t.cardShadow, border: `2px solid ${pc}` }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                      <span style={{ fontSize: 18, fontWeight: 800, color: pc }}>ASI</span>
-                      <Badge label={`${ps.length} projects`} color={pc} />
-                      <span style={{ fontSize:11, color:t.textMuted, fontStyle:"italic" }}>RISE Private Pay</span>
-                    </div>
-                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                      <Stat t={t} label="Total" value={ps.length} color={pc} />
-                      <Stat t={t} label="Installed" value={installed} color={COLORS.ok} />
-                      <Stat t={t} label="Pending Install" value={ps.length - installed} color={COLORS.warn} />
-                      <Stat t={t} label="Invoiced" value={invoiced} color={COLORS.purple} />
-                      <Stat t={t} label="Needs Invoice" value={needsInvoice} color={needsInvoice>0?COLORS.warn:COLORS.gray} />
-                      <Stat t={t} label="Revenue" value={revenue > 0 ? `$${revenue.toLocaleString()}` : "$0"} color={COLORS.asi} />
-                      <Stat t={t} label="On Hold" value={onHoldN} color={COLORS.hold} />
-                    </div>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: pc }}>{program}</span>
+                    <span style={{ color: t.textMuted, fontSize: 13, marginLeft: 12 }}>No data yet</span>
                   </div>
                 );
               }
+              const months = [];
+              const curMonth = today().substring(0, 7);
+              let mo = sorted[0];
+              while (mo <= curMonth) {
+                months.push(mo);
+                const [yy, mm] = mo.split("-").map(Number);
+                mo = mm === 12 ? `${yy+1}-01` : `${yy}-${String(mm+1).padStart(2,"0")}`;
+              }
 
-              const withLeadAssess = ps.filter(p => p.leadDate && p.assessmentDate);
-              const leadToAssess = withLeadAssess.length ? Math.round(withLeadAssess.reduce((s, p) => s + (diffDays(p.leadDate, p.assessmentDate) || 0), 0) / withLeadAssess.length * 10) / 10 : null;
-              const withAssess = ps.filter(p => p.assessmentDate && p.riseSubmitDate);
-              const assessToRISE = withAssess.length ? Math.round(withAssess.reduce((s, p) => s + (diffBizDays(p.assessmentDate, p.riseSubmitDate) || 0), 0) / withAssess.length * 10) / 10 : null;
-              const compliant48 = withAssess.filter(p => diffBizDays(p.assessmentDate, p.riseSubmitDate) <= 2);
-              const rise48 = withAssess.length ? Math.round(compliant48.length / withAssess.length * 100) : null;
-              const withRiseApproval = ps.filter(p => p.riseSubmitDate && p.riApprovedDate);
-              const riseToApproval = withRiseApproval.length ? Math.round(withRiseApproval.reduce((s, p) => s + (diffDays(p.riseSubmitDate, p.riApprovedDate) || 0), 0) / withRiseApproval.length * 10) / 10 : null;
-              const withApprovalInstall = ps.filter(p => p.riApprovedDate && p.lastInstallDate);
-              const approvalToInstall = withApprovalInstall.length ? Math.round(withApprovalInstall.reduce((s, p) => s + (diffDays(p.riApprovedDate, p.lastInstallDate) || 0), 0) / withApprovalInstall.length * 10) / 10 : null;
-              const invoiced = ps.filter(p => p.lastInstallDate && p.invoiceSubmittedDate);
-              const invoiceTAT = invoiced.length ? Math.round(invoiced.reduce((s, p) => s + (diffDays(p.lastInstallDate, p.invoiceSubmittedDate) || 0), 0) / invoiced.length * 10) / 10 : null;
-              const closed = ps.filter(p => p.stage === "Closed" && p.assessmentDate && p.invoiceSubmittedDate);
-              const avgProject = closed.length ? Math.round(closed.reduce((s, p) => s + (diffDays(p.assessmentDate, p.invoiceSubmittedDate) || 0), 0) / closed.length) : null;
-              const closedWithLead = ps.filter(p => p.stage === "Closed" && p.leadDate && p.invoiceSubmittedDate);
-              const leadToClose = closedWithLead.length ? Math.round(closedWithLead.reduce((s, p) => s + (diffDays(p.leadDate, p.invoiceSubmittedDate) || 0), 0) / closedWithLead.length) : null;
-              const completionRate = ps.length > 0 ? Math.round((ps.filter(p => p.stage === "Closed").length / ps.length) * 100) : null;
-              const overdueInvoices = ps.filter(p => p.invoiceable && p.lastInstallDate && p.lastInstallDate <= today() && !p.invoiceSubmittedDate);
+              // Compute KPIs for a set of projects
+              const calcKPIs = (ps) => {
+                if (isASIProg) {
+                  const installed = ps.filter(p => p.installDate || p.lastInstallDate).length;
+                  const invoiced = ps.filter(p => p.invoiceSubmittedDate).length;
+                  const needsInv = ps.filter(p => p.installDate && !p.invoiceSubmittedDate).length;
+                  const rev = ps.reduce((s, p) => s + (parseFloat(p.totalJobPrice) || 0), 0);
+                  return { total: ps.length, installed, invoiced, needsInv, rev };
+                }
+                const wLA = ps.filter(p => p.leadDate && p.assessmentDate);
+                const leadToAssess = wLA.length ? Math.round(wLA.reduce((s, p) => s + (diffDays(p.leadDate, p.assessmentDate) || 0), 0) / wLA.length * 10) / 10 : null;
+                const wAR = ps.filter(p => p.assessmentDate && p.riseSubmitDate);
+                const assessToRISE = wAR.length ? Math.round(wAR.reduce((s, p) => s + (diffBizDays(p.assessmentDate, p.riseSubmitDate) || 0), 0) / wAR.length * 10) / 10 : null;
+                const c48 = wAR.filter(p => diffBizDays(p.assessmentDate, p.riseSubmitDate) <= 2);
+                const rise48 = wAR.length ? Math.round(c48.length / wAR.length * 100) : null;
+                const wRA = ps.filter(p => p.riseSubmitDate && p.riApprovedDate);
+                const riseToApproval = wRA.length ? Math.round(wRA.reduce((s, p) => s + (diffDays(p.riseSubmitDate, p.riApprovedDate) || 0), 0) / wRA.length * 10) / 10 : null;
+                const wAI = ps.filter(p => p.riApprovedDate && p.lastInstallDate);
+                const approvalToInstall = wAI.length ? Math.round(wAI.reduce((s, p) => s + (diffDays(p.riApprovedDate, p.lastInstallDate) || 0), 0) / wAI.length * 10) / 10 : null;
+                const inv = ps.filter(p => p.lastInstallDate && p.invoiceSubmittedDate);
+                const invoiceTAT = inv.length ? Math.round(inv.reduce((s, p) => s + (diffDays(p.lastInstallDate, p.invoiceSubmittedDate) || 0), 0) / inv.length * 10) / 10 : null;
+                const cl = ps.filter(p => p.stage === "Closed");
+                const rev = ps.reduce((s, p) => s + (parseFloat(p.totalJobPrice) || 0), 0);
+                return { total: ps.length, leadToAssess, assessToRISE, rise48, riseToApproval, approvalToInstall, invoiceTAT, closed: cl.length, rev };
+              };
+
+              // Group months into quarters
+              const quarters = {};
+              months.forEach(m => {
+                const [yy, mm] = m.split("-").map(Number);
+                const q = `Q${Math.ceil(mm / 3)} ${yy}`;
+                if (!quarters[q]) quarters[q] = [];
+                quarters[q].push(m);
+              });
+
+              const fmtMonth = (m) => parseLocal(`${m}-01`).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+
+              const cs = { padding: "8px 6px", fontSize: 12, textAlign: "center", borderBottom: `1px solid ${t.rowBorder}` };
+              const hc = { ...cs, fontWeight: 700, fontSize: 11, color: t.textMuted, textTransform: "uppercase", letterSpacing: .3, background: t.inputBg, position: "sticky", top: 0, zIndex: 1 };
+              const qr = { ...cs, fontWeight: 800, fontSize: 12, background: pc + "15", borderBottom: `2px solid ${pc}44` };
+
+              const cv = (val, good, warn) => {
+                if (val === null) return t.textMuted;
+                const n = typeof val === "string" ? parseFloat(val) : val;
+                if (isNaN(n)) return t.text;
+                return n <= good ? COLORS.ok : n <= warn ? COLORS.warn : COLORS.danger;
+              };
 
               return (
-                <div key={program} style={{ background: t.cardBg, borderRadius: 14, padding: "20px 24px", marginBottom: 20, boxShadow: t.cardShadow, border: `2px solid ${pc}` }}>
+                <div key={program} style={{ background: t.cardBg, borderRadius: 14, padding: "20px 24px", marginBottom: 24, boxShadow: t.cardShadow, border: `2px solid ${pc}` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                     <span style={{ fontSize: 18, fontWeight: 800, color: pc }}>{program}</span>
-                    <Badge label={`${ps.length} projects`} color={pc} />
-                    <Badge label={`${closed.length} closed`} color={COLORS.ok} small />
-                    {!isHES && <Badge label="Tracking Only" color={COLORS.gray} small />}
+                    <Badge label={`${allPs.length} total projects`} color={pc} />
+                    {isASIProg && <span style={{ fontSize:11, color:t.textMuted, fontStyle:"italic" }}>RISE Private Pay</span>}
+                    {isHES && <Badge label="Graded" color={COLORS.ok} small />}
+                    {!isHES && !isASIProg && <Badge label="Tracking" color={COLORS.gray} small />}
                   </div>
 
-                  {isHES && (
-                    <div style={{ marginBottom: 16 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: t.textMuted, marginBottom: 8, textTransform: "uppercase", letterSpacing: .5 }}>🎯 Graded KPIs</div>
-                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                        <Stat t={t} label="Lead → Assessment" value={leadToAssess !== null ? `${leadToAssess}d` : "—"} color={leadToAssess !== null ? (leadToAssess <= 10 ? COLORS.ok : leadToAssess <= 15 ? COLORS.warn : COLORS.danger) : t.textMuted} sub={`Target: ≤10d • ${withLeadAssess.length} tracked`} />
-                        <Stat t={t} label="Assessment → RISE" value={assessToRISE !== null ? `${assessToRISE}bd` : "—"} color={assessToRISE !== null ? (assessToRISE <= 2 ? COLORS.ok : COLORS.danger) : t.textMuted} sub={`Target: ≤2 biz days • ${rise48}% compliant`} />
-                        <Stat t={t} label="RI Approved → Install" value={approvalToInstall !== null ? `${approvalToInstall}d` : "—"} color={approvalToInstall !== null ? (approvalToInstall <= 5 ? COLORS.ok : approvalToInstall <= 7 ? COLORS.warn : COLORS.danger) : t.textMuted} sub={`Target: ≤5d • ${withApprovalInstall.length} installed`} />
-                        <Stat t={t} label="Install → Invoice" value={invoiceTAT !== null ? `${invoiceTAT}d` : "—"} color={invoiceTAT !== null ? (invoiceTAT <= 1 ? COLORS.ok : invoiceTAT <= 3 ? COLORS.warn : COLORS.danger) : t.textMuted} sub={`Target: ≤1d • ${invoiced.length} invoiced`} />
-                      </div>
-                    </div>
-                  )}
-
-                  <div style={{ marginBottom: 16 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: t.textMuted, marginBottom: 8, textTransform: "uppercase", letterSpacing: .5 }}>
-                      {isHES ? "📊 Additional Tracking" : "📊 Average Turnaround Times"}
-                    </div>
-                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                      {!isHES && (
-                        <>
-                          <Stat t={t} label="Lead → Assessment" value={leadToAssess !== null ? `${leadToAssess}d` : "—"} color={t.textMuted} sub={`${withLeadAssess.length} tracked`} />
-                          <Stat t={t} label="Assessment → RISE" value={assessToRISE !== null ? `${assessToRISE}bd` : "—"} color={t.textMuted} sub={`${withAssess.length} submitted`} />
-                        </>
-                      )}
-                      <Stat t={t} label="RISE → RI Approval" value={riseToApproval !== null ? `${riseToApproval}d` : "—"} color={t.textMuted} sub={`${isHES ? 'Tracking only • ' : ''}${withRiseApproval.length} approved`} />
-                      {!isHES && (
-                        <>
-                          <Stat t={t} label="RI Approved → Install" value={approvalToInstall !== null ? `${approvalToInstall}d` : "—"} color={t.textMuted} sub={`${withApprovalInstall.length} installed`} />
-                          <Stat t={t} label="Install → Invoice" value={invoiceTAT !== null ? `${invoiceTAT}d` : "—"} color={t.textMuted} sub={`${invoiced.length} invoiced`} />
-                        </>
-                      )}
-                    </div>
+                  <div style={{ overflowX: "auto", borderRadius: 10, border: `1px solid ${t.cardBorder}` }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", minWidth: isASIProg ? 500 : 900 }}>
+                      <thead>
+                        <tr>
+                          <th style={{ ...hc, textAlign: "left", minWidth: 100 }}>Month</th>
+                          <th style={hc}>Projects</th>
+                          {isASIProg ? (
+                            <>
+                              <th style={hc}>Installed</th>
+                              <th style={hc}>Invoiced</th>
+                              <th style={hc}>Needs Inv</th>
+                              <th style={hc}>Revenue</th>
+                            </>
+                          ) : (
+                            <>
+                              <th style={hc}>Lead→Assess</th>
+                              <th style={hc}>Assess→RISE</th>
+                              <th style={hc}>RISE 2bd %</th>
+                              <th style={hc}>RISE→Approval</th>
+                              <th style={hc}>Approval→Install</th>
+                              <th style={hc}>Install→Invoice</th>
+                              <th style={hc}>Closed</th>
+                              <th style={hc}>Revenue</th>
+                            </>
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(quarters).map(([qLabel, qMonths]) => {
+                          const qProjects = allPs.filter(p => { const m = getMonth(p); return m && qMonths.includes(m); });
+                          const qKPI = calcKPIs(qProjects);
+                          return (
+                            <Fragment key={qLabel}>
+                              {qMonths.map(month => {
+                                const mProjects = allPs.filter(p => getMonth(p) === month);
+                                const kpi = calcKPIs(mProjects);
+                                return (
+                                  <tr key={month}>
+                                    <td style={{ ...cs, textAlign: "left", fontWeight: 600, color: t.text }}>{fmtMonth(month)}</td>
+                                    <td style={{ ...cs, fontWeight: 700, color: t.text }}>{kpi.total}</td>
+                                    {isASIProg ? (
+                                      <>
+                                        <td style={{ ...cs, color: COLORS.ok, fontWeight: 600 }}>{kpi.installed}</td>
+                                        <td style={{ ...cs, color: COLORS.purple, fontWeight: 600 }}>{kpi.invoiced}</td>
+                                        <td style={{ ...cs, color: kpi.needsInv > 0 ? COLORS.warn : t.textMuted, fontWeight: 600 }}>{kpi.needsInv}</td>
+                                        <td style={{ ...cs, color: COLORS.asi, fontWeight: 700 }}>{kpi.rev > 0 ? `$${kpi.rev.toLocaleString()}` : "—"}</td>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <td style={{ ...cs, color: cv(kpi.leadToAssess, 10, 15), fontWeight: 600 }}>{kpi.leadToAssess !== null ? `${kpi.leadToAssess}d` : "—"}</td>
+                                        <td style={{ ...cs, color: cv(kpi.assessToRISE, 2, 3), fontWeight: 600 }}>{kpi.assessToRISE !== null ? `${kpi.assessToRISE}bd` : "—"}</td>
+                                        <td style={{ ...cs, color: kpi.rise48 !== null ? (kpi.rise48 >= 80 ? COLORS.ok : kpi.rise48 >= 50 ? COLORS.warn : COLORS.danger) : t.textMuted, fontWeight: 700 }}>{kpi.rise48 !== null ? `${kpi.rise48}%` : "—"}</td>
+                                        <td style={{ ...cs, color: t.textSecondary }}>{kpi.riseToApproval !== null ? `${kpi.riseToApproval}d` : "—"}</td>
+                                        <td style={{ ...cs, color: cv(kpi.approvalToInstall, 5, 7), fontWeight: 600 }}>{kpi.approvalToInstall !== null ? `${kpi.approvalToInstall}d` : "—"}</td>
+                                        <td style={{ ...cs, color: cv(kpi.invoiceTAT, 1, 3), fontWeight: 600 }}>{kpi.invoiceTAT !== null ? `${kpi.invoiceTAT}d` : "—"}</td>
+                                        <td style={{ ...cs, color: COLORS.ok, fontWeight: 600 }}>{kpi.closed}</td>
+                                        <td style={{ ...cs, color: pc, fontWeight: 700 }}>{kpi.rev > 0 ? `$${kpi.rev.toLocaleString()}` : "—"}</td>
+                                      </>
+                                    )}
+                                  </tr>
+                                );
+                              })}
+                              {/* Quarterly summary row */}
+                              <tr>
+                                <td style={{ ...qr, textAlign: "left", color: pc }}>📊 {qLabel}</td>
+                                <td style={{ ...qr, color: pc }}>{qKPI.total}</td>
+                                {isASIProg ? (
+                                  <>
+                                    <td style={{ ...qr, color: COLORS.ok }}>{qKPI.installed}</td>
+                                    <td style={{ ...qr, color: COLORS.purple }}>{qKPI.invoiced}</td>
+                                    <td style={{ ...qr, color: qKPI.needsInv > 0 ? COLORS.warn : t.textMuted }}>{qKPI.needsInv}</td>
+                                    <td style={{ ...qr, color: COLORS.asi }}>{qKPI.rev > 0 ? `$${qKPI.rev.toLocaleString()}` : "—"}</td>
+                                  </>
+                                ) : (
+                                  <>
+                                    <td style={{ ...qr, color: cv(qKPI.leadToAssess, 10, 15) }}>{qKPI.leadToAssess !== null ? `${qKPI.leadToAssess}d` : "—"}</td>
+                                    <td style={{ ...qr, color: cv(qKPI.assessToRISE, 2, 3) }}>{qKPI.assessToRISE !== null ? `${qKPI.assessToRISE}bd` : "—"}</td>
+                                    <td style={{ ...qr, color: qKPI.rise48 !== null ? (qKPI.rise48 >= 80 ? COLORS.ok : COLORS.danger) : t.textMuted }}>{qKPI.rise48 !== null ? `${qKPI.rise48}%` : "—"}</td>
+                                    <td style={{ ...qr, color: t.textSecondary }}>{qKPI.riseToApproval !== null ? `${qKPI.riseToApproval}d` : "—"}</td>
+                                    <td style={{ ...qr, color: cv(qKPI.approvalToInstall, 5, 7) }}>{qKPI.approvalToInstall !== null ? `${qKPI.approvalToInstall}d` : "—"}</td>
+                                    <td style={{ ...qr, color: cv(qKPI.invoiceTAT, 1, 3) }}>{qKPI.invoiceTAT !== null ? `${qKPI.invoiceTAT}d` : "—"}</td>
+                                    <td style={{ ...qr, color: COLORS.ok }}>{qKPI.closed}</td>
+                                    <td style={{ ...qr, color: pc }}>{qKPI.rev > 0 ? `$${qKPI.rev.toLocaleString()}` : "—"}</td>
+                                  </>
+                                )}
+                              </tr>
+                            </Fragment>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
-
-                  <div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: t.textMuted, marginBottom: 8, textTransform: "uppercase", letterSpacing: .5 }}>🎯 Full Cycle</div>
-                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                      <Stat t={t} label="Lead → Close" value={leadToClose !== null ? `${leadToClose}d` : "—"} color={COLORS.purple} sub={`${closedWithLead.length} closed w/ lead date`} />
-                      <Stat t={t} label="Assessment → Close" value={avgProject !== null ? `${avgProject}d` : "—"} color={COLORS.purple} sub={`${closed.length} closed projects`} />
-                      <Stat t={t} label="Completion Rate" value={completionRate !== null ? `${completionRate}%` : "—"} color={completionRate !== null ? (completionRate >= 70 ? COLORS.ok : completionRate >= 50 ? COLORS.warn : COLORS.danger) : t.textMuted} sub={`${ps.filter(p => p.stage === "Closed").length} / ${ps.length}`} />
-                    </div>
-                  </div>
-
-                  {overdueInvoices.length > 0 && (
-                    <div style={{ background: t.alertBg, border: `1px solid ${t.alertBorder}`, borderRadius: 8, padding: "10px 12px", fontSize: 12, marginTop: 16 }}>
-                      <strong style={{color:t.alertText}}>⚠ {overdueInvoices.length} overdue invoice{overdueInvoices.length > 1 ? "s" : ""}</strong> <span style={{color:t.alertTextSub}}>- Last install complete but not yet invoiced</span>
-                    </div>
-                  )}
                 </div>
               );
             })}
