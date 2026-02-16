@@ -11,6 +11,29 @@ const diffDays = (a, b) => {
 };
 const daysSince = d => d ? Math.round((Date.now() - new Date(d)) / 86400000) : null;
 
+// Count only Mon-Fri between two dates
+const diffBizDays = (a, b) => {
+  if (!a || !b) return null;
+  const start = new Date(a);
+  const end = new Date(b);
+  let count = 0;
+  const d = new Date(start);
+  const direction = end >= start ? 1 : -1;
+  if (direction === 1) {
+    d.setDate(d.getDate() + 1);
+    while (d <= end) {
+      const day = d.getDay();
+      if (day !== 0 && day !== 6) count++;
+      d.setDate(d.getDate() + 1);
+    }
+  } else {
+    return -diffBizDays(b, a);
+  }
+  return count;
+};
+// Business days since a date (excluding weekends)
+const bizDaysSince = d => d ? diffBizDays(d, today()) : null;
+
 const STAGES = ["Lead","Assessment Scheduled","Assessment Complete","Scope Submitted to RISE","RI Approved","Install Scheduled","Install Complete","Closed"];
 const DOCS_WHE = ["Signed Audit Report","Manual J","Manual S","Customer Auth Form","Pre-install Photos","Scope of Work","AHRI Certificate","Post Inspection Form","Customer Acknowledgement","Invoice"];
 const DOCS_HES = ["Signed Audit Report","Customer Auth Form","Pre-install Photos","Scope of Work","Post Inspection Form","Customer Acknowledgement","Invoice"];
@@ -331,9 +354,9 @@ export default function App() {
     const comp = ps.filter(p => p.type === "Comprehensive").length;
     const def = ps.filter(p => p.type === "Deferred").length;
     const withAssess = ps.filter(p => p.assessmentDate && p.riseSubmitDate);
-    const compliant48 = withAssess.filter(p => diffDays(p.assessmentDate, p.riseSubmitDate) <= 2);
+    const compliant48 = withAssess.filter(p => diffBizDays(p.assessmentDate, p.riseSubmitDate) <= 2);
     const rise48Rate = withAssess.length ? Math.round(compliant48.length / withAssess.length * 100) : null;
-    const rise48Issues = ps.filter(p => p.assessmentDate && !p.riseSubmitDate && daysSince(p.assessmentDate) > 2);
+    const rise48Issues = ps.filter(p => p.assessmentDate && !p.riseSubmitDate && bizDaysSince(p.assessmentDate) > 2);
     const invoiced = ps.filter(p => p.lastInstallDate && p.invoiceSubmittedDate);
     const overdueInvoices = ps.filter(p => p.invoiceable && p.lastInstallDate && p.lastInstallDate <= today() && !p.invoiceSubmittedDate);
     const closed = ps.filter(p => p.stage === "Closed" && p.assessmentDate && p.invoiceSubmittedDate);
@@ -479,19 +502,19 @@ export default function App() {
 
   const riseColor = (p) => {
     if (!p.assessmentDate) return COLORS.gray;
-    if (p.riseSubmitDate) return diffDays(p.assessmentDate, p.riseSubmitDate) <= 2 ? COLORS.ok : COLORS.warn;
-    const d = daysSince(p.assessmentDate);
+    if (p.riseSubmitDate) return diffBizDays(p.assessmentDate, p.riseSubmitDate) <= 2 ? COLORS.ok : COLORS.warn;
+    const d = bizDaysSince(p.assessmentDate);
     if (d > 2) return COLORS.danger;
     return COLORS.warn;
   };
   const riseLabel = (p) => {
     if (!p.assessmentDate) return "No Assessment";
     if (p.riseSubmitDate) {
-      const d = diffDays(p.assessmentDate, p.riseSubmitDate);
-      return d <= 2 ? `✓ ${d}d` : `⚠ ${d}d`;
+      const d = diffBizDays(p.assessmentDate, p.riseSubmitDate);
+      return d <= 2 ? `✓ ${d}bd` : `⚠ ${d}bd`;
     }
-    const d = daysSince(p.assessmentDate);
-    return d > 2 ? `! ${d}d pending` : `${d}d pending`;
+    const d = bizDaysSince(p.assessmentDate);
+    return d > 2 ? `! ${d}bd pending` : `${d}bd pending`;
   };
   const progColor = p => p === "WHE SF" ? COLORS.whe : p === "HES IE" ? COLORS.hes : p === "ASI" ? COLORS.asi : COLORS.purple;
   const tabColor = tab === "WHE SF" ? COLORS.whe : tab === "HES IE" ? COLORS.hes : tab === "ASI" ? COLORS.asi : COLORS.purple;
@@ -617,8 +640,8 @@ export default function App() {
               const withLeadAssess = ps.filter(p => p.leadDate && p.assessmentDate);
               const leadToAssess = withLeadAssess.length ? Math.round(withLeadAssess.reduce((s, p) => s + (diffDays(p.leadDate, p.assessmentDate) || 0), 0) / withLeadAssess.length * 10) / 10 : null;
               const withAssess = ps.filter(p => p.assessmentDate && p.riseSubmitDate);
-              const assessToRISE = withAssess.length ? Math.round(withAssess.reduce((s, p) => s + (diffDays(p.assessmentDate, p.riseSubmitDate) || 0), 0) / withAssess.length * 10) / 10 : null;
-              const compliant48 = withAssess.filter(p => diffDays(p.assessmentDate, p.riseSubmitDate) <= 2);
+              const assessToRISE = withAssess.length ? Math.round(withAssess.reduce((s, p) => s + (diffBizDays(p.assessmentDate, p.riseSubmitDate) || 0), 0) / withAssess.length * 10) / 10 : null;
+              const compliant48 = withAssess.filter(p => diffBizDays(p.assessmentDate, p.riseSubmitDate) <= 2);
               const rise48 = withAssess.length ? Math.round(compliant48.length / withAssess.length * 100) : null;
               const withRiseApproval = ps.filter(p => p.riseSubmitDate && p.riApprovedDate);
               const riseToApproval = withRiseApproval.length ? Math.round(withRiseApproval.reduce((s, p) => s + (diffDays(p.riseSubmitDate, p.riApprovedDate) || 0), 0) / withRiseApproval.length * 10) / 10 : null;
@@ -647,7 +670,7 @@ export default function App() {
                       <div style={{ fontSize: 11, fontWeight: 700, color: t.textMuted, marginBottom: 8, textTransform: "uppercase", letterSpacing: .5 }}>🎯 Graded KPIs</div>
                       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                         <Stat t={t} label="Lead → Assessment" value={leadToAssess !== null ? `${leadToAssess}d` : "—"} color={leadToAssess !== null ? (leadToAssess <= 10 ? COLORS.ok : leadToAssess <= 15 ? COLORS.warn : COLORS.danger) : t.textMuted} sub={`Target: ≤10d • ${withLeadAssess.length} tracked`} />
-                        <Stat t={t} label="Assessment → RISE" value={assessToRISE !== null ? `${assessToRISE}d` : "—"} color={assessToRISE !== null ? (assessToRISE <= 2 ? COLORS.ok : COLORS.danger) : t.textMuted} sub={`Target: ≤2d (48hr) • ${rise48}% compliant`} />
+                        <Stat t={t} label="Assessment → RISE" value={assessToRISE !== null ? `${assessToRISE}bd` : "—"} color={assessToRISE !== null ? (assessToRISE <= 2 ? COLORS.ok : COLORS.danger) : t.textMuted} sub={`Target: ≤2 biz days • ${rise48}% compliant`} />
                         <Stat t={t} label="RI Approved → Install" value={approvalToInstall !== null ? `${approvalToInstall}d` : "—"} color={approvalToInstall !== null ? (approvalToInstall <= 5 ? COLORS.ok : approvalToInstall <= 7 ? COLORS.warn : COLORS.danger) : t.textMuted} sub={`Target: ≤5d • ${withApprovalInstall.length} installed`} />
                         <Stat t={t} label="Install → Invoice" value={invoiceTAT !== null ? `${invoiceTAT}d` : "—"} color={invoiceTAT !== null ? (invoiceTAT <= 1 ? COLORS.ok : invoiceTAT <= 3 ? COLORS.warn : COLORS.danger) : t.textMuted} sub={`Target: ≤1d • ${invoiced.length} invoiced`} />
                       </div>
@@ -662,7 +685,7 @@ export default function App() {
                       {!isHES && (
                         <>
                           <Stat t={t} label="Lead → Assessment" value={leadToAssess !== null ? `${leadToAssess}d` : "—"} color={t.textMuted} sub={`${withLeadAssess.length} tracked`} />
-                          <Stat t={t} label="Assessment → RISE" value={assessToRISE !== null ? `${assessToRISE}d` : "—"} color={t.textMuted} sub={`${withAssess.length} submitted`} />
+                          <Stat t={t} label="Assessment → RISE" value={assessToRISE !== null ? `${assessToRISE}bd` : "—"} color={t.textMuted} sub={`${withAssess.length} submitted`} />
                         </>
                       )}
                       <Stat t={t} label="RISE → RI Approval" value={riseToApproval !== null ? `${riseToApproval}d` : "—"} color={t.textMuted} sub={`${isHES ? 'Tracking only • ' : ''}${withRiseApproval.length} approved`} />
@@ -936,9 +959,9 @@ export default function App() {
               const comp = ps.filter(x=>x.type==="Comprehensive").length;
               const def = ps.filter(x=>x.type==="Deferred").length;
               const withA = ps.filter(x=>x.assessmentDate&&x.riseSubmitDate);
-              const ok48 = withA.filter(x=>diffDays(x.assessmentDate,x.riseSubmitDate)<=2).length;
+              const ok48 = withA.filter(x=>diffBizDays(x.assessmentDate,x.riseSubmitDate)<=2).length;
               const rate = withA.length ? Math.round(ok48/withA.length*100) : null;
-              const issues = ps.filter(x=>x.assessmentDate&&!x.riseSubmitDate&&daysSince(x.assessmentDate)>2);
+              const issues = ps.filter(x=>x.assessmentDate&&!x.riseSubmitDate&&bizDaysSince(x.assessmentDate)>2);
               const installed = ps.filter(x=>x.installDate || x.lastInstallDate).length;
               return (
                 <div key={p} style={{ background:t.cardBg, borderRadius:14, padding:"18px 20px", marginBottom:16, boxShadow:t.cardShadow, borderLeft:`5px solid ${progColor(p)}`, border:`1px solid ${t.cardBorder}`, borderLeftWidth:5, borderLeftColor:progColor(p) }}>
@@ -1022,7 +1045,7 @@ export default function App() {
 
             {!isASI && metrics.rise48Issues.length > 0 && (
               <div style={{ background:t.warnBg, border:`1px solid ${t.warnBorder}`, borderRadius:10, padding:"10px 14px", marginBottom:12, fontSize:13, color:t.text }}>
-                <strong>⚠ {metrics.rise48Issues.length} project{metrics.rise48Issues.length>1?"s":""} past the 48-hr RISE submission window:</strong>{" "}
+                <strong>⚠ {metrics.rise48Issues.length} project{metrics.rise48Issues.length>1?"s":""} past the 2 business day RISE submission window:</strong>{" "}
                 {metrics.rise48Issues.map(p=>p.customerName||p.address||"Unnamed").join(", ")}
               </div>
             )}
@@ -1231,7 +1254,7 @@ export default function App() {
                 )}
                 <Row t={t} k="RISE Submitted" v={fmt(form.riseSubmitDate)} />
                 {form.assessmentDate && form.riseSubmitDate && (
-                  <Row t={t} k="Assessment → RISE TAT" v={<b style={{color:diffDays(form.assessmentDate,form.riseSubmitDate)<=2?COLORS.ok:COLORS.danger}}>{diffDays(form.assessmentDate, form.riseSubmitDate)} days</b>} />
+                  <Row t={t} k="Assessment → RISE TAT" v={<b style={{color:diffBizDays(form.assessmentDate,form.riseSubmitDate)<=2?COLORS.ok:COLORS.danger}}>{diffBizDays(form.assessmentDate, form.riseSubmitDate)} biz days</b>} />
                 )}
                 <Row t={t} k="RI Approved" v={fmt(form.riApprovedDate)} />
                 {form.riseSubmitDate && form.riApprovedDate && (
