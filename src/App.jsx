@@ -3,19 +3,24 @@ import { useProjects } from "./useProjects";
 import { useAuth } from "./Auth";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
-const fmt = d => d ? new Date(d).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) : "—";
+const fmt = d => {
+  if (!d) return "—";
+  const [y, m, day] = d.split("-").map(Number);
+  return new Date(y, m - 1, day).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+};
 const today = () => new Date().toISOString().split("T")[0];
+const parseLocal = d => { const [y,m,day] = d.split("-").map(Number); return new Date(y, m-1, day); };
 const diffDays = (a, b) => {
   if (!a || !b) return null;
-  return Math.round((new Date(b) - new Date(a)) / 86400000);
+  return Math.round((parseLocal(b) - parseLocal(a)) / 86400000);
 };
-const daysSince = d => d ? Math.round((Date.now() - new Date(d)) / 86400000) : null;
+const daysSince = d => d ? Math.round((new Date().setHours(0,0,0,0) - parseLocal(d)) / 86400000) : null;
 
 // Count only Mon-Fri between two dates
 const diffBizDays = (a, b) => {
   if (!a || !b) return null;
-  const start = new Date(a);
-  const end = new Date(b);
+  const start = parseLocal(a);
+  const end = parseLocal(b);
   let count = 0;
   const d = new Date(start);
   const direction = end >= start ? 1 : -1;
@@ -31,7 +36,6 @@ const diffBizDays = (a, b) => {
   }
   return count;
 };
-// Business days since a date (excluding weekends)
 const bizDaysSince = d => d ? diffBizDays(d, today()) : null;
 
 const STAGES = ["Lead","Assessment Scheduled","Assessment Complete","Scope Submitted to RISE","RI Approved","Install Scheduled","Install Complete","Closed"];
@@ -306,8 +310,8 @@ export default function App() {
     } else if (projectData.riseSubmitDate) {
       newStage = "Scope Submitted to RISE";
     } else if (projectData.assessmentDate) {
-      const assessDate = new Date(projectData.assessmentDate);
-      const todayDate = new Date(now);
+      const assessDate = parseLocal(projectData.assessmentDate);
+      const todayDate = parseLocal(now);
       if (assessDate < todayDate) {
         newStage = "Assessment Complete";
       } else {
@@ -923,7 +927,7 @@ export default function App() {
             {/* Month event summary */}
             {(() => {
               const monthEvents = calendarEvents.filter(e => {
-                const d = new Date(e.date);
+                const d = parseLocal(e.date);
                 return d.getMonth() === calMonth && d.getFullYear() === calYear;
               });
               const byType = {};
@@ -1232,11 +1236,11 @@ export default function App() {
                     )}
                   </div>
                   <Row t={t} k="Action" v={form.nextAction||"—"} />
-                  <Row t={t} k="Target Date" v={form.nextActionDate ? <b style={{color: new Date(form.nextActionDate) < new Date() ? COLORS.danger : COLORS.whe}}>{fmt(form.nextActionDate)}</b> : "—"} />
-                  {form.nextActionDate && new Date(form.nextActionDate) >= new Date() && (
+                  <Row t={t} k="Target Date" v={form.nextActionDate ? <b style={{color: parseLocal(form.nextActionDate) < parseLocal(today()) ? COLORS.danger : COLORS.whe}}>{fmt(form.nextActionDate)}</b> : "—"} />
+                  {form.nextActionDate && parseLocal(form.nextActionDate) >= parseLocal(today()) && (
                     <Row t={t} k="Days Until" v={<b style={{color:COLORS.whe}}>{diffDays(today(), form.nextActionDate)} days</b>} />
                   )}
-                  {form.nextActionDate && new Date(form.nextActionDate) < new Date() && (
+                  {form.nextActionDate && parseLocal(form.nextActionDate) < parseLocal(today()) && (
                     <Row t={t} k="Overdue By" v={<b style={{color:COLORS.danger}}>{daysSince(form.nextActionDate)} days</b>} />
                   )}
                   {form.nextActionOwner === "Customer" && (
