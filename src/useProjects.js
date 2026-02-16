@@ -24,6 +24,13 @@ const fieldMap = {
   leadDate: "lead_date",
   createdAt: "created_at",
   updatedAt: "updated_at",
+  onHold: "on_hold",
+  holdReason: "hold_reason",
+  holdDate: "hold_date",
+  holdParty: "hold_party",
+  nextAction: "next_action",
+  nextActionDate: "next_action_date",
+  nextActionOwner: "next_action_owner",
 };
 
 const reverseMap = Object.fromEntries(

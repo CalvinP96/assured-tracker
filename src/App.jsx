@@ -44,6 +44,13 @@ const defaultProject = (program) => ({
   docs: {},
   stageHistory: [],
   notes: "",
+  onHold: false,
+  holdReason: "",
+  holdDate: "",
+  holdParty: "",
+  nextAction: "",
+  nextActionDate: "",
+  nextActionOwner: "",
   createdAt: today(),
 });
 
@@ -57,7 +64,12 @@ const COLORS = {
   purple: "#8b5cf6",
   brand: "#991b1b",
   brandLight: "#dc2626",
+  hold: "#ef4444",
+  asi: "#f97316",
 };
+
+const HOLD_PARTIES = ["Us","Customer","Utility","Contractor","Permit Office","Other"];
+const ACTION_OWNERS = ["Us","Customer","Utility","Contractor","Permit Office","Other"];
 
 // ── themes ────────────────────────────────────────────────────────────────────
 const themes = {
@@ -240,6 +252,7 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All");
+  const [holdFilter, setHoldFilter] = useState("All");
   const [theme, setThemeState] = useState(loadTheme);
   const [calMonth, setCalMonth] = useState(() => new Date().getMonth());
   const [calYear, setCalYear] = useState(() => new Date().getFullYear());
@@ -298,6 +311,7 @@ export default function App() {
   }, [dbLoading]);
 
   const prog = tab === "Overview" || tab === "KPIs" || tab === "Calendar" ? null : tab;
+  const isASI = prog === "ASI";
   const docs = prog === "WHE SF" ? DOCS_WHE : DOCS_HES;
 
   const filtered = useMemo(() => {
@@ -305,8 +319,11 @@ export default function App() {
     if (search) ps = ps.filter(p => (p.customerName + p.address).toLowerCase().includes(search.toLowerCase()));
     if (stageFilter !== "All") ps = ps.filter(p => p.stage === stageFilter);
     if (typeFilter !== "All") ps = ps.filter(p => p.type === typeFilter);
+    if (holdFilter === "On Hold") ps = ps.filter(p => p.onHold);
+    else if (holdFilter === "Active") ps = ps.filter(p => !p.onHold);
+    else if (holdFilter === "Customer Wait") ps = ps.filter(p => p.nextActionOwner === "Customer" || p.holdParty === "Customer");
     return ps.sort((a, b) => (a.nextInstallDate || "9999") > (b.nextInstallDate || "9999") ? 1 : -1);
-  }, [projects, prog, search, stageFilter, typeFilter]);
+  }, [projects, prog, search, stageFilter, typeFilter, holdFilter]);
 
   const metrics = useMemo(() => {
     const ps = prog ? projects.filter(p => p.program === prog) : projects;
@@ -324,16 +341,19 @@ export default function App() {
       ? Math.round(closed.reduce((s, p) => s + (diffDays(p.assessmentDate, p.invoiceSubmittedDate) || 0), 0) / closed.length)
       : null;
     const permitPending = ps.filter(p => ["Applied","Approved"].includes(p.permitStatus)).length;
+    const onHoldCount = ps.filter(p => p.onHold).length;
+    const customerWaitCount = ps.filter(p => p.nextActionOwner === "Customer" || p.holdParty === "Customer").length;
     const upcoming = ps.filter(p => p.nextInstallDate && p.nextInstallDate >= today()).sort((a,b)=>a.nextInstallDate>b.nextInstallDate?1:-1).slice(0,5);
     const invoiceable = overdueInvoices.length;
     const totalRevenue = ps.reduce((sum, p) => sum + (parseFloat(p.totalJobPrice) || 0), 0);
     const invoiceableRevenue = overdueInvoices.reduce((sum, p) => sum + (parseFloat(p.totalJobPrice) || 0), 0);
     const docsCheck = (p) => {
+      if (p.program === "ASI") return { done: 0, total: 0 };
       const d = p.program === "HES IE" ? DOCS_HES : DOCS_WHE;
       const done = d.filter(k => p.docs?.[k]).length;
       return { done, total: d.length };
     };
-    return { total, comp, def, rise48Rate, rise48Issues, withAssess, avgProjectDays, permitPending, upcoming, docsCheck, invoiceable, overdueInvoices, totalRevenue, invoiceableRevenue, invoiced, closed };
+    return { total, comp, def, rise48Rate, rise48Issues, withAssess, avgProjectDays, permitPending, onHoldCount, customerWaitCount, upcoming, docsCheck, invoiceable, overdueInvoices, totalRevenue, invoiceableRevenue, invoiced, closed };
   }, [projects, prog]);
 
   // ── calendar event types & extraction ───────────────────────────────────────
@@ -473,12 +493,12 @@ export default function App() {
     const d = daysSince(p.assessmentDate);
     return d > 2 ? `! ${d}d pending` : `${d}d pending`;
   };
-  const progColor = p => p === "WHE SF" ? COLORS.whe : COLORS.hes;
-  const tabColor = tab === "WHE SF" ? COLORS.whe : tab === "HES IE" ? COLORS.hes : COLORS.purple;
+  const progColor = p => p === "WHE SF" ? COLORS.whe : p === "HES IE" ? COLORS.hes : p === "ASI" ? COLORS.asi : COLORS.purple;
+  const tabColor = tab === "WHE SF" ? COLORS.whe : tab === "HES IE" ? COLORS.hes : tab === "ASI" ? COLORS.asi : COLORS.purple;
 
   const inputStyle = { padding:"8px 12px", border:`1px solid ${t.inputBorder}`, borderRadius:8, fontSize:13, width:"100%", background:t.inputBg, color:t.text };
 
-  const TAB_ORDER = ["Overview","WHE SF","HES IE","Calendar","KPIs"];
+  const TAB_ORDER = ["Overview","WHE SF","HES IE","ASI","Calendar","KPIs"];
 
   return (
     <div style={{ minHeight: "100vh", background: t.bg, fontFamily: "system-ui,sans-serif" }}>
@@ -495,7 +515,7 @@ export default function App() {
           }}>A</div>
           <div>
             <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: 1, textTransform: "uppercase", color: t.text }}>Assured Energy Solutions</div>
-            <div style={{ fontSize: 11, color: t.textMuted, fontWeight: 600, letterSpacing: 1.2, textTransform: "uppercase" }}>Project Tracker • WHE SF & HES IE</div>
+            <div style={{ fontSize: 11, color: t.textMuted, fontWeight: 600, letterSpacing: 1.2, textTransform: "uppercase" }}>Project Tracker • WHE SF • HES IE • ASI</div>
           </div>
         </div>
         <div style={{ marginLeft: "auto", display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
@@ -512,7 +532,7 @@ export default function App() {
           <div style={{ width: 1, height: 28, background: t.cardBorder, margin: "0 4px" }} />
           <ThemeToggle theme={theme} setTheme={setTheme} />
           <div style={{ width: 1, height: 28, background: t.cardBorder, margin: "0 4px" }} />
-          {["Overview","WHE SF","HES IE","Calendar"].map(tName => (
+          {["Overview","WHE SF","HES IE","ASI","Calendar"].map(tName => (
             <button key={tName} onClick={()=>{setTab(tName);setView("list");}} style={{
               padding: "8px 18px", borderRadius: 8,
               border: tab===tName ? "2px solid #991b1b" : `2px solid ${t.tabInactiveBg}`,
@@ -566,9 +586,34 @@ export default function App() {
           <div>
             <h2 style={{ fontWeight: 800, color: t.text, margin: "0 0 20px", fontSize: 22 }}>📊 Quarterly Performance KPIs</h2>
 
-            {["HES IE", "WHE SF"].map(program => {
+            {["HES IE", "WHE SF", "ASI"].map(program => {
               const ps = projects.filter(p => p.program === program);
               const isHES = program === "HES IE";
+              const isASIProg = program === "ASI";
+              const pc = program === "WHE SF" ? COLORS.whe : program === "ASI" ? COLORS.asi : COLORS.hes;
+
+              if (isASIProg) {
+                const installed = ps.filter(p=>p.installDate || p.lastInstallDate).length;
+                const onHoldN = ps.filter(p=>p.onHold).length;
+                const custWait = ps.filter(p=>p.holdParty==="Customer" || p.nextActionOwner==="Customer").length;
+                return (
+                  <div key={program} style={{ background: t.cardBg, borderRadius: 14, padding: "20px 24px", marginBottom: 20, boxShadow: t.cardShadow, border: `2px solid ${pc}` }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                      <span style={{ fontSize: 18, fontWeight: 800, color: pc }}>ASI</span>
+                      <Badge label={`${ps.length} projects`} color={pc} />
+                      <span style={{ fontSize:11, color:t.textMuted, fontStyle:"italic" }}>RISE Private Pay — Simplified Tracking</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                      <Stat t={t} label="Total" value={ps.length} color={pc} />
+                      <Stat t={t} label="Installed" value={installed} color={COLORS.ok} />
+                      <Stat t={t} label="Pending Install" value={ps.length - installed} color={COLORS.warn} />
+                      <Stat t={t} label="On Hold" value={onHoldN} color={COLORS.hold} />
+                      <Stat t={t} label="Customer Wait" value={custWait} color={COLORS.warn} />
+                    </div>
+                  </div>
+                );
+              }
+
               const withLeadAssess = ps.filter(p => p.leadDate && p.assessmentDate);
               const leadToAssess = withLeadAssess.length ? Math.round(withLeadAssess.reduce((s, p) => s + (diffDays(p.leadDate, p.assessmentDate) || 0), 0) / withLeadAssess.length * 10) / 10 : null;
               const withAssess = ps.filter(p => p.assessmentDate && p.riseSubmitDate);
@@ -587,7 +632,6 @@ export default function App() {
               const leadToClose = closedWithLead.length ? Math.round(closedWithLead.reduce((s, p) => s + (diffDays(p.leadDate, p.invoiceSubmittedDate) || 0), 0) / closedWithLead.length) : null;
               const completionRate = ps.length > 0 ? Math.round((ps.filter(p => p.stage === "Closed").length / ps.length) * 100) : null;
               const overdueInvoices = ps.filter(p => p.invoiceable && p.lastInstallDate && p.lastInstallDate <= today() && !p.invoiceSubmittedDate);
-              const pc = program === "WHE SF" ? COLORS.whe : COLORS.hes;
 
               return (
                 <div key={program} style={{ background: t.cardBg, borderRadius: 14, padding: "20px 24px", marginBottom: 20, boxShadow: t.cardShadow, border: `2px solid ${pc}` }}>
@@ -685,6 +729,7 @@ export default function App() {
                   <option value="All">All Programs</option>
                   <option value="WHE SF">WHE SF</option>
                   <option value="HES IE">HES IE</option>
+                  <option value="ASI">ASI</option>
                 </select>
               </div>
             </div>
@@ -885,36 +930,51 @@ export default function App() {
         {tab === "Overview" && (
           <div>
             <h2 style={{ fontWeight: 800, color: t.text, margin: "0 0 16px" }}>Program Overview</h2>
-            {["WHE SF","HES IE"].map(p => {
+            {["WHE SF","HES IE","ASI"].map(p => {
               const ps = projects.filter(x => x.program === p);
+              const isASIProg = p === "ASI";
               const comp = ps.filter(x=>x.type==="Comprehensive").length;
               const def = ps.filter(x=>x.type==="Deferred").length;
               const withA = ps.filter(x=>x.assessmentDate&&x.riseSubmitDate);
               const ok48 = withA.filter(x=>diffDays(x.assessmentDate,x.riseSubmitDate)<=2).length;
               const rate = withA.length ? Math.round(ok48/withA.length*100) : null;
               const issues = ps.filter(x=>x.assessmentDate&&!x.riseSubmitDate&&daysSince(x.assessmentDate)>2);
+              const installed = ps.filter(x=>x.installDate || x.lastInstallDate).length;
               return (
                 <div key={p} style={{ background:t.cardBg, borderRadius:14, padding:"18px 20px", marginBottom:16, boxShadow:t.cardShadow, borderLeft:`5px solid ${progColor(p)}`, border:`1px solid ${t.cardBorder}`, borderLeftWidth:5, borderLeftColor:progColor(p) }}>
                   <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
                     <span style={{ fontWeight:800, fontSize:16, color: progColor(p) }}>{p}</span>
                     <Badge label={`${ps.length} projects`} color={progColor(p)} small />
+                    {isASIProg && <span style={{ fontSize:11, color:t.textMuted, fontStyle:"italic" }}>RISE Private Pay</span>}
                   </div>
                   <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                     <Stat t={t} label="Total" value={ps.length} />
-                    <Stat t={t} label="Comprehensive" value={comp} color={COLORS.ok} />
-                    <Stat t={t} label="Deferred" value={def} color={COLORS.warn} />
-                    <Stat t={t} label="48hr RISE" value={rate !== null ? `${rate}%` : "—"} color={rate!==null?(rate>=80?COLORS.ok:COLORS.danger):COLORS.gray} sub={`${issues.length} overdue`} />
-                    <Stat t={t} label="Permit Pending" value={ps.filter(x=>["Applied","Approved"].includes(x.permitStatus)).length} color={COLORS.purple} />
+                    {isASIProg ? (
+                      <>
+                        <Stat t={t} label="Installed" value={installed} color={COLORS.ok} />
+                        <Stat t={t} label="Pending" value={ps.length - installed} color={COLORS.warn} />
+                        <Stat t={t} label="On Hold" value={ps.filter(x=>x.onHold).length} color={COLORS.hold} />
+                      </>
+                    ) : (
+                      <>
+                        <Stat t={t} label="Comprehensive" value={comp} color={COLORS.ok} />
+                        <Stat t={t} label="Deferred" value={def} color={COLORS.warn} />
+                        <Stat t={t} label="48hr RISE" value={rate !== null ? `${rate}%` : "—"} color={rate!==null?(rate>=80?COLORS.ok:COLORS.danger):COLORS.gray} sub={`${issues.length} overdue`} />
+                        <Stat t={t} label="Permit Pending" value={ps.filter(x=>["Applied","Approved"].includes(x.permitStatus)).length} color={COLORS.purple} />
+                      </>
+                    )}
                   </div>
-                  <div style={{ marginTop:14 }}>
-                    <div style={{ fontSize:11, fontWeight:700, color:t.textMuted, marginBottom:6, textTransform:"uppercase", letterSpacing:.5 }}>Stage Breakdown</div>
-                    <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
-                      {STAGES.map(s => {
-                        const n = ps.filter(x=>x.stage===s).length;
-                        return n > 0 ? <Badge key={s} label={`${s}: ${n}`} color={progColor(p)} small /> : null;
-                      })}
+                  {!isASIProg && (
+                    <div style={{ marginTop:14 }}>
+                      <div style={{ fontSize:11, fontWeight:700, color:t.textMuted, marginBottom:6, textTransform:"uppercase", letterSpacing:.5 }}>Stage Breakdown</div>
+                      <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                        {STAGES.map(s => {
+                          const n = ps.filter(x=>x.stage===s).length;
+                          return n > 0 ? <Badge key={s} label={`${s}: ${n}`} color={progColor(p)} small /> : null;
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -938,16 +998,29 @@ export default function App() {
           <>
             <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
               <Stat t={t} label="Total" value={metrics.total} />
-              <Stat t={t} label="Comprehensive" value={metrics.comp} color={COLORS.ok} />
-              <Stat t={t} label="Deferred" value={metrics.def} color={COLORS.warn} />
-              <Stat t={t} label="Ready to Invoice" value={metrics.invoiceable} color={COLORS.purple} sub={metrics.invoiceableRevenue > 0 ? `$${metrics.invoiceableRevenue.toLocaleString()}` : ""} />
-              <Stat t={t} label="Total Revenue" value={metrics.totalRevenue > 0 ? `$${metrics.totalRevenue.toLocaleString()}` : "$0"} color={COLORS.whe} />
-              <Stat t={t} label="48hr RISE" value={metrics.rise48Rate !== null ? `${metrics.rise48Rate}%` : "—"} color={metrics.rise48Rate !== null ? (metrics.rise48Rate >= 80 ? COLORS.ok : COLORS.danger) : COLORS.gray} sub={`${metrics.rise48Issues.length} overdue`} />
-              <Stat t={t} label="Permit Pending" value={metrics.permitPending} color={COLORS.purple} />
-              <Stat t={t} label="Avg Days/Project" value={metrics.avgProjectDays ?? "—"} color={COLORS.whe} sub="assessment→close" />
+              {isASI ? (
+                <>
+                  <Stat t={t} label="Installed" value={filtered.filter(p=>p.installDate||p.lastInstallDate).length} color={COLORS.ok} />
+                  <Stat t={t} label="Pending" value={filtered.filter(p=>!p.installDate&&!p.lastInstallDate).length} color={COLORS.warn} />
+                  <Stat t={t} label="On Hold" value={metrics.onHoldCount} color={COLORS.hold} />
+                  <Stat t={t} label="Customer Wait" value={metrics.customerWaitCount} color={COLORS.warn} />
+                </>
+              ) : (
+                <>
+                  <Stat t={t} label="Comprehensive" value={metrics.comp} color={COLORS.ok} />
+                  <Stat t={t} label="Deferred" value={metrics.def} color={COLORS.warn} />
+                  <Stat t={t} label="Ready to Invoice" value={metrics.invoiceable} color={COLORS.purple} sub={metrics.invoiceableRevenue > 0 ? `$${metrics.invoiceableRevenue.toLocaleString()}` : ""} />
+                  <Stat t={t} label="Total Revenue" value={metrics.totalRevenue > 0 ? `$${metrics.totalRevenue.toLocaleString()}` : "$0"} color={COLORS.whe} />
+                  <Stat t={t} label="48hr RISE" value={metrics.rise48Rate !== null ? `${metrics.rise48Rate}%` : "—"} color={metrics.rise48Rate !== null ? (metrics.rise48Rate >= 80 ? COLORS.ok : COLORS.danger) : COLORS.gray} sub={`${metrics.rise48Issues.length} overdue`} />
+                  <Stat t={t} label="Permit Pending" value={metrics.permitPending} color={COLORS.purple} />
+                  <Stat t={t} label="On Hold" value={metrics.onHoldCount} color={COLORS.hold} />
+                  <Stat t={t} label="Customer Wait" value={metrics.customerWaitCount} color={COLORS.warn} />
+                  <Stat t={t} label="Avg Days/Project" value={metrics.avgProjectDays ?? "—"} color={COLORS.whe} sub="assessment→close" />
+                </>
+              )}
             </div>
 
-            {metrics.rise48Issues.length > 0 && (
+            {!isASI && metrics.rise48Issues.length > 0 && (
               <div style={{ background:t.warnBg, border:`1px solid ${t.warnBorder}`, borderRadius:10, padding:"10px 14px", marginBottom:12, fontSize:13, color:t.text }}>
                 <strong>⚠ {metrics.rise48Issues.length} project{metrics.rise48Issues.length>1?"s":""} past the 48-hr RISE submission window:</strong>{" "}
                 {metrics.rise48Issues.map(p=>p.customerName||p.address||"Unnamed").join(", ")}
@@ -971,14 +1044,24 @@ export default function App() {
             <div style={{ display:"flex", gap:8, marginBottom:14, flexWrap:"wrap", alignItems:"center" }}>
               <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search customer / address…"
                 style={{ flex:1, minWidth:180, ...inputStyle }} />
-              <select value={stageFilter} onChange={e=>setStageFilter(e.target.value)} style={{...inputStyle, width:"auto"}}>
-                <option value="All">All</option>
-                {STAGES.map(s=><option key={s} value={s}>{s}</option>)}
-              </select>
-              <select value={typeFilter} onChange={e=>setTypeFilter(e.target.value)} style={{...inputStyle, width:"auto"}}>
-                <option value="All">All</option>
-                <option value="Comprehensive">Comprehensive</option>
-                <option value="Deferred">Deferred</option>
+              {!isASI && (
+                <select value={stageFilter} onChange={e=>setStageFilter(e.target.value)} style={{...inputStyle, width:"auto"}}>
+                  <option value="All">All</option>
+                  {STAGES.map(s=><option key={s} value={s}>{s}</option>)}
+                </select>
+              )}
+              {!isASI && (
+                <select value={typeFilter} onChange={e=>setTypeFilter(e.target.value)} style={{...inputStyle, width:"auto"}}>
+                  <option value="All">All</option>
+                  <option value="Comprehensive">Comprehensive</option>
+                  <option value="Deferred">Deferred</option>
+                </select>
+              )}
+              <select value={holdFilter} onChange={e=>setHoldFilter(e.target.value)} style={{...inputStyle, width:"auto"}}>
+                <option value="All">All Status</option>
+                <option value="Active">Active Only</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Customer Wait">Customer Wait</option>
               </select>
               <button onClick={openNew} style={{ padding:"7px 18px", background:"linear-gradient(135deg, #991b1b, #dc2626)", color:"#fff", border:"2px solid #000", borderRadius:8, fontWeight:800, fontSize:13, cursor:"pointer", textTransform:"uppercase", letterSpacing:0.5, boxShadow:"0 4px 12px rgba(153,27,27,0.5)" }}>
                 + Add Project
@@ -992,34 +1075,70 @@ export default function App() {
               const dc = metrics.docsCheck(p);
               const docPct = Math.round(dc.done/dc.total*100);
               const canInvoice = p.invoiceable && p.lastInstallDate && p.lastInstallDate <= today();
+              const borderColor = p.onHold ? COLORS.hold : canInvoice ? COLORS.purple : p.type==="Deferred" ? COLORS.warn : COLORS.ok;
               return (
                 <div key={p.id} onClick={()=>openDetail(p)}
                   style={{ background:t.cardBg, borderRadius:12, padding:"14px 16px", marginBottom:10, boxShadow:t.cardShadow,
-                    cursor:"pointer", borderLeft:`4px solid ${canInvoice?COLORS.purple:p.type==="Deferred"?COLORS.warn:COLORS.ok}`,
-                    border:`1px solid ${t.cardBorder}`, borderLeftWidth:4, borderLeftColor:canInvoice?COLORS.purple:p.type==="Deferred"?COLORS.warn:COLORS.ok,
-                    transition:"box-shadow .15s" }}
+                    cursor:"pointer", borderLeft:`4px solid ${borderColor}`,
+                    border:`1px solid ${p.onHold ? COLORS.hold+"66" : t.cardBorder}`, borderLeftWidth:4, borderLeftColor:borderColor,
+                    transition:"box-shadow .15s", opacity: p.onHold ? 0.85 : 1 }}
                   onMouseOver={e=>e.currentTarget.style.boxShadow=t.cardHover}
                   onMouseOut={e=>e.currentTarget.style.boxShadow=t.cardShadow}
                 >
                   <div style={{ display:"flex", flexWrap:"wrap", gap:8, alignItems:"flex-start" }}>
                     <div style={{ flex:1, minWidth:160 }}>
-                      <div style={{ fontWeight:700, fontSize:15, color:t.text }}>{p.customerName||<span style={{color:t.textMuted}}>Unnamed Customer</span>}</div>
+                      <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                        <span style={{ fontWeight:700, fontSize:15, color:t.text }}>{p.customerName||<span style={{color:t.textMuted}}>Unnamed Customer</span>}</span>
+                        {p.onHold && <span style={{ fontSize:10, fontWeight:800, color:"#fff", background:COLORS.hold, borderRadius:4, padding:"1px 6px", textTransform:"uppercase", letterSpacing:.5 }}>HOLD</span>}
+                      </div>
                       <div style={{ fontSize:12, color:t.textSecondary, marginTop:1 }}>{p.address||"No address"}</div>
                     </div>
                     <div style={{ display:"flex", gap:6, flexWrap:"wrap", alignItems:"center" }}>
-                      {canInvoice && <Badge label="✓ Ready to Invoice" color={COLORS.purple} small />}
-                      <Badge label={p.type} color={p.type==="Deferred"?COLORS.warn:COLORS.ok} small />
-                      <Badge label={p.stage} color={tabColor} small />
-                      <Badge label={riseLabel(p)} color={riseColor(p)} small />
-                      {p.permitStatus !== "N/A" && <Badge label={`Permit: ${p.permitStatus}`} color={permitStatusColor(p.permitStatus)} small />}
+                      {p.program === "ASI" ? (
+                        <>
+                          <Badge label="ASI" color={COLORS.asi} small />
+                          {(p.installDate || p.lastInstallDate) ? <Badge label="Installed" color={COLORS.ok} small /> : <Badge label="Pending" color={COLORS.warn} small />}
+                        </>
+                      ) : (
+                        <>
+                          {canInvoice && <Badge label="✓ Ready to Invoice" color={COLORS.purple} small />}
+                          <Badge label={p.type} color={p.type==="Deferred"?COLORS.warn:COLORS.ok} small />
+                          <Badge label={p.stage} color={tabColor} small />
+                          <Badge label={riseLabel(p)} color={riseColor(p)} small />
+                          {p.permitStatus !== "N/A" && <Badge label={`Permit: ${p.permitStatus}`} color={permitStatusColor(p.permitStatus)} small />}
+                        </>
+                      )}
                     </div>
                   </div>
+                  {/* Hold reason banner */}
+                  {p.onHold && (
+                    <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:6, padding:"5px 10px", background:COLORS.hold+"15", borderRadius:6, border:`1px solid ${COLORS.hold}33` }}>
+                      <span style={{ fontSize:13 }}>⏸</span>
+                      <span style={{ fontSize:11, color:COLORS.hold, fontWeight:700 }}>
+                        On Hold{p.holdParty ? ` — ${p.holdParty}` : ""}{p.holdReason ? `: ${p.holdReason}` : ""}
+                      </span>
+                      {p.holdDate && <span style={{ fontSize:10, color:t.textMuted, marginLeft:"auto" }}>since {fmt(p.holdDate)}</span>}
+                    </div>
+                  )}
+                  {/* Next action line */}
+                  {p.nextAction && (
+                    <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:p.onHold?4:6, padding:"5px 10px", background:COLORS.whe+"12", borderRadius:6, border:`1px solid ${COLORS.whe}28` }}>
+                      <span style={{ fontSize:13 }}>➡️</span>
+                      <span style={{ fontSize:11, color:COLORS.whe, fontWeight:600 }}>
+                        Next: {p.nextAction}
+                      </span>
+                      {p.nextActionOwner && <Badge label={p.nextActionOwner} color={p.nextActionOwner==="Customer"?COLORS.warn:p.nextActionOwner==="Us"?COLORS.ok:COLORS.gray} small />}
+                      {p.nextActionDate && <span style={{ fontSize:10, color:t.textMuted, marginLeft:"auto" }}>by {fmt(p.nextActionDate)}</span>}
+                    </div>
+                  )}
                   <div style={{ display:"flex", gap:16, marginTop:10, flexWrap:"wrap" }}>
-                    {p.totalJobPrice && <span style={{ fontSize:11, color:t.textMuted }}>💰 Job Price: <b style={{color:COLORS.whe}}>${parseFloat(p.totalJobPrice).toLocaleString()}</b></span>}
-                    <span style={{ fontSize:11, color:t.textMuted }}>📋 Docs: <b style={{ color: docPct===100?COLORS.ok:docPct>50?COLORS.warn:COLORS.danger }}>{dc.done}/{dc.total}</b></span>
-                    {p.assessmentDate && <span style={{ fontSize:11, color:t.textMuted }}>🔍 Assessed: <b style={{color:t.text}}>{fmt(p.assessmentDate)}</b></span>}
-                    {p.lastInstallDate && <span style={{ fontSize:11, color:t.textMuted }}>🔧 Last Install: <b style={{color:t.text}}>{fmt(p.lastInstallDate)}</b></span>}
-                    {p.nextInstallDate && p.nextInstallDate >= today() && <span style={{ fontSize:11, color: tabColor }}>📅 Next Install: <b>{fmt(p.nextInstallDate)}</b></span>}
+                    {p.program !== "ASI" && p.totalJobPrice && <span style={{ fontSize:11, color:t.textMuted }}>💰 Job Price: <b style={{color:COLORS.whe}}>${parseFloat(p.totalJobPrice).toLocaleString()}</b></span>}
+                    {p.program !== "ASI" && <span style={{ fontSize:11, color:t.textMuted }}>📋 Docs: <b style={{ color: docPct===100?COLORS.ok:docPct>50?COLORS.warn:COLORS.danger }}>{dc.done}/{dc.total}</b></span>}
+                    {p.program === "ASI" && p.installDate && <span style={{ fontSize:11, color:t.textMuted }}>🔧 Install: <b style={{color:COLORS.ok}}>{fmt(p.installDate)}</b></span>}
+                    {p.program === "ASI" && !p.installDate && <span style={{ fontSize:11, color:COLORS.warn }}>⏳ No install date yet</span>}
+                    {p.program !== "ASI" && p.assessmentDate && <span style={{ fontSize:11, color:t.textMuted }}>🔍 Assessed: <b style={{color:t.text}}>{fmt(p.assessmentDate)}</b></span>}
+                    {p.program !== "ASI" && p.lastInstallDate && <span style={{ fontSize:11, color:t.textMuted }}>🔧 Last Install: <b style={{color:t.text}}>{fmt(p.lastInstallDate)}</b></span>}
+                    {p.program !== "ASI" && p.nextInstallDate && p.nextInstallDate >= today() && <span style={{ fontSize:11, color: tabColor }}>📅 Next Install: <b>{fmt(p.nextInstallDate)}</b></span>}
                   </div>
                 </div>
               );
@@ -1047,12 +1166,13 @@ export default function App() {
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:14 }}>
               <div style={{ background:t.cardBg, borderRadius:12, padding:"16px", boxShadow:t.cardShadow, border:`1px solid ${t.cardBorder}` }}>
                 <div style={{ fontWeight:700, fontSize:13, marginBottom:10, color: tabColor }}>Project Info</div>
-                <Row t={t} k="Program" v={form.program} />
-                <Row t={t} k="Type" v={<Badge label={form.type} color={form.type==="Deferred"?COLORS.warn:COLORS.ok} small />} />
-                <Row t={t} k="Stage" v={<Badge label={form.stage} color={tabColor} small />} />
+                <Row t={t} k="Program" v={<>{form.program}{form.program === "ASI" && <span style={{color:t.textMuted, fontStyle:"italic"}}> — RISE Private Pay</span>}</>} />
+                {form.program !== "ASI" && <Row t={t} k="Type" v={<Badge label={form.type} color={form.type==="Deferred"?COLORS.warn:COLORS.ok} small />} />}
+                {form.program !== "ASI" && <Row t={t} k="Stage" v={<Badge label={form.stage} color={tabColor} small />} />}
                 <Row t={t} k="Address" v={form.address||"—"} />
-                <Row t={t} k="Total Job Price" v={form.totalJobPrice ? <b style={{color:COLORS.whe,fontSize:14}}>${parseFloat(form.totalJobPrice).toLocaleString()}</b> : "—"} />
-                {form.invoiceable && form.lastInstallDate && form.lastInstallDate <= today() && (
+                {form.program === "ASI" && <Row t={t} k="Install Date" v={form.installDate ? <b style={{color:COLORS.ok}}>{fmt(form.installDate)}</b> : <span style={{color:COLORS.warn}}>Not scheduled</span>} />}
+                {form.program !== "ASI" && <Row t={t} k="Total Job Price" v={form.totalJobPrice ? <b style={{color:COLORS.whe,fontSize:14}}>${parseFloat(form.totalJobPrice).toLocaleString()}</b> : "—"} />}
+                {form.program !== "ASI" && form.invoiceable && form.lastInstallDate && form.lastInstallDate <= today() && (
                   <div style={{background:COLORS.purple+"22",border:`1px solid ${COLORS.purple}`,borderRadius:8,padding:"8px 10px",marginTop:6}}>
                     <div style={{fontWeight:700,fontSize:12,color:COLORS.purple}}>✓ READY TO INVOICE</div>
                     <div style={{fontSize:11,color:t.textMuted,marginTop:2}}>Last install date passed • All criteria met</div>
@@ -1060,6 +1180,48 @@ export default function App() {
                 )}
                 <Row t={t} k="Notes" v={form.notes||"—"} />
               </div>
+
+              {/* ── HOLD STATUS CARD (detail) ── */}
+              {form.onHold && (
+                <div style={{ background:t.cardBg, borderRadius:12, padding:"16px", boxShadow:t.cardShadow, border:`1px solid ${COLORS.hold}66`, borderTop:`3px solid ${COLORS.hold}`, gridColumn: "1 / -1" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
+                    <span style={{ fontSize:20 }}>⏸</span>
+                    <span style={{ fontWeight:800, fontSize:15, color:COLORS.hold, textTransform:"uppercase", letterSpacing:.5 }}>Project On Hold</span>
+                    {form.holdParty && <Badge label={`Waiting on: ${form.holdParty}`} color={form.holdParty==="Customer"?COLORS.warn:form.holdParty==="Us"?COLORS.ok:COLORS.gray} />}
+                  </div>
+                  {form.holdReason && <Row t={t} k="Reason" v={form.holdReason} />}
+                  <Row t={t} k="Hold Since" v={fmt(form.holdDate)} />
+                  {form.holdDate && <Row t={t} k="Days On Hold" v={<b style={{color:COLORS.hold}}>{daysSince(form.holdDate)} days</b>} />}
+                </div>
+              )}
+
+              {/* ── NEXT EXPECTED ACTION CARD (detail) ── */}
+              {(form.nextAction || form.nextActionDate) && (
+                <div style={{ background:t.cardBg, borderRadius:12, padding:"16px", boxShadow:t.cardShadow, border:`1px solid ${COLORS.whe}44`, borderTop:`3px solid ${COLORS.whe}`, gridColumn: "1 / -1" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
+                    <span style={{ fontSize:20 }}>➡️</span>
+                    <span style={{ fontWeight:800, fontSize:15, color:COLORS.whe }}>Next Expected Action</span>
+                    {form.nextActionOwner && (
+                      <Badge label={`Ball in: ${form.nextActionOwner}'s court`} color={form.nextActionOwner==="Customer"?COLORS.warn:form.nextActionOwner==="Us"?COLORS.ok:COLORS.gray} />
+                    )}
+                  </div>
+                  <Row t={t} k="Action" v={form.nextAction||"—"} />
+                  <Row t={t} k="Target Date" v={form.nextActionDate ? <b style={{color: new Date(form.nextActionDate) < new Date() ? COLORS.danger : COLORS.whe}}>{fmt(form.nextActionDate)}</b> : "—"} />
+                  {form.nextActionDate && new Date(form.nextActionDate) >= new Date() && (
+                    <Row t={t} k="Days Until" v={<b style={{color:COLORS.whe}}>{diffDays(today(), form.nextActionDate)} days</b>} />
+                  )}
+                  {form.nextActionDate && new Date(form.nextActionDate) < new Date() && (
+                    <Row t={t} k="Overdue By" v={<b style={{color:COLORS.danger}}>{daysSince(form.nextActionDate)} days</b>} />
+                  )}
+                  {form.nextActionOwner === "Customer" && (
+                    <div style={{ background:COLORS.warn+"18", border:`1px solid ${COLORS.warn}44`, borderRadius:8, padding:"8px 10px", marginTop:8, fontSize:12 }}>
+                      <strong style={{color:COLORS.warn}}>⚠ Customer action required</strong>
+                      <span style={{color:t.textSecondary}}> — delay is not on your team</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {form.program !== "ASI" && (
               <div style={{ background:t.cardBg, borderRadius:12, padding:"16px", boxShadow:t.cardShadow, border:`1px solid ${t.cardBorder}` }}>
                 <div style={{ fontWeight:700, fontSize:13, marginBottom:10, color: tabColor }}>Key Dates & Turnarounds</div>
                 <Row t={t} k="Lead Date" v={fmt(form.leadDate)} />
@@ -1209,7 +1371,8 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              {form.stageHistory?.length > 0 && (
+              )}
+              {form.stageHistory?.length > 0 && form.program !== "ASI" && (
                 <div style={{ background:t.cardBg, borderRadius:12, padding:"16px", boxShadow:t.cardShadow, border:`1px solid ${t.cardBorder}` }}>
                   <div style={{ fontWeight:700, fontSize:13, marginBottom:10, color: tabColor }}>Stage History</div>
                   {form.stageHistory.map((h,i) => (
@@ -1240,6 +1403,7 @@ export default function App() {
                   <select value={form.program} onChange={e=>setForm({...form,program:e.target.value})} style={inputStyle}>
                     <option value="WHE SF">WHE SF</option>
                     <option value="HES IE">HES IE</option>
+                    <option value="ASI">ASI (Private Pay)</option>
                   </select>
                 </Field>
                 <Field t={t} label="Customer Name">
@@ -1248,21 +1412,96 @@ export default function App() {
                 <Field t={t} label="Address">
                   <input value={form.address} onChange={e=>setForm({...form,address:e.target.value})} style={inputStyle} placeholder="Enter address" />
                 </Field>
-                <Field t={t} label="Type">
-                  <select value={form.type} onChange={e=>setForm({...form,type:e.target.value})} style={inputStyle}>
-                    <option value="Comprehensive">Comprehensive</option>
-                    <option value="Deferred">Deferred</option>
-                  </select>
-                </Field>
-                <Field t={t} label="Stage">
-                  <input value={form.stage} readOnly style={{...inputStyle, background:theme==="dark"?"#3f3f46":"#e4e4e7", cursor:"not-allowed", color:t.textMuted}} />
-                  <div style={{fontSize:10,color:t.textMuted,marginTop:2}}>Stage auto-updates based on dates entered below</div>
-                </Field>
-                <Field t={t} label="Total Job Price ($)">
-                  <input type="number" step="0.01" value={form.totalJobPrice} onChange={e=>setForm({...form,totalJobPrice:e.target.value})} style={inputStyle} placeholder="e.g., 15750.00" />
-                </Field>
+                {form.program !== "ASI" && (
+                  <>
+                    <Field t={t} label="Type">
+                      <select value={form.type} onChange={e=>setForm({...form,type:e.target.value})} style={inputStyle}>
+                        <option value="Comprehensive">Comprehensive</option>
+                        <option value="Deferred">Deferred</option>
+                      </select>
+                    </Field>
+                    <Field t={t} label="Stage">
+                      <input value={form.stage} readOnly style={{...inputStyle, background:theme==="dark"?"#3f3f46":"#e4e4e7", cursor:"not-allowed", color:t.textMuted}} />
+                      <div style={{fontSize:10,color:t.textMuted,marginTop:2}}>Stage auto-updates based on dates entered below</div>
+                    </Field>
+                    <Field t={t} label="Total Job Price ($)">
+                      <input type="number" step="0.01" value={form.totalJobPrice} onChange={e=>setForm({...form,totalJobPrice:e.target.value})} style={inputStyle} placeholder="e.g., 15750.00" />
+                    </Field>
+                  </>
+                )}
+                {form.program === "ASI" && (
+                  <Field t={t} label="Install Date">
+                    <input type="date" value={form.installDate||""} onChange={e=>setForm({...form,installDate:e.target.value})} style={inputStyle} />
+                    <div style={{fontSize:10,color:t.textMuted,marginTop:2}}>Only date tracked for ASI projects</div>
+                  </Field>
+                )}
               </Section>
 
+              {/* ── HOLD STATUS FORM ── */}
+              <Section t={t} title="⏸ Hold Status">
+                <div style={{gridColumn:"1/-1"}}>
+                  <label style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 12px", background:form.onHold?(COLORS.hold+"18"):t.checkboxLabelBg, border:`1px solid ${form.onHold?COLORS.hold:t.cardBorder}`, borderRadius:8, cursor:"pointer" }}>
+                    <input type="checkbox" checked={form.onHold||false} onChange={e=>setForm({...form,onHold:e.target.checked, holdDate:e.target.checked && !form.holdDate ? today() : form.holdDate})} />
+                    <div>
+                      <div style={{ fontSize:13, fontWeight:600, color:form.onHold?COLORS.hold:t.text }}>Project is On Hold</div>
+                      <div style={{ fontSize:11, color:t.textMuted, marginTop:2 }}>Pauses the project — tracks who's responsible for the delay</div>
+                    </div>
+                  </label>
+                </div>
+                {form.onHold && (
+                  <>
+                    <Field t={t} label="Who's Holding This Up?">
+                      <select value={form.holdParty||""} onChange={e=>setForm({...form,holdParty:e.target.value})} style={inputStyle}>
+                        <option value="">Select...</option>
+                        {HOLD_PARTIES.map(p=><option key={p} value={p}>{p}</option>)}
+                      </select>
+                    </Field>
+                    <Field t={t} label="Hold Date">
+                      <input type="date" value={form.holdDate||""} onChange={e=>setForm({...form,holdDate:e.target.value})} style={inputStyle} />
+                    </Field>
+                    <div style={{gridColumn:"1/-1"}}>
+                      <Field t={t} label="Hold Reason">
+                        <input value={form.holdReason||""} onChange={e=>setForm({...form,holdReason:e.target.value})} style={inputStyle} placeholder="e.g., Customer can't schedule until May, waiting on permit approval..." />
+                      </Field>
+                    </div>
+                    {form.holdDate && (
+                      <div style={{gridColumn:"1/-1", background:COLORS.hold+"12", borderRadius:8, padding:"8px 14px", border:`1px solid ${COLORS.hold}33`, fontSize:12}}>
+                        <span style={{color:t.textSecondary}}>On hold for </span>
+                        <b style={{color:COLORS.hold}}>{daysSince(form.holdDate)} days</b>
+                        {form.holdParty && <span style={{color:t.textSecondary}}> — waiting on <b style={{color:form.holdParty==="Customer"?COLORS.warn:form.holdParty==="Us"?COLORS.ok:t.text}}>{form.holdParty}</b></span>}
+                      </div>
+                    )}
+                  </>
+                )}
+              </Section>
+
+              {/* ── NEXT EXPECTED ACTION FORM ── */}
+              <Section t={t} title="➡️ Next Expected Action">
+                <div style={{gridColumn:"1/-1"}}>
+                  <Field t={t} label="What needs to happen next?">
+                    <input value={form.nextAction||""} onChange={e=>setForm({...form,nextAction:e.target.value})} style={inputStyle} placeholder="e.g., Schedule assessment, Customer to confirm install date, Waiting on permit..." />
+                  </Field>
+                </div>
+                <Field t={t} label="Target Date">
+                  <input type="date" value={form.nextActionDate||""} onChange={e=>setForm({...form,nextActionDate:e.target.value})} style={inputStyle} />
+                  <div style={{fontSize:10,color:t.textMuted,marginTop:2}}>When this should happen by</div>
+                </Field>
+                <Field t={t} label="Ball Is In Whose Court?">
+                  <select value={form.nextActionOwner||""} onChange={e=>setForm({...form,nextActionOwner:e.target.value})} style={inputStyle}>
+                    <option value="">Select...</option>
+                    {ACTION_OWNERS.map(p=><option key={p} value={p}>{p}</option>)}
+                  </select>
+                  <div style={{fontSize:10,color:t.textMuted,marginTop:2}}>Who's responsible for the next step</div>
+                </Field>
+                {form.nextAction && form.nextActionOwner === "Customer" && (
+                  <div style={{gridColumn:"1/-1", background:COLORS.warn+"15", borderRadius:8, padding:"8px 14px", border:`1px solid ${COLORS.warn}44`, fontSize:12}}>
+                    <strong style={{color:COLORS.warn}}>⚠ Customer action needed</strong>
+                    <span style={{color:t.textSecondary}}> — this delay is on them, not your team</span>
+                  </div>
+                )}
+              </Section>
+
+              {form.program !== "ASI" && (<>
               <Section t={t} title="Dates & Timeline">
                 <Field t={t} label="Lead Date">
                   <input type="date" value={form.leadDate} onChange={e=>setForm({...form,leadDate:e.target.value})} style={inputStyle} />
@@ -1365,6 +1604,8 @@ export default function App() {
                   ))}
                 </div>
               </Section>
+
+              </>)}
 
               <Section t={t} title="Notes">
                 <div style={{gridColumn:"1/-1"}}>
