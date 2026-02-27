@@ -504,10 +504,10 @@ function printScope(p, s) {
   var kWin = ash.kWin; var b1Win = ash.b1Win; var b2Win = ash.b2Win; var b3Win = ash.b3Win;
   var qi2 = Q50 > 0 ? 0.052 * Q50 * wsf * Math.pow(H2 / 8.2, 0.4) : 0;
   var qt2 = (sq > 0 && Nbr >= 0) ? 0.03 * sq + 7.5 * (Nbr + 1) : 0;
-  var kD = kCFM > 0 ? (kWin ? 0 : Math.max(0, 100 - kCFM)) : 0;
-  var b1D = b1CFM > 0 ? (b1Win ? 0 : Math.max(0, 50 - b1CFM)) : 0;
-  var b2D = b2CFM > 0 ? (b2Win ? 0 : Math.max(0, 50 - b2CFM)) : 0;
-  var b3D = b3CFM > 0 ? (b3Win ? 0 : Math.max(0, 50 - b3CFM)) : 0;
+  var kD = kCFM > 0 ? Math.max(0, 100 - (kWin ? 20 : kCFM)) : 0;
+  var b1D = b1CFM > 0 ? Math.max(0, 50 - (b1Win ? 20 : b1CFM)) : 0;
+  var b2D = b2CFM > 0 ? Math.max(0, 50 - (b2Win ? 20 : b2CFM)) : 0;
+  var b3D = b3CFM > 0 ? Math.max(0, 50 - (b3Win ? 20 : b3CFM)) : 0;
   var totalDef = kD + b1D + b2D + b3D;
   var supp = totalDef * 0.25;
   var qf = qt2 + supp - qi2;
@@ -1078,10 +1078,10 @@ const exportProjectForms = async (proj) => {
         var ash2 = s2.ashrae||{}; var a2 = p.audit||{};
         var kC2=Number(ash2.kitchenCFM||a2.kitchenFan||0); var b1C=Number(ash2.bath1CFM||a2.bathFan1||0);
         var b2C=Number(ash2.bath2CFM||a2.bathFan2||0); var b3C=Number(ash2.bath3CFM||a2.bathFan3||0);
-        var kD2=kC2>0?(ash2.kWin?0:Math.max(0,100-kC2)):0;
-        var b1D2=b1C>0?(ash2.b1Win?0:Math.max(0,50-b1C)):0;
-        var b2D2=b2C>0?(ash2.b2Win?0:Math.max(0,50-b2C)):0;
-        var b3D2=b3C>0?(ash2.b3Win?0:Math.max(0,50-b3C)):0;
+        var kD2=kC2>0?Math.max(0,100-(ash2.kWin?20:kC2)):0;
+        var b1D2=b1C>0?Math.max(0,50-(ash2.b1Win?20:b1C)):0;
+        var b2D2=b2C>0?Math.max(0,50-(ash2.b2Win?20:b2C)):0;
+        var b3D2=b3C>0?Math.max(0,50-(ash2.b3Win?20:b3C)):0;
         var tdA=kD2+b1D2+b2D2+b3D2; var suppA=tdA*0.25;
         var qfA=qtA+suppA-qiA;
         var RN=function(x){return Math.round(x*100)/100;};
@@ -2241,8 +2241,8 @@ function ScopeTab({p,u,onLog}) {
       const kW=s.ashrae?.kWin;const b1W=s.ashrae?.b1Win;const b2W=s.ashrae?.b2Win;const b3W=s.ashrae?.b3Win;
       const qi=c50>0?0.052*c50*wsf2*Math.pow(hh/8.2,0.4):0;
       const qt=sq>0?0.03*sq+7.5*(oc2+1):0;
-      const kD=kP?(kW?0:Math.max(0,100-kC)):0;const b1D=b1P?(b1W?0:Math.max(0,50-b1c)):0;
-      const b2D=b2P?(b2W?0:Math.max(0,50-b2c)):0;const b3D=b3P?(b3W?0:Math.max(0,50-b3c)):0;
+      const kD=kP?Math.max(0,100-(kW?20:kC)):0;const b1D=b1P?Math.max(0,50-(b1W?20:b1c)):0;
+      const b2D=b2P?Math.max(0,50-(b2W?20:b2c)):0;const b3D=b3P?Math.max(0,50-(b3W?20:b3c)):0;
       const td=kD+b1D+b2D+b3D;const supp=td*0.25;
       const qf=qt+supp-qi;
       const R2=vv=>Math.round(vv*100)/100;
@@ -2880,7 +2880,7 @@ function ScopeTab({p,u,onLog}) {
              
              Local Ventilation — Alternative Compliance:
              Intermittent exhaust rates: Kitchen 100 CFM, Bath 50 CFM
-             Deficit = max(0, required - measured). Window → deficit = 0.
+             Deficit = max(0, required - measured). Window = 20 CFM credit.
              Blank = no fan = no requirement.
              Alternative compliance supplement = totalDeficit × 0.25
              (converts intermittent deficit to continuous equivalent)
@@ -2896,15 +2896,15 @@ function ScopeTab({p,u,onLog}) {
 
           // Local ventilation deficits — Alternative Compliance
           // Intermittent rates: Kitchen 100 CFM, Bath 50 CFM
-          // Window → deficit = 0. Blank = no fan = no requirement.
+          // Window = 20 CFM credit. Blank = no fan = no requirement.
           const kReq = kPresent ? 100 : 0;
           const b1Req = b1Present ? 50 : 0;
           const b2Req = b2Present ? 50 : 0;
           const b3Req = b3Present ? 50 : 0;
-          const kDef = !kPresent ? 0 : kWin ? 0 : Math.max(0, kReq - kCFM);
-          const b1Def = !b1Present ? 0 : b1Win ? 0 : Math.max(0, b1Req - b1);
-          const b2Def = !b2Present ? 0 : b2Win ? 0 : Math.max(0, b2Req - b2);
-          const b3Def = !b3Present ? 0 : b3Win ? 0 : Math.max(0, b3Req - b3);
+          const kDef = !kPresent ? 0 : Math.max(0, kReq - (kWin ? 20 : kCFM));
+          const b1Def = !b1Present ? 0 : Math.max(0, b1Req - (b1Win ? 20 : b1));
+          const b2Def = !b2Present ? 0 : Math.max(0, b2Req - (b2Win ? 20 : b2));
+          const b3Def = !b3Present ? 0 : Math.max(0, b3Req - (b3Win ? 20 : b3));
           const totalDef = kDef + b1Def + b2Def + b3Def;
 
           // Alternative compliance supplement (intermittent → continuous: ×0.25)
@@ -2958,7 +2958,7 @@ function ScopeTab({p,u,onLog}) {
 
               {/* ══ LOCAL VENTILATION ══ */}
               <div style={hdr}>Local Ventilation — Alternative Compliance</div>
-              <div style={{fontSize:9,color:"#64748b",marginBottom:2}}>Blank = no fan = no requirement. Openable window = deficit 0. Kitchen: 100 CFM · Bath: 50 CFM (intermittent rates)</div>
+              <div style={{fontSize:9,color:"#64748b",marginBottom:2}}>Blank = no fan = no requirement. Openable window = 20 CFM credit. Kitchen: 100 CFM · Bath: 50 CFM (intermittent rates)</div>
               <div style={{fontSize:9,color:"#f59e0b",marginBottom:6}}>⚠ If a fan is present but not operational or CFM is unknown, enter 0.</div>
               <div style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",fontSize:11,alignItems:"center"}}>
                 <span style={{fontWeight:600,color:"#64748b"}}></span>
@@ -3293,10 +3293,10 @@ function InstallTab({p,u,onLog,user,role}) {
     const b1Req = b1Present ? 50 : 0;
     const b2Req = b2Present ? 50 : 0;
     const b3Req = b3Present ? 50 : 0;
-    const kDef = !kPresent ? 0 : kWin ? 0 : Math.max(0, kReq - kCFM);
-    const b1Def = !b1Present ? 0 : b1Win ? 0 : Math.max(0, b1Req - b1);
-    const b2Def = !b2Present ? 0 : b2Win ? 0 : Math.max(0, b2Req - b2);
-    const b3Def = !b3Present ? 0 : b3Win ? 0 : Math.max(0, b3Req - b3);
+    const kDef = !kPresent ? 0 : Math.max(0, kReq - (kWin ? 20 : kCFM));
+    const b1Def = !b1Present ? 0 : Math.max(0, b1Req - (b1Win ? 20 : b1));
+    const b2Def = !b2Present ? 0 : Math.max(0, b2Req - (b2Win ? 20 : b2));
+    const b3Def = !b3Present ? 0 : Math.max(0, b3Req - (b3Win ? 20 : b3));
     const totalDef = kDef + b1Def + b2Def + b3Def;
     const supplement = totalDef * 0.25;
     const Qfan = Qtot + supplement - Qinf;
@@ -3542,7 +3542,7 @@ function InstallTab({p,u,onLog,user,role}) {
 
             {/* Local Ventilation — read-only from scope */}
             <div style={hdr}>Local Ventilation — Alternative Compliance <span style={{fontSize:9,fontWeight:400,color:"#64748b"}}>(from Scope)</span></div>
-            <div style={{fontSize:9,color:"#64748b",marginBottom:2}}>Blank = no fan = no requirement. Openable window = deficit 0. Kitchen: 100 CFM · Bath: 50 CFM (intermittent rates)</div>
+            <div style={{fontSize:9,color:"#64748b",marginBottom:2}}>Blank = no fan = no requirement. Openable window = 20 CFM credit. Kitchen: 100 CFM · Bath: 50 CFM (intermittent rates)</div>
             <div style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",fontSize:11,alignItems:"center"}}>
               <span style={{fontWeight:600,color:"#64748b"}}></span>
               <span style={{fontWeight:600,color:"#64748b",textAlign:"center"}}>Fan Flow [CFM]</span>
