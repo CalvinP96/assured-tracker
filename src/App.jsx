@@ -496,14 +496,13 @@ function printScope(p, s) {
   var st = Number(p.stories) || 1;
   var H2 = st >= 2 ? 16 : st >= 1.5 ? 14 : 8;
   var wsf = 0.56;
-  var Hr = 8.202;
   var ash = s.ashrae || {};
   var kCFM = Number(ash.kitchenCFM || a.kitchenFan || 0);
   var b1CFM = Number(ash.bath1CFM || a.bathFan1 || 0);
   var b2CFM = Number(ash.bath2CFM || a.bathFan2 || 0);
   var b3CFM = Number(ash.bath3CFM || a.bathFan3 || 0);
   var kWin = ash.kWin; var b1Win = ash.b1Win; var b2Win = ash.b2Win; var b3Win = ash.b3Win;
-  var qi2 = Q50 > 0 ? Q50 * wsf * Math.pow(H2/Hr, 0.25) / 17.8 : 0;
+  var qi2 = Q50 > 0 ? 0.052 * Q50 * wsf * Math.pow(H2 / 8.2, 0.4) : 0;
   var qt2 = (sq > 0 && Nbr >= 0) ? 0.03 * sq + 7.5 * (Nbr + 1) : 0;
   var kD = kCFM > 0 ? (kWin ? 0 : Math.max(0, 100 - kCFM)) : 0;
   var b1D = b1CFM > 0 ? (b1Win ? 0 : Math.max(0, 50 - b1CFM)) : 0;
@@ -511,7 +510,7 @@ function printScope(p, s) {
   var b3D = b3CFM > 0 ? (b3Win ? 0 : Math.max(0, 50 - b3CFM)) : 0;
   var totalDef = kD + b1D + b2D + b3D;
   var supp = totalDef * 0.25;
-  var qf = Math.max(0, qt2 + supp - qi2);
+  var qf = qt2 + supp - qi2;
   var RND = function(x) { return Math.round(x * 100) / 100; };
   var fanSet = Number(ash.fanSetting) || 0;
   var minHr = fanSet > 0 ? RND(qf / fanSet * 60) : 0;
@@ -527,7 +526,7 @@ function printScope(p, s) {
   row("Total Deficit (intermittent)", Math.round(totalDef) + " CFM");
   h += "<div style='margin:6px 0;padding:6px;background:#f0f0ff;border:1px solid #c7d2fe;border-radius:4px;font-size:11px'>";
   h += "<div style='font-weight:700;color:#4338ca;margin-bottom:4px'>Ventilation Results</div>";
-  row("Infiltration Credit (qi)", RND(qi2) + " CFM");
+  row("Infiltration Credit (Qinf)", RND(qi2) + " CFM");
   row("Qtot (0.03\u00d7" + sq + " + 7.5\u00d7(" + Nbr + "+1))", RND(qt2) + " CFM");
   row("Supplement (" + Math.round(totalDef) + "\u00d70.25)", RND(supp) + " CFM");
   h += "<div style='border-top:2px solid #4338ca;padding-top:4px;margin-top:4px;display:flex;justify-content:space-between'>";
@@ -1074,7 +1073,7 @@ const exportProjectForms = async (proj) => {
         var finB = fnd.type==="Finished"?(Number(fnd.aboveSqft)||0)+(Number(fnd.belowSqft)||0):0;
         var sqA = baseSq2+finB; var NbrA = Number(s2.bedrooms)||0; var Q50A = Number(p.preCFM50)||0;
         var stA = Number(p.stories)||1; var HA = stA>=2?16:stA>=1.5?14:8;
-        var qiA = Q50A>0?Q50A*0.56*Math.pow(HA/8.202,0.25)/17.8:0;
+        var qiA = Q50A>0?0.052*Q50A*0.56*Math.pow(HA/8.2,0.4):0;
         var qtA = sqA>0?0.03*sqA+7.5*(NbrA+1):0;
         var ash2 = s2.ashrae||{}; var a2 = p.audit||{};
         var kC2=Number(ash2.kitchenCFM||a2.kitchenFan||0); var b1C=Number(ash2.bath1CFM||a2.bathFan1||0);
@@ -1084,7 +1083,7 @@ const exportProjectForms = async (proj) => {
         var b2D2=b2C>0?(ash2.b2Win?0:Math.max(0,50-b2C)):0;
         var b3D2=b3C>0?(ash2.b3Win?0:Math.max(0,50-b3C)):0;
         var tdA=kD2+b1D2+b2D2+b3D2; var suppA=tdA*0.25;
-        var qfA=Math.max(0,qtA+suppA-qiA);
+        var qfA=qtA+suppA-qiA;
         var RN=function(x){return Math.round(x*100)/100;};
         var fanA=Number(ash2.fanSetting)||0;
 
@@ -1094,7 +1093,7 @@ const exportProjectForms = async (proj) => {
           ["Kitchen Fan", kC2>0?kC2+" CFM":null], ["Bath #1", b1C>0?b1C+" CFM":null],
           ["Bath #2", b2C>0?b2C+" CFM":null], ["Bath #3", b3C>0?b3C+" CFM":null],
           ["Total Deficit", Math.round(tdA)+" CFM"],
-          ["Infiltration (qi)", RN(qiA)+" CFM"],
+          ["Infiltration (Qinf)", RN(qiA)+" CFM"],
           ["Qtot", RN(qtA)+" CFM"], ["Supplement", RN(suppA)+" CFM"],
           ["Qfan Required", RN(qfA)+" CFM", qfA>0?"r":"g"]
         ]});
@@ -2234,18 +2233,18 @@ function ScopeTab({p,u,onLog}) {
     // Build ASHRAE HTML first (avoid nested template literals)
     const ashraeHTML = (() => {
       const a2=p.audit||{};const baseSq=Number(p.sqft)||0;const finBsmt=s.fnd?.type==="Finished"?(Number(s.fnd?.aboveSqft)||0)+(Number(s.fnd?.belowSqft)||0):0;const sq=baseSq+finBsmt;const oc2=Number(s.bedrooms)||0;const c50=Number(p.preCFM50)||0;
-      const st2=Number(p.stories)||1;const hh=st2>=2?16:st2>=1.5?14:8;const wsf2=0.56;const hr=8.202;
+      const st2=Number(p.stories)||1;const hh=st2>=2?16:st2>=1.5?14:8;const wsf2=0.56;
       const kRw=String(s.ashrae?.kitchenCFM??a2.kitchenFan??"");const b1Rw=String(s.ashrae?.bath1CFM??a2.bathFan1??"");
       const b2Rw=String(s.ashrae?.bath2CFM??a2.bathFan2??"");const b3Rw=String(s.ashrae?.bath3CFM??a2.bathFan3??"");
       const kP=kRw.trim()!=="";const b1P=b1Rw.trim()!=="";const b2P=b2Rw.trim()!=="";const b3P=b3Rw.trim()!=="";
       const kC=Number(kRw)||0;const b1c=Number(b1Rw)||0;const b2c=Number(b2Rw)||0;const b3c=Number(b3Rw)||0;
       const kW=s.ashrae?.kWin;const b1W=s.ashrae?.b1Win;const b2W=s.ashrae?.b2Win;const b3W=s.ashrae?.b3Win;
-      const qi=c50>0?c50*wsf2*Math.pow(hh/hr,0.25)/17.8:0;
+      const qi=c50>0?0.052*c50*wsf2*Math.pow(hh/8.2,0.4):0;
       const qt=sq>0?0.03*sq+7.5*(oc2+1):0;
       const kD=kP?(kW?0:Math.max(0,100-kC)):0;const b1D=b1P?(b1W?0:Math.max(0,50-b1c)):0;
       const b2D=b2P?(b2W?0:Math.max(0,50-b2c)):0;const b3D=b3P?(b3W?0:Math.max(0,50-b3c)):0;
       const td=kD+b1D+b2D+b3D;const supp=td*0.25;
-      const qf=Math.max(0,qt+supp-qi);
+      const qf=qt+supp-qi;
       const R2=vv=>Math.round(vv*100)/100;
       const fan=Number(s.ashrae?.fanSetting)||0;const minHr=fan>0?R2(qf/fan*60):0;
       let h = "";
@@ -2874,11 +2873,10 @@ function ScopeTab({p,u,onLog}) {
           /* ══ ASHRAE 62.2-2016 CALCULATIONS ══
              Section 4.1.1 — Total Required Ventilation Rate
              Qtot = 0.03 × Afl + 7.5 × (Nbr + 1)
-             (Nbr = number of bedrooms)
+             (Nbr = number of bedrooms, Nocc = Nbr + 1)
              
-             Section 4.1.2 — Infiltration Credit (Existing)
-             NL = Q50 / (17.8 × Afl) × √(Hr / H)
-             Qinf = Q50 × wsf × (H/Hr)^0.25 / 17.8
+             Infiltration Credit
+             Qinf = 0.052 × Q50 × wsf × (H / 8.2)^0.4
              
              Local Ventilation — Alternative Compliance:
              Intermittent exhaust rates: Kitchen 100 CFM, Bath 50 CFM
@@ -2887,16 +2885,11 @@ function ScopeTab({p,u,onLog}) {
              Alternative compliance supplement = totalDeficit × 0.25
              (converts intermittent deficit to continuous equivalent)
              
-             Section 4.1.2 — For existing dwellings:
-             Qfan = max(0, Qtot + supplement - Qinf)
-             (existing gets FULL infiltration credit)
+             Qfan = Qtot + supplement - Qinf
           */
 
-          // Step 1: Normalized Leakage (Eq 4-6)
-          const NL = (Afl > 0 && Q50 > 0) ? Q50 / (17.8 * Afl) * Math.sqrt(Hr / H) : 0;
-
-          // Step 2: Effective Annual Average Infiltration Rate
-          const Qinf_eff = Q50 > 0 ? Q50 * wsf * Math.pow(H / Hr, 0.25) / 17.8 : 0;
+          // Infiltration credit
+          const Qinf_eff = Q50 > 0 ? 0.052 * Q50 * wsf * Math.pow(H / 8.2, 0.4) : 0;
 
           // Qtot (Eq 4.1a)
           const Qtot = (Afl > 0) ? 0.03 * Afl + 7.5 * (Nbr + 1) : 0;
@@ -2921,7 +2914,7 @@ function ScopeTab({p,u,onLog}) {
           const Qinf_credit = Qinf_eff;
 
           // Required mechanical ventilation rate
-          const Qfan = Math.max(0, Qtot + supplement - Qinf_credit);
+          const Qfan = Qtot + supplement - Qinf_credit;
 
           // Fan setting selector (continuous run: 50 / 80 / 110 CFM)
           const FAN_SETTINGS = [50, 80, 110];
@@ -2998,8 +2991,8 @@ function ScopeTab({p,u,onLog}) {
               <div style={resultBox}>
                 <div style={{fontSize:13,fontWeight:700,color:"#a855f7",marginBottom:10}}>Dwelling-Unit Ventilation Results</div>
 
-                <div style={row}><span style={lbl}>Effective annual avg infiltration rate [CFM]</span><span style={val}>{R(Qinf_eff)}</span></div>
-                <div style={eq}>= Q50 × wsf × (H/Hr)^0.25 ÷ 17.8<br/>= {Q50} × {wsf} × ({H}/{R(Hr)})^0.25 ÷ 17.8</div>
+                <div style={row}><span style={lbl}>Infiltration credit, Qinf [CFM]</span><span style={val}>{R(Qinf_eff)}</span></div>
+                <div style={eq}>= 0.052 × Q50 × wsf × (H / 8.2)^0.4<br/>= 0.052 × {Q50} × {wsf} × ({H} / 8.2)^0.4</div>
 
                 <div style={row}><span style={lbl}>Total required ventilation rate, Qtot [CFM]</span><span style={val}>{R(Qtot)}</span></div>
                 <div style={eq}>= 0.03 × Afl + 7.5 × (Nbr + 1)<br/>= 0.03 × {Afl} + 7.5 × ({Nbr} + 1)<br/>= {R(0.03*Afl)} + {R(7.5*(Nbr+1))}</div>
@@ -3010,14 +3003,11 @@ function ScopeTab({p,u,onLog}) {
                 <div style={row}><span style={lbl}>Alternative compliance supplement [CFM]</span><span style={val}>{R(supplement)}</span></div>
                 <div style={eq}>= totalDeficit × 0.25 (intermittent → continuous)<br/>= {Ri(totalDef)} × 0.25</div>
 
-                <div style={row}><span style={lbl}>Infiltration credit, Qinf [CFM]</span><span style={val}>{R(Qinf_credit)}</span></div>
-                <div style={eq}>= full Qinf (existing dwelling — no 2/3 limit)</div>
-
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0 4px",borderTop:"2px solid rgba(168,85,247,.4)",marginTop:8}}>
                   <span style={{fontWeight:700,color:"#e2e8f0",fontSize:13}}>Required mech. ventilation, Qfan [CFM]</span>
                   <span style={{fontWeight:800,color:"#a855f7",fontSize:18,fontFamily:"'JetBrains Mono',monospace"}}>{R(Qfan)}</span>
                 </div>
-                <div style={eq}>= max(0, Qtot + supplement − Qinf)<br/>= max(0, {R(Qtot)} + {R(supplement)} − {R(Qinf_credit)})</div>
+                <div style={eq}>= Qtot + supplement − Qinf<br/>= {R(Qtot)} + {R(supplement)} − {R(Qinf_credit)}</div>
               </div>
 
               {/* ══ DWELLING-UNIT VENTILATION RUN-TIME SOLVER ══ */}
@@ -3296,10 +3286,8 @@ function InstallTab({p,u,onLog,user,role}) {
     const b2Win = s.ashrae?.b2Win || false;
     const b3Win = s.ashrae?.b3Win || false;
 
-    // Step 1: Normalized Leakage
-    const NL = (Afl > 0 && Q50 > 0) ? Q50 / (17.8 * Afl) * Math.sqrt(Hr / H) : 0;
-    // Step 2: Effective Annual Avg Infiltration Rate
-    const Qinf = Q50 > 0 ? Q50 * wsf * Math.pow(H / Hr, 0.25) / 17.8 : 0;
+    // Infiltration credit
+    const Qinf = Q50 > 0 ? 0.052 * Q50 * wsf * Math.pow(H / 8.2, 0.4) : 0;
     const Qtot = (Afl > 0) ? 0.03 * Afl + 7.5 * (Nbr + 1) : 0;
     const kReq = kPresent ? 100 : 0;
     const b1Req = b1Present ? 50 : 0;
@@ -3311,12 +3299,12 @@ function InstallTab({p,u,onLog,user,role}) {
     const b3Def = !b3Present ? 0 : b3Win ? 0 : Math.max(0, b3Req - b3);
     const totalDef = kDef + b1Def + b2Def + b3Def;
     const supplement = totalDef * 0.25;
-    const Qfan = Math.max(0, Qtot + supplement - Qinf);
+    const Qfan = Qtot + supplement - Qinf;
     const FAN_SETTINGS = [50, 80, 110];
     const recFan = FAN_SETTINGS.find(f => f >= Qfan) || FAN_SETTINGS[FAN_SETTINGS.length - 1];
     const R = v => Math.round(v * 100) / 100;
     const Ri = v => Math.round(v);
-    return { Afl, Nbr, Q50, H, Hr, wsf, st, NL, Qinf, Qtot, totalDef, supplement, Qfan, FAN_SETTINGS, recFan, R, Ri, baseSqft, finBasement, kCFM, b1, b2, b3, kPresent, b1Present, b2Present, b3Present, kWin, b1Win, b2Win, b3Win, kReq, b1Req, b2Req, b3Req, kDef, b1Def, b2Def, b3Def };
+    return { Afl, Nbr, Q50, H, Hr, wsf, st, Qinf, Qtot, totalDef, supplement, Qfan, FAN_SETTINGS, recFan, R, Ri, baseSqft, finBasement, kCFM, b1, b2, b3, kPresent, b1Present, b2Present, b3Present, kWin, b1Win, b2Win, b3Win, kReq, b1Req, b2Req, b3Req, kDef, b1Def, b2Def, b3Def };
   };
 
   // ── Change Orders ──
@@ -3521,7 +3509,7 @@ function InstallTab({p,u,onLog,user,role}) {
       {/* ── POST-WORK RED CALC ── */}
       <Sec title="Post-Work ASHRAE 62.2-2016 — RED Calc">
         {!rcPost.Q50 ? <p style={{color:"#64748b",fontSize:12,textAlign:"center",padding:12}}>Enter Post CFM50 above to calculate.</p> : (() => {
-          const {Afl,Nbr,Q50,H,Hr,wsf,st,NL,Qinf,Qtot,totalDef,supplement,Qfan,FAN_SETTINGS,recFan,baseSqft,finBasement,kCFM,b1,b2,b3,kPresent,b1Present,b2Present,b3Present,kWin,b1Win,b2Win,b3Win,kReq,b1Req,b2Req,b3Req,kDef,b1Def,b2Def,b3Def} = rcPost;
+          const {Afl,Nbr,Q50,H,Hr,wsf,st,Qinf,Qtot,totalDef,supplement,Qfan,FAN_SETTINGS,recFan,baseSqft,finBasement,kCFM,b1,b2,b3,kPresent,b1Present,b2Present,b3Present,kWin,b1Win,b2Win,b3Win,kReq,b1Req,b2Req,b3Req,kDef,b1Def,b2Def,b3Def} = rcPost;
           const hdr = {fontSize:13,fontWeight:700,color:"#818cf8",margin:"14px 0 6px",borderBottom:"1px solid rgba(99,102,241,.25)",paddingBottom:4};
           const row = {display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0",fontSize:12,borderBottom:"1px solid rgba(255,255,255,.04)"};
           const lbl = {color:"#94a3b8",flex:1};
@@ -3586,8 +3574,8 @@ function InstallTab({p,u,onLog,user,role}) {
             <div style={resultBox}>
               <div style={{fontSize:13,fontWeight:700,color:"#a855f7",marginBottom:10}}>Post-Work Ventilation Results</div>
 
-              <div style={row}><span style={lbl}>Effective annual avg infiltration rate [CFM]</span><span style={val}>{R(Qinf)}</span></div>
-              <div style={eq}>= Q50 × wsf × (H/Hr)^0.25 ÷ 17.8<br/>= {Q50} × {wsf} × ({H}/{R(Hr)})^0.25 ÷ 17.8</div>
+              <div style={row}><span style={lbl}>Infiltration credit, Qinf [CFM]</span><span style={val}>{R(Qinf)}</span></div>
+              <div style={eq}>= 0.052 × Q50 × wsf × (H / 8.2)^0.4<br/>= 0.052 × {Q50} × {wsf} × ({H} / 8.2)^0.4</div>
 
               <div style={row}><span style={lbl}>Total required ventilation rate, Qtot [CFM]</span><span style={val}>{R(Qtot)}</span></div>
               <div style={eq}>= 0.03 × Afl + 7.5 × (Nbr + 1)<br/>= 0.03 × {Afl} + 7.5 × ({Nbr} + 1)<br/>= {R(0.03*Afl)} + {R(7.5*(Nbr+1))}</div>
@@ -3598,14 +3586,11 @@ function InstallTab({p,u,onLog,user,role}) {
               <div style={row}><span style={lbl}>Alternative compliance supplement [CFM]</span><span style={val}>{R(supplement)}</span></div>
               <div style={eq}>= totalDeficit × 0.25 (intermittent → continuous)<br/>= {Ri(totalDef)} × 0.25</div>
 
-              <div style={row}><span style={lbl}>Infiltration credit, Qinf [CFM]</span><span style={val}>{R(Qinf)}</span></div>
-              <div style={eq}>= full Qinf (existing dwelling — no 2/3 limit)</div>
-
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0 4px",borderTop:"2px solid rgba(168,85,247,.4)",marginTop:8}}>
                 <span style={{fontWeight:700,color:"#e2e8f0",fontSize:13}}>Required mech. ventilation, Qfan [CFM]</span>
                 <span style={{fontWeight:800,color:"#a855f7",fontSize:18,fontFamily:"'JetBrains Mono',monospace"}}>{R(Qfan)}</span>
               </div>
-              <div style={eq}>= max(0, Qtot + supplement − Qinf)<br/>= max(0, {R(Qtot)} + {R(supplement)} − {R(Qinf)})</div>
+              <div style={eq}>= Qtot + supplement − Qinf<br/>= {R(Qtot)} + {R(supplement)} − {R(Qinf)}</div>
               {rcPre.Qfan > 0 && <div style={{fontSize:10,color:"#64748b",marginTop:4,padding:"4px 8px",background:"rgba(255,255,255,.03)",borderRadius:4}}>Pre-work Qfan was {R(rcPre.Qfan)} CFM · Δ {R(Qfan-rcPre.Qfan)} CFM</div>}
             </div>
 
