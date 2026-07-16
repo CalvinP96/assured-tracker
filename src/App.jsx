@@ -5,30 +5,30 @@ import { loadUsers, saveUser, deleteUser as dbDeleteUser, loadProjects, saveProj
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════
 const STAGES = [
-  { id:0, label:"Intake", icon:"📥", color:"#6366f1" },
-  { id:1, label:"Schedule", icon:"📅", color:"#8b5cf6" },
-  { id:2, label:"Assess", icon:"🔍", color:"#a855f7" },
-  { id:3, label:"Scope", icon:"📋", color:"#d946ef" },
-  { id:4, label:"Approve", icon:"✅", color:"#f43f5e" },
-  { id:5, label:"Install", icon:"🏗️", color:"#f97316" },
-  { id:6, label:"Post-QC", icon:"📊", color:"#eab308" },
-  { id:7, label:"Closeout", icon:"📦", color:"#22c55e" },
+  { id:0, label:"Intake", icon:"●", color:"#4f46e5" },
+  { id:1, label:"Schedule", icon:"●", color:"#7c3aed" },
+  { id:2, label:"Assess", icon:"●", color:"#9333ea" },
+  { id:3, label:"Scope", icon:"●", color:"#c026d3" },
+  { id:4, label:"Approve", icon:"●", color:"#e11d48" },
+  { id:5, label:"Install", icon:"●", color:"#ea580c" },
+  { id:6, label:"Post-QC", icon:"●", color:"#ca8a04" },
+  { id:7, label:"Closeout", icon:"●", color:"#16a34a" },
 ];
 
 const ROLES = [
-  { key:"admin", label:"Admin/Ops", icon:"👑", tabs:["info","scheduling","assessment","photos","scope","install","qaqc","closeout","log"] },
-  { key:"scheduler", label:"Scheduler", icon:"📅", tabs:["info","scheduling","log"] },
-  { key:"assessor", label:"Assessor", icon:"🔍", tabs:["info","assessment","photos","log"] },
-  { key:"scope", label:"Scope/Compliance", icon:"📋", tabs:["info","scope","photos","install","qaqc","closeout","log"] },
-  { key:"installer", label:"Install Crew", icon:"🏗️", tabs:["info","install","photos","closeout","log"] },
+  { key:"admin", label:"Admin/Ops", icon:"", tabs:["info","scheduling","assessment","photos","scope","install","qaqc","closeout","log"] },
+  { key:"scheduler", label:"Scheduler", icon:"", tabs:["info","scheduling","log"] },
+  { key:"assessor", label:"Assessor", icon:"", tabs:["info","assessment","photos","log"] },
+  { key:"scope", label:"Scope/Compliance", icon:"", tabs:["info","scope","photos","install","qaqc","closeout","log"] },
+  { key:"installer", label:"Install Crew", icon:"", tabs:["info","install","photos","closeout","log"] },
 ];
 
 const TAB_META = {
-  info:{label:"Info",icon:"📋"}, scheduling:{label:"Schedule",icon:"📅"},
-  assessment:{label:"Assess",icon:"🔍"},
-  photos:{label:"Photos",icon:"📸"}, scope:{label:"Scope",icon:"✅"},
-  install:{label:"Install",icon:"🏗️"}, qaqc:{label:"QAQC",icon:"🔎"},
-  closeout:{label:"Close",icon:"📦"}, log:{label:"Log",icon:"📝"},
+  info:{label:"Info",icon:""}, scheduling:{label:"Schedule",icon:""},
+  assessment:{label:"Assess",icon:""},
+  photos:{label:"Photos",icon:""}, scope:{label:"Scope",icon:""},
+  install:{label:"Install",icon:""}, qaqc:{label:"QAQC",icon:""},
+  closeout:{label:"Close",icon:""}, log:{label:"Log",icon:""},
 };
 
 const EE_MEASURES = ["Air Sealing","Duct Sealing","Attic Insulation (0-R11)","Attic Insulation (R12-19)","Basement Wall Insulation","Crawl Space Wall Insulation","Knee Wall Insulation","Floor Insulation Above Crawl","Rim Joist Insulation","Injection Foam Walls","Furnace Replacement","Boiler Replacement","Central AC Replacement","Water Heater Replacement","Furnace Tune-Up","Thermostat","Low-e Storm Windows","EC Motor","AC Cover"];
@@ -134,10 +134,10 @@ const PROGRAM = {
 // Smart recommendation badge
 function Rec({type,children}) {
   const colors = {
-    rec: {bg:"rgba(34,197,94,.1)",border:"rgba(34,197,94,.3)",color:"#22c55e",icon:"✓"},
-    warn: {bg:"rgba(245,158,11,.1)",border:"rgba(245,158,11,.3)",color:"#f59e0b",icon:"⚠"},
-    info: {bg:"rgba(99,102,241,.1)",border:"rgba(99,102,241,.3)",color:"#818cf8",icon:"ℹ"},
-    flag: {bg:"rgba(239,68,68,.1)",border:"rgba(239,68,68,.3)",color:"#ef4444",icon:"⛔"},
+    rec: {bg:"#f0fdf4",border:"#bbf7d0",color:"#15803d",icon:"✓"},
+    warn: {bg:"#fffbeb",border:"#fde68a",color:"#b45309",icon:"⚠"},
+    info: {bg:"#eef2ff",border:"#c7d2fe",color:"#4338ca",icon:"ℹ"},
+    flag: {bg:"#fef2f2",border:"#fecaca",color:"#b91c1c",icon:"✕"},
   };
   const c = colors[type] || colors.info;
   return <div style={{marginTop:6,padding:"6px 10px",borderRadius:6,background:c.bg,border:`1px solid ${c.border}`,fontSize:11,color:c.color,lineHeight:1.4}}>{c.icon} {children}</div>;
@@ -300,19 +300,19 @@ function savePrint(html) {
   // Create overlay container in React app
   const overlay = document.createElement("div");
   overlay.id = "print-overlay";
-  overlay.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;display:flex;flex-direction:column;background:#1e293b";
+  overlay.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;display:flex;flex-direction:column;background:#ffffff";
 
   // Toolbar
   const toolbar = document.createElement("div");
   toolbar.style.cssText = "display:flex;gap:8px;padding:8px 12px;background:#0f172a;justify-content:flex-end;align-items:center;flex-shrink:0";
 
   const printBtn = document.createElement("button");
-  printBtn.textContent = "💾 Save as PDF / Print";
+  printBtn.textContent = "Save as PDF / Print";
   printBtn.style.cssText = "padding:8px 16px;background:#4338ca;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-family:Arial,sans-serif";
 
   const closeBtn = document.createElement("button");
   closeBtn.textContent = "✕ Close";
-  closeBtn.style.cssText = "padding:8px 16px;background:#64748b;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-family:Arial,sans-serif";
+  closeBtn.style.cssText = "padding:8px 16px;background:#6b7280;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;font-family:Arial,sans-serif";
 
   toolbar.appendChild(printBtn);
   toolbar.appendChild(closeBtn);
@@ -706,12 +706,12 @@ export default function App() {
   // ── Loading ──────────────────────────────────────────────
   if (loading) return (
     <div style={S.center}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');@keyframes spin{to{transform:rotate(360deg)}}*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');@keyframes spin{to{transform:rotate(360deg)}}*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}`}</style>
       <div style={S.spin}/>
     </div>
   );
 
-  const globalCSS = <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');@keyframes spin{to{transform:rotate(360deg)}}*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}html{color-scheme:dark}input,select,textarea,button{font-size:16px;color-scheme:dark}select option{background:#1e293b;color:#e2e8f0}@media(min-width:768px){input,select,textarea,button{font-size:inherit}}`}</style>;
+  const globalCSS = <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');@keyframes spin{to{transform:rotate(360deg)}}*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}html{color-scheme:light}body{margin:0;background:#f4f5f7}input,select,textarea,button{font-size:16px;color-scheme:light}select option{background:#ffffff;color:#1f2937}@media(min-width:768px){input,select,textarea,button{font-size:inherit}}button{transition:background-color .12s ease,border-color .12s ease,color .12s ease,box-shadow .12s ease}button:hover{filter:brightness(.97)}input,select,textarea{transition:box-shadow .12s ease,border-color .12s ease}input:focus,select:focus,textarea:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.12)}::selection{background:rgba(79,70,229,.18)}::-webkit-scrollbar{width:10px;height:8px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:8px;border:2px solid transparent;background-clip:padding-box}::-webkit-scrollbar-thumb:hover{background:#9ca3af;border:2px solid transparent;background-clip:padding-box}`}</style>;
 
   // ── Login screen ──────────────────────────────────────────
   const doLogin = () => {
@@ -802,8 +802,8 @@ const exportProjectForms = async (proj) => {
 
     // Status
     const overlay = document.createElement("div");
-    overlay.style.cssText = "position:fixed;inset:0;background:#0f172a;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-family:Arial;color:#e2e8f0";
-    overlay.innerHTML = '<div style="font-size:16px;font-weight:bold">Generating PDFs…</div><div id="pdf-step" style="font-size:13px;color:#94a3b8"></div>';
+    overlay.style.cssText = "position:fixed;inset:0;background:rgba(255,255,255,.96);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-family:Arial;color:#111827";
+    overlay.innerHTML = '<div style="font-size:16px;font-weight:bold">Generating PDFs…</div><div id="pdf-step" style="font-size:13px;color:#6b7280"></div>';
     document.body.appendChild(overlay);
     const stepEl = overlay.querySelector("#pdf-step");
 
@@ -1201,9 +1201,9 @@ const exportProjectForms = async (proj) => {
     <div style={S.app}>{globalCSS}
       <div style={S.rpWrap}>
         <div style={{textAlign:"center",marginBottom:24}}>
-          <div style={S.logoBox}>⚡</div>
-          <h1 style={{fontSize:20,fontWeight:700,color:"#f1f5f9",margin:"14px 0 2px"}}>HES Retrofits Tracker</h1>
-          <p style={{color:"#64748b",fontSize:12}}>Sign in to continue</p>
+          <div style={S.logoBox}>AE</div>
+          <h1 style={{fontSize:20,fontWeight:700,color:"#111827",margin:"14px 0 2px"}}>HES Retrofits Tracker</h1>
+          <p style={{color:"#6b7280",fontSize:12}}>Sign in to continue</p>
         </div>
         <div style={{marginBottom:12}}>
           <label style={S.fl}>Username</label>
@@ -1214,21 +1214,21 @@ const exportProjectForms = async (proj) => {
           <input style={S.inp} type="password" inputMode="numeric" value={loginPin} onChange={e=>{setLoginPin(e.target.value);setLoginErr("");}} placeholder="Enter PIN" maxLength={8}
             onKeyDown={e=>{if(e.key==="Enter")doLogin();}}/>
         </div>
-        {loginErr && <div style={{color:"#ef4444",fontSize:12,marginBottom:10,textAlign:"center"}}>{loginErr}</div>}
-        <button type="button" onClick={doLogin} style={{width:"100%",padding:"12px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",color:"#fff",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>
+        {loginErr && <div style={{color:"#dc2626",fontSize:12,marginBottom:10,textAlign:"center"}}>{loginErr}</div>}
+        <button type="button" onClick={doLogin} style={{width:"100%",padding:"11px",borderRadius:6,border:"1px solid #4f46e5",background:"#4f46e5",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"'Inter',system-ui,sans-serif",boxShadow:"0 1px 2px rgba(16,24,40,.08)"}}>
           Sign In
         </button>
-        <div style={{marginTop:20,padding:12,background:"rgba(255,255,255,.03)",borderRadius:8,border:"1px solid rgba(255,255,255,.06)"}}>
-          <div style={{fontSize:10,color:"#64748b",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em",fontWeight:600}}>Default Accounts</div>
+        <div style={{marginTop:20,padding:14,background:"#f9fafb",borderRadius:8,border:"1px solid #e5e7eb"}}>
+          <div style={{fontSize:10,color:"#6b7280",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em",fontWeight:600}}>Default Accounts</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"2px 12px",fontSize:11}}>
-            <span style={{color:"#64748b",fontWeight:600}}>Username</span>
-            <span style={{color:"#64748b",fontWeight:600}}>PIN</span>
-            <span style={{color:"#64748b",fontWeight:600}}>Role</span>
+            <span style={{color:"#6b7280",fontWeight:600}}>Username</span>
+            <span style={{color:"#6b7280",fontWeight:600}}>PIN</span>
+            <span style={{color:"#6b7280",fontWeight:600}}>Role</span>
             {(users||DEFAULT_USERS).map(u => (
               <React.Fragment key={u.id}>
-                <span style={{color:"#94a3b8",fontFamily:"'JetBrains Mono',monospace"}}>{u.username}</span>
-                <span style={{color:"#475569",fontFamily:"'JetBrains Mono',monospace"}}>{u.pin}</span>
-                <span style={{color:"#94a3b8"}}>{ROLES.find(r=>r.key===u.role)?.label||u.role}</span>
+                <span style={{color:"#6b7280",fontFamily:"'JetBrains Mono',monospace"}}>{u.username}</span>
+                <span style={{color:"#9ca3af",fontFamily:"'JetBrains Mono',monospace"}}>{u.pin}</span>
+                <span style={{color:"#6b7280"}}>{ROLES.find(r=>r.key===u.role)?.label||u.role}</span>
               </React.Fragment>
             ))}
           </div>
@@ -1245,7 +1245,7 @@ const exportProjectForms = async (proj) => {
       <Hdr role={curRole} user={userName} onSw={doLogout} onBack={()=>{setView("dash");setNewName("");setNewAddr("");}} title="New Lead"/>
       <div style={S.cnt}>
         <Sec title="RISE Lead → Create Project">
-          <p style={{fontSize:12,color:"#94a3b8",marginBottom:12}}>Enter customer name & address from RISE. Add ST ID after creating in ServiceTitan.</p>
+          <p style={{fontSize:12,color:"#6b7280",marginBottom:12}}>Enter customer name & address from RISE. Add ST ID after creating in ServiceTitan.</p>
           <F label="Customer Name *" value={newName} onChange={setNewName}/>
           <div style={{height:10}}/>
           <F label="Address *" value={newAddr} onChange={setNewAddr}/>
@@ -1277,15 +1277,15 @@ const exportProjectForms = async (proj) => {
           onBack={()=>{setView("dash");setTab("info");}}
           title={proj.customerName||"Unnamed"} sub={proj.address}
           badge={<span style={{...S.bdg,background:stage.color}}>{stage.icon} {stage.label}</span>}
-          actions={<><button style={{...S.ghost,padding:"5px 8px",fontSize:10}} onClick={()=>exportProjectPhotos(proj)}>📷 Photos</button><button style={{...S.ghost,padding:"5px 8px",fontSize:10}} onClick={()=>exportProjectForms(proj)}>📄 Forms</button></>}
+          actions={<><button style={{...S.ghost,padding:"5px 8px",fontSize:10}} onClick={()=>exportProjectPhotos(proj)}>Photos</button><button style={{...S.ghost,padding:"5px 8px",fontSize:10}} onClick={()=>exportProjectForms(proj)}>Forms</button></>}
         />
         {/* Stage bar */}
         <div style={S.stBar}>
           {STAGES.map(s => (
             <div key={s.id} style={{
               ...S.stStep,
-              background: s.id <= proj.currentStage ? s.color : "rgba(255,255,255,0.04)",
-              color: s.id <= proj.currentStage ? "#fff" : "#475569",
+              background: s.id <= proj.currentStage ? s.color : "#f3f4f6",
+              color: s.id <= proj.currentStage ? "#fff" : "#9ca3af",
             }} title={s.label}>
               <span style={{fontSize:12}}>{s.icon}</span>
               <span style={{fontSize:7,lineHeight:1,textAlign:"center"}}>{s.label}</span>
@@ -1302,9 +1302,9 @@ const exportProjectForms = async (proj) => {
                   <button style={{...S.btn,padding:"5px 12px",fontSize:11}} onClick={() => {
                     upP(proj.id, {currentStage:a.stage, stageHistory:[...proj.stageHistory,{s:a.stage,at:new Date().toISOString()}]});
                     addLog(proj.id, `Advanced → ${STAGES[a.stage].label}`);
-                  }}>⬆ {a.msg}</button>
+                  }}>↑ {a.msg}</button>
                 ) : (
-                  <span style={{fontSize:11,color:a.type==="warn"?"#fbbf24":"#93c5fd"}}>⚠ {a.msg}</span>
+                  <span style={{fontSize:11,color:a.type==="warn"?"#b45309":"#1d4ed8"}}>⚠ {a.msg}</span>
                 )}
               </div>
             ))}
@@ -1356,7 +1356,7 @@ const exportProjectForms = async (proj) => {
     <div style={S.app}>{globalCSS}
       <Hdr role={curRole} user={userName} onSw={doLogout} title="HES Retrofits"
         sub={`${projects.length} projects`}
-        actions={<>{role==="admin" && <><button style={{...S.ghost,padding:"6px 10px",fontSize:11}} onClick={()=>setShowUsers(!showUsers)}>👥 Users</button><button style={{...S.ghost,padding:"6px 10px",fontSize:11}} onClick={exportData}>📥 Data</button><button style={{...S.ghost,padding:"6px 10px",fontSize:11}} onClick={exportPhotos}>📷 Photos</button></>}<button style={{...S.btn,padding:"8px 16px",fontSize:13}} onClick={()=>setView("new")}>+ New Lead</button></>}
+        actions={<>{role==="admin" && <><button style={{...S.ghost,padding:"6px 10px",fontSize:11}} onClick={()=>setShowUsers(!showUsers)}>Users</button><button style={{...S.ghost,padding:"6px 10px",fontSize:11}} onClick={exportData}>Data</button><button style={{...S.ghost,padding:"6px 10px",fontSize:11}} onClick={exportPhotos}>Photos</button></>}<button style={{...S.btn,padding:"8px 16px",fontSize:13}} onClick={()=>setView("new")}>+ New Lead</button></>}
       />
 
       {/* ── User Management (Admin only) ── */}
@@ -1364,9 +1364,9 @@ const exportProjectForms = async (proj) => {
 
       {alertCount > 0 && (
         <div style={S.readyBan} onClick={() => setFilter(filter === "alerts" ? "all" : "alerts")}>
-          <span style={{fontSize:18}}>🔔</span>
+          <span style={{fontSize:18}}>⚠</span>
           <span style={{flex:1,fontSize:13}}><b>{alertCount}</b> need{alertCount>1?"":"s"} attention</span>
-          <span style={{fontSize:11,color:"#fde68a"}}>{filter==="alerts"?"Show all":"Filter"} →</span>
+          <span style={{fontSize:11,color:"#b45309"}}>{filter==="alerts"?"Show all":"Filter"} →</span>
         </div>
       )}
 
@@ -1376,11 +1376,11 @@ const exportProjectForms = async (proj) => {
           return (
             <button key={s.id} style={{
               ...S.chip,
-              background: filter === String(s.id) ? s.color : "rgba(255,255,255,0.06)",
-              color: filter === String(s.id) ? "#fff" : "#94a3b8",
-              borderColor: filter === String(s.id) ? s.color : "rgba(255,255,255,0.08)",
+              background: filter === String(s.id) ? s.color : "#ffffff",
+              color: filter === String(s.id) ? "#fff" : "#374151",
+              borderColor: filter === String(s.id) ? s.color : "#d1d5db",
             }} onClick={() => setFilter(filter === String(s.id) ? "all" : String(s.id))}>
-              {s.icon} <span style={S.chipN}>{c}</span>
+              <span style={{color: filter === String(s.id) ? "#fff" : s.color, fontSize:9}}>{s.icon}</span> {s.label} <span style={S.chipN}>{c}</span>
             </button>
           );
         })}
@@ -1433,29 +1433,29 @@ const exportProjectForms = async (proj) => {
         // Hazard flags
         const hazards = projects.filter(p=>{const s=p.scope2026||{};return s.int?.knobTube||s.int?.vermiculite||s.int?.mold||s.attic?.knobTube||s.attic?.vermPresent||s.attic?.moldPresent;});
 
-        const card = {borderRadius:8,background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.06)",padding:"10px 12px",marginBottom:8};
-        const hdr = {fontSize:10,color:"#64748b",textTransform:"uppercase",letterSpacing:".06em",marginBottom:6,fontWeight:600};
+        const card = {borderRadius:8,background:"#f3f4f6",border:"1px solid #e5e7eb",padding:"10px 12px",marginBottom:8};
+        const hdr = {fontSize:10,color:"#6b7280",textTransform:"uppercase",letterSpacing:".06em",marginBottom:6,fontWeight:600};
         const kpi = {textAlign:"center",padding:"6px 4px"};
         const kpiN = {fontSize:22,fontWeight:700,lineHeight:1};
-        const kpiL = {fontSize:8,color:"#64748b",marginTop:2,lineHeight:1.2};
+        const kpiL = {fontSize:8,color:"#6b7280",marginTop:2,lineHeight:1.2};
         const row = {display:"flex",justifyContent:"space-between",alignItems:"center",padding:"3px 0",fontSize:11};
 
         return <div style={{padding:"0 16px",marginBottom:6}}>
           {/* KPI Row */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:6,marginBottom:8}}>
-            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:"#e2e8f0"}}>{projects.length}</div><div style={kpiL}>Total Projects</div></div>
-            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:"#818cf8"}}>{active.length}</div><div style={kpiL}>Active</div></div>
-            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:"#22c55e"}}>{completed.length}</div><div style={kpiL}>Completed</div></div>
-            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:stuck.length>0?"#ef4444":"#22c55e"}}>{stuck.length}</div><div style={kpiL}>Stuck (7d+)</div></div>
-            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:"#f59e0b"}}>{avgDays||"—"}</div><div style={kpiL}>Avg Days</div></div>
+            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:"#1f2937"}}>{projects.length}</div><div style={kpiL}>Total Projects</div></div>
+            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:"#4f46e5"}}>{active.length}</div><div style={kpiL}>Active</div></div>
+            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:"#16a34a"}}>{completed.length}</div><div style={kpiL}>Completed</div></div>
+            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:stuck.length>0?"#dc2626":"#16a34a"}}>{stuck.length}</div><div style={kpiL}>Stuck (7d+)</div></div>
+            <div style={{...card,...kpi,marginBottom:0}}><div style={{...kpiN,color:"#b45309"}}>{avgDays||"—"}</div><div style={kpiL}>Avg Days</div></div>
           </div>
 
           {/* Action Items */}
           {(needsScheduling>0||needsInstallSched>0||hazards.length>0) && <div style={{...card,background:"rgba(239,68,68,.06)",borderColor:"rgba(239,68,68,.2)"}}>
-            <div style={{...hdr,color:"#ef4444"}}>⚡ Action Required</div>
-            {needsScheduling>0 && <div style={{...row,color:"#fca5a5"}}><span>Needs assessment scheduling</span><b>{needsScheduling}</b></div>}
-            {needsInstallSched>0 && <div style={{...row,color:"#fca5a5"}}><span>Needs install scheduling</span><b>{needsInstallSched}</b></div>}
-            {hazards.length>0 && <div style={{...row,color:"#fca5a5"}}><span>⛔ Hazard flags (K&T/asbestos/mold)</span><b>{hazards.length}</b></div>}
+            <div style={{...hdr,color:"#dc2626"}}>Action Required</div>
+            {needsScheduling>0 && <div style={{...row,color:"#b91c1c"}}><span>Needs assessment scheduling</span><b>{needsScheduling}</b></div>}
+            {needsInstallSched>0 && <div style={{...row,color:"#b91c1c"}}><span>Needs install scheduling</span><b>{needsInstallSched}</b></div>}
+            {hazards.length>0 && <div style={{...row,color:"#b91c1c"}}><span>Hazard flags (K&T/asbestos/mold)</span><b>{hazards.length}</b></div>}
           </div>}
 
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
@@ -1463,10 +1463,10 @@ const exportProjectForms = async (proj) => {
             <div style={card}>
               <div style={hdr}>Pipeline</div>
               {byStage.filter(s=>s.count>0).map(s=><div key={s.id} style={row}>
-                <span style={{color:"#94a3b8"}}>{s.icon} {s.label}</span>
+                <span style={{color:"#6b7280"}}>{s.icon} {s.label}</span>
                 <div style={{display:"flex",alignItems:"center",gap:6}}>
                   <div style={{width:Math.min(s.count/Math.max(...byStage.map(x=>x.count))*60,60),height:6,borderRadius:3,background:s.color,minWidth:4}}/>
-                  <span style={{fontWeight:600,color:"#e2e8f0",minWidth:16,textAlign:"right"}}>{s.count}</span>
+                  <span style={{fontWeight:600,color:"#1f2937",minWidth:16,textAlign:"right"}}>{s.count}</span>
                 </div>
               </div>)}
             </div>
@@ -1474,37 +1474,37 @@ const exportProjectForms = async (proj) => {
             {/* Weekly Throughput */}
             <div style={card}>
               <div style={hdr}>This Week</div>
-              <div style={row}><span style={{color:"#94a3b8"}}>Assessments</span><b style={{color:"#818cf8"}}>{assessThisWeek}</b></div>
-              <div style={row}><span style={{color:"#94a3b8"}}>Installs</span><b style={{color:"#f59e0b"}}>{installsThisWeek}</b></div>
-              <div style={row}><span style={{color:"#94a3b8"}}>Completed</span><b style={{color:"#22c55e"}}>{completedThisWeek}</b></div>
+              <div style={row}><span style={{color:"#6b7280"}}>Assessments</span><b style={{color:"#4f46e5"}}>{assessThisWeek}</b></div>
+              <div style={row}><span style={{color:"#6b7280"}}>Installs</span><b style={{color:"#b45309"}}>{installsThisWeek}</b></div>
+              <div style={row}><span style={{color:"#6b7280"}}>Completed</span><b style={{color:"#16a34a"}}>{completedThisWeek}</b></div>
               <div style={{...hdr,marginTop:8}}>This Month</div>
-              <div style={row}><span style={{color:"#94a3b8"}}>Completed</span><b style={{color:"#22c55e"}}>{completedThisMonth}</b></div>
-              <div style={row}><span style={{color:"#94a3b8"}}>Measures installed</span><b style={{color:"#e2e8f0"}}>{totalEE+totalHS}</b></div>
+              <div style={row}><span style={{color:"#6b7280"}}>Completed</span><b style={{color:"#16a34a"}}>{completedThisMonth}</b></div>
+              <div style={row}><span style={{color:"#6b7280"}}>Measures installed</span><b style={{color:"#1f2937"}}>{totalEE+totalHS}</b></div>
             </div>
           </div>
 
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
             {/* Stuck Projects */}
-            {stuck.length>0 && <div style={{...card,background:"rgba(245,158,11,.04)",borderColor:"rgba(245,158,11,.15)"}}>
-              <div style={{...hdr,color:"#f59e0b"}}>⏳ Aging Projects</div>
+            {stuck.length>0 && <div style={{...card,background:"rgba(245,158,11,.04)",borderColor:"#fef3c7"}}>
+              <div style={{...hdr,color:"#b45309"}}>Aging Projects</div>
               {stuck.slice(0,5).map(p=><div key={p.id} style={{...row,cursor:"pointer"}} onClick={()=>{setSelId(p.id);setView("detail");setTab("info");}}>
-                <span style={{color:"#94a3b8",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginRight:6}}>{p.customerName||"Unnamed"}</span>
-                <span style={{flexShrink:0}}><span style={{color:STAGES[p.currentStage].color,fontSize:10}}>{STAGES[p.currentStage].icon}</span> <b style={{color:p.daysInStage>=14?"#ef4444":"#f59e0b"}}>{p.daysInStage}d</b></span>
+                <span style={{color:"#6b7280",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginRight:6}}>{p.customerName||"Unnamed"}</span>
+                <span style={{flexShrink:0}}><span style={{color:STAGES[p.currentStage].color,fontSize:10}}>{STAGES[p.currentStage].icon}</span> <b style={{color:p.daysInStage>=14?"#dc2626":"#b45309"}}>{p.daysInStage}d</b></span>
               </div>)}
-              {stuck.length>5 && <div style={{fontSize:9,color:"#64748b",textAlign:"center",marginTop:4}}>+{stuck.length-5} more</div>}
+              {stuck.length>5 && <div style={{fontSize:9,color:"#6b7280",textAlign:"center",marginTop:4}}>+{stuck.length-5} more</div>}
             </div>}
 
             {/* Team Activity */}
             {topCrew.length>0 && <div style={card}>
               <div style={hdr}>Team Activity</div>
               {topCrew.map(([name,count])=><div key={name} style={row}>
-                <span style={{color:"#94a3b8"}}>{name}</span>
+                <span style={{color:"#6b7280"}}>{name}</span>
                 <div style={{display:"flex",alignItems:"center",gap:6}}>
-                  <div style={{width:Math.min(count/Math.max(...topCrew.map(x=>x[1]))*50,50),height:5,borderRadius:3,background:"#818cf8",minWidth:4}}/>
-                  <span style={{fontWeight:600,color:"#e2e8f0",minWidth:20,textAlign:"right"}}>{count}</span>
+                  <div style={{width:Math.min(count/Math.max(...topCrew.map(x=>x[1]))*50,50),height:5,borderRadius:3,background:"#4f46e5",minWidth:4}}/>
+                  <span style={{fontWeight:600,color:"#1f2937",minWidth:20,textAlign:"right"}}>{count}</span>
                 </div>
               </div>)}
-              <div style={{fontSize:8,color:"#475569",marginTop:4}}>Actions logged (all time)</div>
+              <div style={{fontSize:8,color:"#9ca3af",marginTop:4}}>Actions logged (all time)</div>
             </div>}
           </div>
 
@@ -1512,10 +1512,10 @@ const exportProjectForms = async (proj) => {
           {topM.length>0 && <div style={card}>
             <div style={hdr}>Top Measures Across Portfolio</div>
             {topM.map(([m,c])=><div key={m} style={row}>
-              <span style={{color:"#94a3b8",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginRight:8}}>{m}</span>
+              <span style={{color:"#6b7280",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginRight:8}}>{m}</span>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
-                <div style={{width:Math.min(c/Math.max(...topM.map(x=>x[1]))*80,80),height:5,borderRadius:3,background:"#22c55e",minWidth:4}}/>
-                <span style={{fontWeight:600,color:"#e2e8f0",minWidth:20,textAlign:"right"}}>{c}</span>
+                <div style={{width:Math.min(c/Math.max(...topM.map(x=>x[1]))*80,80),height:5,borderRadius:3,background:"#16a34a",minWidth:4}}/>
+                <span style={{fontWeight:600,color:"#1f2937",minWidth:20,textAlign:"right"}}>{c}</span>
               </div>
             </div>)}
           </div>}
@@ -1529,8 +1529,8 @@ const exportProjectForms = async (proj) => {
 
       {sorted.length === 0 ? (
         <div style={S.empty}>
-          <p style={{fontSize:32}}>📂</p>
-          <p style={{color:"#64748b",fontSize:13}}>{projects.length===0?"No projects yet. Tap + New Lead.":"No matches."}</p>
+          
+          <p style={{color:"#6b7280",fontSize:13}}>{projects.length===0?"No projects yet. Tap + New Lead.":"No matches."}</p>
         </div>
       ) : (
         <div style={S.list}>
@@ -1541,15 +1541,15 @@ const exportProjectForms = async (proj) => {
               <button key={p.id} style={S.card} onClick={() => {setSelId(p.id);setView("proj");setTab(tabs[0]);}}>
                 <div style={S.cTop}>
                   <div style={{display:"flex",alignItems:"center",gap:5,flex:1,minWidth:0}}>
-                    {p.flagged && <span>⚠️</span>}
+                    {p.flagged && <span style={{color:"#b45309"}}>⚠</span>}
                     <span style={S.cName}>{p.customerName}</span>
                   </div>
                   <span style={{...S.bdg,background:st.color,fontSize:10}}>{st.icon} {st.label}</span>
                 </div>
-                <div style={{fontSize:12,color:"#94a3b8",marginTop:2}}>{p.address}</div>
+                <div style={{fontSize:12,color:"#6b7280",marginTop:2}}>{p.address}</div>
                 {al.length > 0 && (
                   <div style={{display:"flex",gap:4,marginTop:5,flexWrap:"wrap"}}>
-                    {al.map((a,i) => <span key={i} style={{...S.tBadge,...(a.type==="co"?{background:"rgba(249,115,22,.15)",color:"#f97316",border:"1px solid rgba(249,115,22,.3)"}:{})}}>{a.type==="advance"?"⬆":a.type==="co"?"🔶":"🔔"} {a.msg}</span>)}
+                    {al.map((a,i) => <span key={i} style={{...S.tBadge,...(a.type==="co"?{background:"#ffedd5",color:"#ea580c",border:"1px solid #fed7aa"}:{})}}>{a.type==="advance"?"↑":a.type==="co"?"CO":"⚠"} {a.msg}</span>)}
                   </div>
                 )}
                 <div style={S.cMeta}>
@@ -1580,20 +1580,20 @@ function InfoTab({p,u,role,onLog,onDel}) {
         <Gr><F label="Phone" value={p.phone} onChange={v=>u({phone:v})}/><F label="Email" value={p.email} onChange={v=>u({email:v})}/></Gr>
       </Sec>
       <Sec title="System IDs">
-        <p style={{fontSize:11,color:"#64748b",marginBottom:8}}>Lookup customer in ST, enter IDs here</p>
+        <p style={{fontSize:11,color:"#6b7280",marginBottom:8}}>Lookup customer in ST, enter IDs here</p>
         <Gr><F label="RISE ID" value={p.riseId} onChange={v=>u({riseId:v})}/><F label="ServiceTitan ID" value={p.stId} onChange={v=>u({stId:v})}/><F label="Utility" value={p.utility} onChange={v=>u({utility:v})} placeholder="Nicor, ComEd…"/></Gr>
       </Sec>
 
       <Sec title="Flags & Notes">
-        <CK checked={p.flagged} onChange={v=>u({flagged:v})} label="⚠️ Flag this project"/>
+        <CK checked={p.flagged} onChange={v=>u({flagged:v})} label="Flag this project"/>
         {p.flagged && <div style={{marginTop:6}}><F label="Reason" value={p.flagReason} onChange={v=>u({flagReason:v})}/></div>}
         <div style={{marginTop:8}}><label style={S.fl}>Notes</label><textarea style={S.ta} value={p.internalNotes} onChange={e=>u({internalNotes:e.target.value})} rows={3}/></div>
       </Sec>
       {role === "admin" && (
         <Sec title="Danger Zone" danger>
-          {!del ? <button style={{...S.ghost,color:"#ef4444",borderColor:"#ef4444"}} onClick={()=>setDel(true)}>Delete Project</button> : (
+          {!del ? <button style={{...S.ghost,color:"#dc2626",borderColor:"#dc2626"}} onClick={()=>setDel(true)}>Delete Project</button> : (
             <div style={{display:"flex",gap:8,alignItems:"center"}}>
-              <button style={{...S.btn,background:"#ef4444"}} onClick={onDel}>Confirm Delete</button>
+              <button style={{...S.btn,background:"#dc2626"}} onClick={onDel}>Confirm Delete</button>
               <button style={S.ghost} onClick={()=>setDel(false)}>Cancel</button>
             </div>
           )}
@@ -1608,7 +1608,7 @@ function SchedTab({p,u,onLog}) {
   const showInstall = p.scopeApproved || p.currentStage >= 4;
   return (
     <div>
-      {alerts.length > 0 && <div style={S.alertBox}><span style={{fontSize:18}}>🔔</span><div style={{flex:1}}>{alerts.map((a,i)=><div key={i} style={{fontSize:12,color:"#fde68a"}}>• {a.msg}</div>)}</div></div>}
+      {alerts.length > 0 && <div style={S.alertBox}><span style={{fontSize:18}}>⚠</span><div style={{flex:1}}>{alerts.map((a,i)=><div key={i} style={{fontSize:12,color:"#b45309"}}>• {a.msg}</div>)}</div></div>}
       <Sec title="Assessment">
         <F label="Assessment Date" value={p.assessmentDate} onChange={v=>{u({assessmentDate:v,assessmentScheduled:!!v});if(v)onLog(`Assessment scheduled: ${fmts(v)}`);}} type="date"/>
         <div style={{marginTop:6}}><textarea style={S.ta} value={p.scheduleNotes} onChange={e=>u({scheduleNotes:e.target.value})} rows={2} placeholder="Customer availability, access notes…"/></div>
@@ -1626,7 +1626,7 @@ function SchedTab({p,u,onLog}) {
         </Sec>
       ) : (
         <Sec title="Install Scheduling">
-          <p style={{fontSize:12,color:"#64748b"}}>Install scheduling opens after scope is approved.</p>
+          <p style={{fontSize:12,color:"#6b7280"}}>Install scheduling opens after scope is approved.</p>
         </Sec>
       )}
     </div>
@@ -1681,7 +1681,7 @@ function AuditTab({p,u,onLog,user}) {
         <div style={S.camH}>
           <button style={{...S.back,fontSize:18}} onClick={()=>setPrev(null)}>← Back</button>
           <div style={{flex:1,textAlign:"center",fontWeight:600,fontSize:14}}>{it?.l} {arr.length>1?`(${prev.idx+1}/${arr.length})`:""}</div>
-          <button style={{...S.ghost,color:"#ef4444",borderColor:"#ef4444",padding:"4px 10px"}} onClick={()=>{
+          <button style={{...S.ghost,color:"#dc2626",borderColor:"#dc2626",padding:"4px 10px"}} onClick={()=>{
             const remaining = arr.filter((_,i)=>i!==prev.idx);
             u({photos:{...p.photos,[prev.id]:remaining.length?remaining:undefined}});
             if(onLog)onLog(`🗑️ Removed ${it?.l||prev.id}`);setPrev(null);
@@ -1692,7 +1692,7 @@ function AuditTab({p,u,onLog,user}) {
           {arr.length > 1 && prev.idx > 0 && <button onClick={()=>setPrev({...prev,idx:prev.idx-1})} style={{position:"absolute",left:8,top:"50%",transform:"translateY(-50%)",background:"rgba(0,0,0,.5)",color:"#fff",border:"none",borderRadius:"50%",width:36,height:36,fontSize:18,cursor:"pointer"}}>‹</button>}
           {arr.length > 1 && prev.idx < arr.length-1 && <button onClick={()=>setPrev({...prev,idx:prev.idx+1})} style={{position:"absolute",right:8,top:"50%",transform:"translateY(-50%)",background:"rgba(0,0,0,.5)",color:"#fff",border:"none",borderRadius:"50%",width:36,height:36,fontSize:18,cursor:"pointer"}}>›</button>}
         </div>
-        <div style={{padding:12,textAlign:"center",fontSize:11,color:"#94a3b8"}}>{ph?.by} · {ph?.at&&new Date(ph.at).toLocaleString()}</div>
+        <div style={{padding:12,textAlign:"center",fontSize:11,color:"#6b7280"}}>{ph?.by} · {ph?.at&&new Date(ph.at).toLocaleString()}</div>
       </div>
     );
   }
@@ -1732,7 +1732,7 @@ function AuditTab({p,u,onLog,user}) {
   return (
     <div>
       {/* ── CUSTOMER AUTHORIZATION FORM ── */}
-      <Sec title={<span>Customer Authorization Form {a.customerAuthSig ? <span style={{color:"#22c55e",fontSize:11}}>✓ Signed</span> : <span style={{color:"#f59e0b",fontSize:11}}>⚠ Required</span>}</span>}>
+      <Sec title={<span>Customer Authorization Form {a.customerAuthSig ? <span style={{color:"#16a34a",fontSize:11}}>✓ Signed</span> : <span style={{color:"#b45309",fontSize:11}}>⚠ Required</span>}</span>}>
         {/* Page 1 with signature fields overlaid on the form */}
         <div style={{position:"relative",background:"#fff",borderRadius:6,overflow:"hidden"}}>
           <img src="/auth-form-page1.jpg" alt="Page 1" style={{width:"100%",display:"block"}}/>
@@ -1776,17 +1776,17 @@ function AuditTab({p,u,onLog,user}) {
 <div style="page-break-before:always"></div>
 <img src="/auth-form-page2.jpg" style="width:100%;display:block"/>
 </div>`);
-          }}>🖨️ Print Signed Form</button>
-          <button style={{...S.ghost,padding:"8px 16px",fontSize:12,color:"#ef4444",borderColor:"rgba(239,68,68,.3)"}} onClick={()=>{u({audit:{...a,customerAuthSig:"",authDate:"",customerAuthName:""}});}}>✕ Clear & Re-sign</button>
+          }}>Print Signed Form</button>
+          <button style={{...S.ghost,padding:"8px 16px",fontSize:12,color:"#dc2626",borderColor:"#fecaca"}} onClick={()=>{u({audit:{...a,customerAuthSig:"",authDate:"",customerAuthName:""}});}}>✕ Clear & Re-sign</button>
         </div>}
       </Sec>
 
-      <Sec title="📋 Data Collection Tool">
+      <Sec title="Data Collection Tool">
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <p style={{fontSize:11,color:"#94a3b8",margin:0}}>For use with BLK2GO</p>
+          <p style={{fontSize:11,color:"#6b7280",margin:0}}>For use with BLK2GO</p>
           <PrintBtn onClick={()=>savePrint(getAuditHTML())}/>
         </div>
-        <p style={{fontSize:10,color:"#64748b",marginTop:4}}>Customer: <b>{p.customerName}</b> · {p.address} · Assessment: {p.assessmentDate ? fmts(p.assessmentDate) : "—"}</p>
+        <p style={{fontSize:10,color:"#6b7280",marginTop:4}}>Customer: <b>{p.customerName}</b> · {p.address} · Assessment: {p.assessmentDate ? fmts(p.assessmentDate) : "—"}</p>
       </Sec>
 
       <Sec title="Basic Info">
@@ -1815,8 +1815,8 @@ function AuditTab({p,u,onLog,user}) {
           <F label="14. Bath Fan 3 CFM" value={a.bathFan3||""} onChange={v=>sa("bathFan3",v)} num/>
           <F label="15. Kitchen Fan CFM" value={a.kitchenFan||""} onChange={v=>sa("kitchenFan",v)} num/>
         </Gr>
-        <p style={{fontSize:10,color:"#64748b",marginTop:4}}>Q13-14 only if additional full baths present</p>
-        <p style={{fontSize:10,color:"#f59e0b",marginTop:2}}>⚠ If a fan is present but not operational or CFM is unknown, enter 0. Leave blank if no fan exists.</p>
+        <p style={{fontSize:10,color:"#6b7280",marginTop:4}}>Q13-14 only if additional full baths present</p>
+        <p style={{fontSize:10,color:"#b45309",marginTop:2}}>⚠ If a fan is present but not operational or CFM is unknown, enter 0. Leave blank if no fan exists.</p>
       </Sec>
 
       <Sec title="Smoke / CO Detectors">
@@ -1851,7 +1851,7 @@ function AuditTab({p,u,onLog,user}) {
           <F label="BD Location" value={p.bdLoc} onChange={v=>u({bdLoc:v})} placeholder="Front/Side"/>
           <F label="Ext. Temp" value={p.extTemp} onChange={v=>u({extTemp:v})} placeholder="°F" num/>
         </Gr>
-        {p.preCFM50 && p.sqft && <div style={S.calc}><span>Pre CFM50: <b>{p.preCFM50}</b></span><span style={{color:Number(p.preCFM50)>=Number(p.sqft)*1.1?"#22c55e":"#f59e0b",marginLeft:10}}>{Number(p.preCFM50)>=Number(p.sqft)*1.1?"✓ ≥110% sqft":"⚠ <110% sqft"}</span></div>}
+        {p.preCFM50 && p.sqft && <div style={S.calc}><span>Pre CFM50: <b>{p.preCFM50}</b></span><span style={{color:Number(p.preCFM50)>=Number(p.sqft)*1.1?"#16a34a":"#b45309",marginLeft:10}}>{Number(p.preCFM50)>=Number(p.sqft)*1.1?"✓ ≥110% sqft":"⚠ <110% sqft"}</span></div>}
       </Sec>
 
       <Sec title="CAZ Testing">
@@ -1861,7 +1861,7 @@ function AuditTab({p,u,onLog,user}) {
             <div key={c.k} style={S.cazR}>
               <span style={{flex:1,fontSize:12,minWidth:120}}>{c.l}</span>
               {c.r && <input style={{...S.inp,width:60,textAlign:"center"}} value={r.reading||""} onChange={e=>u({cazResults:{...p.cazResults,[c.k]:{...(p.cazResults?.[c.k]||{}),reading:e.target.value}}})} placeholder={c.u}/>}
-              <BtnGrp value={r.result||""} onChange={v=>u({cazResults:{...p.cazResults,[c.k]:{...(p.cazResults?.[c.k]||{}),result:v}}})} opts={[{v:"pass",l:"Pass",c:"#22c55e"},{v:"fail",l:"Fail",c:"#ef4444"},{v:"na",l:"N/A",c:"#64748b"}]}/>
+              <BtnGrp value={r.result||""} onChange={v=>u({cazResults:{...p.cazResults,[c.k]:{...(p.cazResults?.[c.k]||{}),result:v}}})} opts={[{v:"pass",l:"Pass",c:"#16a34a"},{v:"fail",l:"Fail",c:"#dc2626"},{v:"na",l:"N/A",c:"#6b7280"}]}/>
               <CK checked={r.fu||false} onChange={v=>u({cazResults:{...p.cazResults,[c.k]:{...(p.cazResults?.[c.k]||{}),fu:v}}})} label="F/U" small/>
             </div>
           );
@@ -1877,25 +1877,25 @@ function AuditTab({p,u,onLog,user}) {
       </Sec>
 
       {/* ── PRE-INSTALL PHOTOS ── */}
-      <Sec title={<span>Pre-Install Photos <span style={{fontWeight:400,color:"#94a3b8",fontFamily:"'JetBrains Mono',monospace"}}>{preTaken}/{preItems.length}</span></span>}>
-        <div style={S.prog}><div style={{...S.progF,width:`${preItems.length?(preTaken/preItems.length)*100:0}%`,background:"linear-gradient(90deg,#6366f1,#a855f7)"}}/></div>
+      <Sec title={<span>Pre-Install Photos <span style={{fontWeight:400,color:"#6b7280",fontFamily:"'JetBrains Mono',monospace"}}>{preTaken}/{preItems.length}</span></span>}>
+        <div style={S.prog}><div style={{...S.progF,width:`${preItems.length?(preTaken/preItems.length)*100:0}%`,background:"linear-gradient(90deg,#4f46e5,#7e22ce)"}}/></div>
         {preSections.map(([cat,items]) => (
           <div key={cat} style={{marginTop:10}}>
-            <div style={{fontSize:11,fontWeight:700,color:"#6366f1",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em"}}>{cat}</div>
+            <div style={{fontSize:11,fontWeight:700,color:"#4f46e5",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em"}}>{cat}</div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(120px,1fr))",gap:6}}>
               {items.map(item => {
                 const arr = getPhotos(p.photos, item.id);
                 const has = arr.length > 0;
-                return <div key={item.id} style={{background:has?"rgba(34,197,94,.08)":"rgba(255,255,255,.03)",border:`1px solid ${has?"rgba(34,197,94,.3)":"rgba(255,255,255,.08)"}`,borderRadius:8,overflow:"hidden"}}>
+                return <div key={item.id} style={{background:has?"rgba(34,197,94,.08)":"#f9fafb",border:`1px solid ${has?"#86efac":"#e5e7eb"}`,borderRadius:8,overflow:"hidden"}}>
                   {has ? <div style={{position:"relative",cursor:"pointer"}} onClick={()=>setPrev({id:item.id,idx:0})}>
                     <img src={arr[0].d} style={{width:"100%",height:70,objectFit:"cover"}} alt=""/>
                     {arr.length>1 && <span style={{position:"absolute",top:2,right:2,background:"rgba(0,0,0,.7)",color:"#fff",fontSize:9,padding:"1px 4px",borderRadius:4}}>{arr.length}</span>}
                   </div> : <div style={{height:70,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                    <label style={{fontSize:10,color:"#64748b",cursor:"pointer",textAlign:"center",padding:4}}>📸 Tap<input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>handleFile(item.id,e.target.files?.[0])}/></label>
+                    <label style={{fontSize:10,color:"#6b7280",cursor:"pointer",textAlign:"center",padding:4}}>Add<input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>handleFile(item.id,e.target.files?.[0])}/></label>
                   </div>}
-                  <div style={{padding:"4px 6px",fontSize:9,color:"#94a3b8",borderTop:"1px solid rgba(255,255,255,.05)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <div style={{padding:"4px 6px",fontSize:9,color:"#6b7280",borderTop:"1px solid #f3f4f6",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                     <span>{item.l}{has&&" ✓"}</span>
-                    {has && <label style={{fontSize:10,color:"#818cf8",cursor:"pointer"}}>＋<input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>handleFile(item.id,e.target.files?.[0])}/></label>}
+                    {has && <label style={{fontSize:10,color:"#4f46e5",cursor:"pointer"}}>＋<input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>handleFile(item.id,e.target.files?.[0])}/></label>}
                   </div>
                 </div>;
               })}
@@ -1969,14 +1969,14 @@ function PhotoTab({p,u,onLog,user,role}) {
         <div style={S.camH}>
           <button style={{...S.back,fontSize:18}} onClick={()=>setPrev(null)}>← Back</button>
           <div style={{flex:1,textAlign:"center",fontWeight:600,fontSize:14}}>{it?.l} {arr.length>1?`(${prev.idx+1}/${arr.length})`:""}</div>
-          <button style={{...S.ghost,color:"#ef4444",borderColor:"#ef4444",padding:"4px 10px"}} onClick={()=>deletePhoto(prev.id,prev.idx)}>Delete</button>
+          <button style={{...S.ghost,color:"#dc2626",borderColor:"#dc2626",padding:"4px 10px"}} onClick={()=>deletePhoto(prev.id,prev.idx)}>Delete</button>
         </div>
         <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",background:"#000",padding:8,position:"relative"}}>
           {ph?.d && <img src={ph.d} style={{maxWidth:"100%",maxHeight:"80vh",borderRadius:8}} alt=""/>}
           {arr.length > 1 && prev.idx > 0 && <button onClick={()=>setPrev({...prev,idx:prev.idx-1})} style={{position:"absolute",left:8,top:"50%",transform:"translateY(-50%)",background:"rgba(0,0,0,.5)",color:"#fff",border:"none",borderRadius:"50%",width:36,height:36,fontSize:18,cursor:"pointer"}}>‹</button>}
           {arr.length > 1 && prev.idx < arr.length-1 && <button onClick={()=>setPrev({...prev,idx:prev.idx+1})} style={{position:"absolute",right:8,top:"50%",transform:"translateY(-50%)",background:"rgba(0,0,0,.5)",color:"#fff",border:"none",borderRadius:"50%",width:36,height:36,fontSize:18,cursor:"pointer"}}>›</button>}
         </div>
-        <div style={{padding:12,textAlign:"center",fontSize:11,color:"#94a3b8"}}>{ph?.by} · {ph?.at&&new Date(ph.at).toLocaleString()}</div>
+        <div style={{padding:12,textAlign:"center",fontSize:11,color:"#6b7280"}}>{ph?.by} · {ph?.at&&new Date(ph.at).toLocaleString()}</div>
       </div>
     );
   }
@@ -1988,17 +1988,17 @@ function PhotoTab({p,u,onLog,user,role}) {
     return (
       <div style={S.phRow}>
         <div style={{flex:1,minWidth:0}}>
-          <div style={{fontSize:13,color:has?"#22c55e":"#cbd5e1"}}>{has?"✓":"○"} {it.l} {arr.length>1?<span style={{fontSize:10,color:"#818cf8"}}>({arr.length})</span>:""}</div>
-          <div style={{fontSize:10,color:"#64748b"}}>{it.p==="pre"?"📋 Pre":"🏗️ Post"}{has&&arr[0].by?` · ${arr[0].by}`:""}</div>
+          <div style={{fontSize:13,color:has?"#16a34a":"#374151"}}>{has?"✓":"○"} {it.l} {arr.length>1?<span style={{fontSize:10,color:"#4f46e5"}}>({arr.length})</span>:""}</div>
+          <div style={{fontSize:10,color:"#6b7280"}}>{it.p==="pre"?"Pre":"Post"}{has&&arr[0].by?` · ${arr[0].by}`:""}</div>
         </div>
         <div style={{display:"flex",gap:4,alignItems:"center"}}>
           {arr.map((ph,idx) => <button key={idx} style={S.thBtn} onClick={()=>setPrev({id:it.id,idx})}><img src={ph.d} style={S.th} alt=""/></button>)}
           <label style={S.cBtn} title={has?"Add another":"Take photo"}>
-            {has?"＋":"📷"}
+            ＋
             <input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>{compressAndSave(it.id,e.target.files?.[0]);e.target.value="";}}/>
           </label>
           <label style={S.uBtn} title="Upload from gallery">
-            📁
+            ↥
             <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{compressAndSave(it.id,e.target.files?.[0]);e.target.value="";}}/>
           </label>
         </div>
@@ -2038,21 +2038,21 @@ function PhotoTab({p,u,onLog,user,role}) {
 
   // ── Tab button style ──
   const tabBtn = (mode, label, icon) => ({
-    flex:1,padding:"8px 4px",borderRadius:6,border:`1px solid ${viewMode===mode?"rgba(99,102,241,.5)":"rgba(255,255,255,.1)"}`,
-    background:viewMode===mode?"rgba(99,102,241,.15)":"transparent",color:viewMode===mode?"#a5b4fc":"#64748b",
-    fontSize:11,fontWeight:viewMode===mode?700:500,cursor:"pointer",textAlign:"center",fontFamily:"'DM Sans',sans-serif"
+    flex:1,padding:"8px 4px",borderRadius:6,border:`1px solid ${viewMode===mode?"rgba(99,102,241,.5)":"#d1d5db"}`,
+    background:viewMode===mode?"#e0e7ff":"transparent",color:viewMode===mode?"#4338ca":"#6b7280",
+    fontSize:11,fontWeight:viewMode===mode?700:500,cursor:"pointer",textAlign:"center",fontFamily:"'Inter',system-ui,sans-serif"
   });
 
   return (
     <div>
       {/* ── HEADER ── */}
-      <Sec title={<span>Photos <span style={{fontWeight:400,color:"#94a3b8",fontFamily:"'JetBrains Mono',monospace"}}>{totalTaken}/{allItems.length}</span></span>}>
-        <div style={S.prog}><div style={{...S.progF,width:`${allItems.length?(totalTaken/allItems.length)*100:0}%`,background:"linear-gradient(90deg,#6366f1,#a855f7)"}}/></div>
+      <Sec title={<span>Photos <span style={{fontWeight:400,color:"#6b7280",fontFamily:"'JetBrains Mono',monospace"}}>{totalTaken}/{allItems.length}</span></span>}>
+        <div style={S.prog}><div style={{...S.progF,width:`${allItems.length?(totalTaken/allItems.length)*100:0}%`,background:"linear-gradient(90deg,#4f46e5,#7e22ce)"}}/></div>
 
         {/* View mode toggle */}
         <div style={{display:"flex",gap:4,marginTop:10}}>
-          <button type="button" onClick={()=>setViewMode("role")} style={tabBtn("role")}>📋 By Role</button>
-          <button type="button" onClick={()=>setViewMode("all")} style={tabBtn("all")}>📂 All</button>
+          <button type="button" onClick={()=>setViewMode("role")} style={tabBtn("role")}>By Role</button>
+          <button type="button" onClick={()=>setViewMode("all")} style={tabBtn("all")}>All</button>
           <button type="button" onClick={()=>setViewMode("compare")} style={tabBtn("compare")}>↔ Side-by-Side</button>
         </div>
 
@@ -2068,14 +2068,14 @@ function PhotoTab({p,u,onLog,user,role}) {
       {/* ═══ VIEW: BY ROLE ═══ */}
       {viewMode === "role" && <>
         {/* ASSESSOR — Pre Photos */}
-        <Sec title={<span style={{color:"#6366f1"}}>📋 Assessor — Pre-Install <span style={{fontWeight:400,color:"#94a3b8",fontFamily:"'JetBrains Mono',monospace"}}>{preTaken}/{preItems.length}</span></span>}>
-          <div style={S.prog}><div style={{...S.progF,width:`${preItems.length?(preTaken/preItems.length)*100:0}%`,background:"linear-gradient(90deg,#6366f1,#a855f7)"}}/></div>
+        <Sec title={<span style={{color:"#4f46e5"}}>Assessor — Pre-Install <span style={{fontWeight:400,color:"#6b7280",fontFamily:"'JetBrains Mono',monospace"}}>{preTaken}/{preItems.length}</span></span>}>
+          <div style={S.prog}><div style={{...S.progF,width:`${preItems.length?(preTaken/preItems.length)*100:0}%`,background:"linear-gradient(90deg,#4f46e5,#7e22ce)"}}/></div>
           {preSections.map(([cat,items]) => {
             const cd = items.filter(i=>hasPhoto(p.photos,i.id)).length;
             return (
               <div key={cat} style={{marginTop:10}}>
-                <div style={{fontSize:11,fontWeight:700,color:"#6366f1",marginBottom:4,display:"flex",justifyContent:"space-between"}}>
-                  <span>{cat}</span><span style={{color:cd===items.length?"#22c55e":"#64748b"}}>{cd}/{items.length}</span>
+                <div style={{fontSize:11,fontWeight:700,color:"#4f46e5",marginBottom:4,display:"flex",justifyContent:"space-between"}}>
+                  <span>{cat}</span><span style={{color:cd===items.length?"#16a34a":"#6b7280"}}>{cd}/{items.length}</span>
                 </div>
                 {items.map(it => <PhotoRow key={it.id} it={it}/>)}
               </div>
@@ -2084,14 +2084,14 @@ function PhotoTab({p,u,onLog,user,role}) {
         </Sec>
 
         {/* INSTALL CREW — Post Photos */}
-        <Sec title={<span style={{color:"#f97316"}}>🏗️ Install Crew — Post-Install <span style={{fontWeight:400,color:"#94a3b8",fontFamily:"'JetBrains Mono',monospace"}}>{postTaken}/{postItems.length}</span></span>}>
-          <div style={S.prog}><div style={{...S.progF,width:`${postItems.length?(postTaken/postItems.length)*100:0}%`,background:"linear-gradient(90deg,#f97316,#eab308)"}}/></div>
+        <Sec title={<span style={{color:"#ea580c"}}>Install Crew — Post-Install <span style={{fontWeight:400,color:"#6b7280",fontFamily:"'JetBrains Mono',monospace"}}>{postTaken}/{postItems.length}</span></span>}>
+          <div style={S.prog}><div style={{...S.progF,width:`${postItems.length?(postTaken/postItems.length)*100:0}%`,background:"linear-gradient(90deg,#ea580c,#ca8a04)"}}/></div>
           {postSections.map(([cat,items]) => {
             const cd = items.filter(i=>hasPhoto(p.photos,i.id)).length;
             return (
               <div key={cat} style={{marginTop:10}}>
-                <div style={{fontSize:11,fontWeight:700,color:"#f97316",marginBottom:4,display:"flex",justifyContent:"space-between"}}>
-                  <span>{cat}</span><span style={{color:cd===items.length?"#22c55e":"#64748b"}}>{cd}/{items.length}</span>
+                <div style={{fontSize:11,fontWeight:700,color:"#ea580c",marginBottom:4,display:"flex",justifyContent:"space-between"}}>
+                  <span>{cat}</span><span style={{color:cd===items.length?"#16a34a":"#6b7280"}}>{cd}/{items.length}</span>
                 </div>
                 {items.map(it => <PhotoRow key={it.id} it={it}/>)}
               </div>
@@ -2104,7 +2104,7 @@ function PhotoTab({p,u,onLog,user,role}) {
       {viewMode === "all" && Object.entries(PHOTO_SECTIONS).map(([cat,items]) => {
         const cd = items.filter(i=>hasPhoto(p.photos,i.id)).length;
         return (
-          <Sec key={cat} title={<span>{cat} <span style={{fontWeight:400,color:cd===items.length?"#22c55e":"#94a3b8"}}>{cd}/{items.length}</span></span>}>
+          <Sec key={cat} title={<span>{cat} <span style={{fontWeight:400,color:cd===items.length?"#16a34a":"#6b7280"}}>{cd}/{items.length}</span></span>}>
             {items.map(it => <PhotoRow key={it.id} it={it}/>)}
           </Sec>
         );
@@ -2113,32 +2113,32 @@ function PhotoTab({p,u,onLog,user,role}) {
       {/* ═══ VIEW: SIDE-BY-SIDE ═══ */}
       {viewMode === "compare" && (() => {
         const pairs = buildPairs();
-        if (pairs.length === 0) return <Sec title="Side-by-Side Comparison"><p style={{color:"#64748b",fontSize:12,textAlign:"center",padding:20}}>No photos to compare yet. Take pre and post photos to see side-by-side.</p></Sec>;
+        if (pairs.length === 0) return <Sec title="Side-by-Side Comparison"><p style={{color:"#6b7280",fontSize:12,textAlign:"center",padding:20}}>No photos to compare yet. Take pre and post photos to see side-by-side.</p></Sec>;
         // Group by category
         const grouped = {};
         pairs.forEach(pr => { if (!grouped[pr.preCat]) grouped[pr.preCat] = []; grouped[pr.preCat].push(pr); });
         return Object.entries(grouped).map(([catBase, catPairs]) => (
           <Sec key={catBase} title={<span>↔ {catBase}</span>}>
             {catPairs.map((pr, pi) => (
-              <div key={pi} style={{marginBottom:12,border:"1px solid rgba(255,255,255,.08)",borderRadius:8,overflow:"hidden"}}>
+              <div key={pi} style={{marginBottom:12,border:"1px solid #e5e7eb",borderRadius:8,overflow:"hidden"}}>
                 {/* Labels */}
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:"1px solid rgba(255,255,255,.06)"}}>
-                  <div style={{padding:"6px 8px",background:"rgba(99,102,241,.08)",fontSize:10,fontWeight:700,color:"#818cf8",textAlign:"center"}}>
-                    📋 PRE — {pr.preIt?.l || "—"}
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:"1px solid #e5e7eb"}}>
+                  <div style={{padding:"6px 8px",background:"#eef2ff",fontSize:10,fontWeight:700,color:"#4f46e5",textAlign:"center"}}>
+                    PRE — {pr.preIt?.l || "—"}
                   </div>
-                  <div style={{padding:"6px 8px",background:"rgba(249,115,22,.08)",fontSize:10,fontWeight:700,color:"#f97316",textAlign:"center"}}>
-                    🏗️ POST — {pr.postIt?.l || "—"}
+                  <div style={{padding:"6px 8px",background:"rgba(249,115,22,.08)",fontSize:10,fontWeight:700,color:"#ea580c",textAlign:"center"}}>
+                    POST — {pr.postIt?.l || "—"}
                   </div>
                 </div>
                 {/* Images */}
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",minHeight:100}}>
                   {/* Pre side */}
-                  <div style={{borderRight:"1px solid rgba(255,255,255,.06)",padding:4,display:"flex",flexDirection:"column",gap:4,alignItems:"center",justifyContent:"center"}}>
+                  <div style={{borderRight:"1px solid #e5e7eb",padding:4,display:"flex",flexDirection:"column",gap:4,alignItems:"center",justifyContent:"center"}}>
                     {pr.preArr.length > 0 ? pr.preArr.map((ph,idx) => (
                       <button key={idx} onClick={()=>setPrev({id:pr.preIt.id,idx})} style={{background:"none",border:"none",padding:0,cursor:"pointer",width:"100%"}}>
                         <img src={ph.d} style={{width:"100%",maxHeight:200,objectFit:"contain",borderRadius:4}} alt=""/>
                       </button>
-                    )) : <div style={{color:"#475569",fontSize:11,padding:20}}>No pre photo</div>}
+                    )) : <div style={{color:"#9ca3af",fontSize:11,padding:20}}>No pre photo</div>}
                   </div>
                   {/* Post side */}
                   <div style={{padding:4,display:"flex",flexDirection:"column",gap:4,alignItems:"center",justifyContent:"center"}}>
@@ -2146,11 +2146,11 @@ function PhotoTab({p,u,onLog,user,role}) {
                       <button key={idx} onClick={()=>setPrev({id:pr.postIt.id,idx})} style={{background:"none",border:"none",padding:0,cursor:"pointer",width:"100%"}}>
                         <img src={ph.d} style={{width:"100%",maxHeight:200,objectFit:"contain",borderRadius:4}} alt=""/>
                       </button>
-                    )) : <div style={{color:"#475569",fontSize:11,padding:20}}>No post photo</div>}
+                    )) : <div style={{color:"#9ca3af",fontSize:11,padding:20}}>No post photo</div>}
                   </div>
                 </div>
                 {/* Metadata */}
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderTop:"1px solid rgba(255,255,255,.04)",fontSize:9,color:"#475569"}}>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",borderTop:"1px solid #f3f4f6",fontSize:9,color:"#9ca3af"}}>
                   <div style={{padding:"3px 8px"}}>{pr.preArr[0]?.by||""}{pr.preArr[0]?.at?` · ${new Date(pr.preArr[0].at).toLocaleDateString()}`:""}</div>
                   <div style={{padding:"3px 8px"}}>{pr.postArr[0]?.by||""}{pr.postArr[0]?.at?` · ${new Date(pr.postArr[0].at).toLocaleDateString()}`:""}</div>
                 </div>
@@ -2427,18 +2427,18 @@ function ScopeTab({p,u,onLog}) {
 
   return (
     <div id="scope-print-content">
-      <Sec title="📋 2026 HEA/IE Retrofit Form">
+      <Sec title="2026 HEA/IE Retrofit Form">
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <p style={{fontSize:11,color:"#94a3b8",margin:0}}>Scope of Work — submit to RISE for approval</p>
+          <p style={{fontSize:11,color:"#6b7280",margin:0}}>Scope of Work — submit to RISE for approval</p>
           <div style={{display:"flex",gap:6}}>
-            <button type="button" style={{...S.ghost,padding:"4px 10px",fontSize:10,color:"#818cf8",borderColor:"rgba(99,102,241,.3)"}} onClick={()=>{
+            <button type="button" style={{...S.ghost,padding:"4px 10px",fontSize:10,color:"#4f46e5",borderColor:"#c7d2fe"}} onClick={()=>{
               const conf = confirm("Re-fill empty scope fields from assessment data?");
               if(conf){setFilled(false);}
             }}>↻ Sync from Assessment</button>
             <PrintBtn onClick={()=>printScope(p,s)}/>
           </div>
         </div>
-        {!filled && <div style={{fontSize:10,color:"#22c55e",marginTop:4}}>✓ Auto-filled empty fields from assessment data</div>}
+        {!filled && <div style={{fontSize:10,color:"#16a34a",marginTop:4}}>✓ Auto-filled empty fields from assessment data</div>}
       </Sec>
 
       {/* ══ PAGE 1: BUILDING PROPERTY TYPE ══ */}
@@ -2450,17 +2450,17 @@ function ScopeTab({p,u,onLog}) {
           <F label="Bedrooms" value={s.bedrooms||""} onChange={v=>ss("bedrooms",v)} num/>
           <F label="Occupants" value={p.occupants} onChange={v=>u({occupants:v})} num/>
           <F label="Sq Footage" value={p.sqft} onChange={v=>u({sqft:v})} num/>
-          <div style={{display:"flex",flexDirection:"column"}}><label style={S.fl}>Volume</label><div style={{...S.inp,background:"rgba(99,102,241,.08)",color:"#a5b4fc",display:"flex",alignItems:"center",marginTop:"auto"}}>{Number(p.sqft) ? (Number(p.sqft)*8).toLocaleString() : "—"}<span style={{fontSize:10,color:"#64748b",marginLeft:6}}>ft³ (sqft × 8)</span></div></div>
+          <div style={{display:"flex",flexDirection:"column"}}><label style={S.fl}>Volume</label><div style={{...S.inp,background:"#eef2ff",color:"#4338ca",display:"flex",alignItems:"center",marginTop:"auto"}}>{Number(p.sqft) ? (Number(p.sqft)*8).toLocaleString() : "—"}<span style={{fontSize:10,color:"#6b7280",marginLeft:6}}>ft³ (sqft × 8)</span></div></div>
           <F label="Home Age" computed={p.yearBuilt ? (new Date().getFullYear() - Number(p.yearBuilt)) + " yrs" : "—"} suffix="auto"/>
           <Sel label="Tenant Type" value={s.tenantType||""} onChange={v=>ss("tenantType",v)} opts={["Own","Rent"]}/>
         </Gr>
-        <div style={{marginTop:8,fontSize:11,fontWeight:600,color:"#818cf8",marginBottom:4,textTransform:"uppercase",letterSpacing:".05em"}}>Gutters</div>
+        <div style={{marginTop:8,fontSize:11,fontWeight:600,color:"#4f46e5",marginBottom:4,textTransform:"uppercase",letterSpacing:".05em"}}>Gutters</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:"0px 8px"}}>
           <CK checked={s.gutterExist} onChange={v=>ss("gutterExist",v)} label="Gutters Exist"/>
           <CK checked={s.downspouts} onChange={v=>ss("downspouts",v)} label="Downspouts"/>
           <CK checked={s.gutterRepair} onChange={v=>ss("gutterRepair",v)} label="Repairs Needed"/>
         </div>
-        <div style={{marginTop:8,fontSize:11,fontWeight:600,color:"#818cf8",marginBottom:4,textTransform:"uppercase",letterSpacing:".05em"}}>Roof</div>
+        <div style={{marginTop:8,fontSize:11,fontWeight:600,color:"#4f46e5",marginBottom:4,textTransform:"uppercase",letterSpacing:".05em"}}>Roof</div>
         <Gr>
           <Sel label="Condition" value={s.roofCondition||""} onChange={v=>ss("roofCondition",v)} opts={["Good","Average","Poor"]}/>
           <Sel label="Type" value={s.roofType||""} onChange={v=>ss("roofType",v)} opts={["Architecture","3-Tab","Flat"]}/>
@@ -2475,7 +2475,7 @@ function ScopeTab({p,u,onLog}) {
       </Sec>
 
       {/* ══ INTERIOR CONDITIONS (from assessment) ══ */}
-      <Sec title={<span>Interior Conditions {a.ceilingCond && <span style={{fontSize:9,color:"#818cf8",fontWeight:400}}> · assessment values auto-filled</span>}</span>}>
+      <Sec title={<span>Interior Conditions {a.ceilingCond && <span style={{fontSize:9,color:"#4f46e5",fontWeight:400}}> · assessment values auto-filled</span>}</span>}>
         <Gr>
           <Sel label="Ceiling Conditions" value={s.ceilingCond||""} onChange={v=>ss("ceilingCond",v)} opts={["Good","Poor"]}/>
           <Sel label="Wall Conditions" value={s.wallCond||""} onChange={v=>ss("wallCond",v)} opts={["Good","Fair","Poor"]}/>
@@ -2530,8 +2530,8 @@ function ScopeTab({p,u,onLog}) {
             const val = s.htg?.cleanTuneOverride !== undefined ? s.htg.cleanTuneOverride : (autoOn || !!s.htg?.cleanTune);
             return <div style={{display:"flex",alignItems:"center",gap:4}}>
               <CK checked={val} onChange={v=>{sn("htg","cleanTune",v);sn("htg","cleanTuneOverride",v);}} label="Clean & Tune"/>
-              {autoOn && s.htg?.cleanTuneOverride===undefined && <span style={{fontSize:8,color:"#818cf8"}}>auto</span>}
-              {s.htg?.cleanTuneOverride!==undefined && autoOn && <span style={{fontSize:8,color:"#818cf8",cursor:"pointer",textDecoration:"underline"}} onClick={()=>{sn("htg","cleanTuneOverride",undefined);sn("htg","cleanTune",true);}}>↻ auto</span>}
+              {autoOn && s.htg?.cleanTuneOverride===undefined && <span style={{fontSize:8,color:"#4f46e5"}}>auto</span>}
+              {s.htg?.cleanTuneOverride!==undefined && autoOn && <span style={{fontSize:8,color:"#4f46e5",cursor:"pointer",textDecoration:"underline"}} onClick={()=>{sn("htg","cleanTuneOverride",undefined);sn("htg","cleanTune",true);}}>↻ auto</span>}
             </div>;
           })()}
         </div>
@@ -2647,14 +2647,14 @@ function ScopeTab({p,u,onLog}) {
 
       {/* ══ PAGE 3: DOOR TYPES / EXHAUST VENTING ══ */}
       <Sec title="Door Types / Exhaust Venting">
-        <div style={{fontSize:11,fontWeight:600,color:"#818cf8",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em"}}>Weather Strips / Door Sweeps</div>
+        <div style={{fontSize:11,fontWeight:600,color:"#4f46e5",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em"}}>Weather Strips / Door Sweeps</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:"0px 8px"}}>
           {["Front","Back","Basement","Attic"].map(d=>(
             <CK key={d} checked={s.doors?.[d]} onChange={v=>sn("doors",d,v)} label={`${d} — Existing`}/>
           ))}
         </div>
         <div style={{maxWidth:200}}><F label="Total Strips/Sweeps Needed" value={s.totalSweeps||""} onChange={v=>ss("totalSweeps",v)}/></div>
-        <div style={{marginTop:10,fontSize:11,fontWeight:600,color:"#818cf8",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em"}}>Exhaust</div>
+        <div style={{marginTop:10,fontSize:11,fontWeight:600,color:"#4f46e5",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em"}}>Exhaust</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:"0px 8px"}}>
           <CK checked={s.exh?.fanReplace} onChange={v=>sn("exh","fanReplace",v)} label="Exhaust Fan Replacement"/>
           <CK checked={s.exh?.bathFanLight} onChange={v=>sn("exh","bathFanLight",v)} label="Bath Fan w/ Light"/>
@@ -2783,11 +2783,11 @@ function ScopeTab({p,u,onLog}) {
         <div style={{marginBottom:8}}><Sel label="Type" value={s.fnd?.type||""} onChange={v=>sn("fnd","type",v)} opts={["No Basement/Slab","Finished","Unfinished","w/ Framing"]}/></div>
         <Gr><F label="Above Grade SqFt" value={s.fnd?.aboveSqft||""} onChange={v=>sn("fnd","aboveSqft",v)} num/><F label="Below Grade SqFt" value={s.fnd?.belowSqft||""} onChange={v=>sn("fnd","belowSqft",v)} num/><F label="Pre-Existing R" value={s.fnd?.preR||""} onChange={v=>sn("fnd","preR",v)} num/></Gr>
         <div style={{marginTop:8}}><Sel label="Insulation Type" value={s.fnd?.insulType||""} onChange={v=>sn("fnd","insulType",v)} opts={["Fiberglass","Rigid Foam Board","None"]}/></div>
-        <div style={{marginTop:8,fontSize:11,fontWeight:600,color:"#818cf8",textTransform:"uppercase",letterSpacing:".05em"}}>Band Joists</div>
+        <div style={{marginTop:8,fontSize:11,fontWeight:600,color:"#4f46e5",textTransform:"uppercase",letterSpacing:".05em"}}>Band Joists</div>
         <div style={{marginTop:4}}><CK checked={s.fnd?.bandAccess} onChange={v=>sn("fnd","bandAccess",v)} label="Access to Band Joists"/></div>
         {s.fnd?.bandAccess && <div style={{marginTop:4}}><Gr><F label="Linear Ft" value={s.fnd?.bandLnft||""} onChange={v=>sn("fnd","bandLnft",v)}/><F label="Pre-Existing R" value={s.fnd?.bandR||""} onChange={v=>sn("fnd","bandR",v)}/><Sel label="Insulation" value={s.fnd?.bandInsul||""} onChange={v=>sn("fnd","bandInsul",v)} opts={["Fiberglass","Rigid Foam Board","None"]}/></Gr></div>}
 
-        <div style={{marginTop:10,fontSize:11,fontWeight:600,color:"#818cf8",textTransform:"uppercase",letterSpacing:".05em"}}>Crawlspace</div>
+        <div style={{marginTop:10,fontSize:11,fontWeight:600,color:"#4f46e5",textTransform:"uppercase",letterSpacing:".05em"}}>Crawlspace</div>
         <div style={{marginTop:4,display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:"0px 8px"}}>
           <CK checked={s.fnd?.vented} onChange={v=>sn("fnd","vented",v)} label="Vented"/>
           <CK checked={s.fnd?.vaporBarrier} onChange={v=>sn("fnd","vaporBarrier",v)} label="Vapor Barrier Needed"/>
@@ -2924,13 +2924,13 @@ function ScopeTab({p,u,onLog}) {
           const Ri = v => Math.round(v);
 
           // Styles
-          const hdr = {fontSize:13,fontWeight:700,color:"#818cf8",margin:"14px 0 6px",borderBottom:"1px solid rgba(99,102,241,.25)",paddingBottom:4};
-          const row = {display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0",fontSize:12,borderBottom:"1px solid rgba(255,255,255,.04)"};
-          const lbl = {color:"#94a3b8",flex:1};
-          const val = {fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:"#e2e8f0",textAlign:"right"};
-          const eq = {fontSize:10,color:"#475569",padding:"1px 0 5px 12px",fontFamily:"'JetBrains Mono',monospace",borderLeft:"2px solid rgba(99,102,241,.15)"};
-          const autoBox = {background:"rgba(99,102,241,.06)",borderRadius:6,padding:"6px 10px",fontFamily:"'JetBrains Mono',monospace",fontWeight:600,fontSize:13,color:"#e2e8f0",textAlign:"center"};
-          const autoSub = {fontSize:9,color:"#64748b",textAlign:"center",marginTop:2};
+          const hdr = {fontSize:13,fontWeight:700,color:"#4f46e5",margin:"14px 0 6px",borderBottom:"1px solid rgba(99,102,241,.25)",paddingBottom:4};
+          const row = {display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0",fontSize:12,borderBottom:"1px solid #f3f4f6"};
+          const lbl = {color:"#6b7280",flex:1};
+          const val = {fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:"#1f2937",textAlign:"right"};
+          const eq = {fontSize:10,color:"#9ca3af",padding:"1px 0 5px 12px",fontFamily:"'JetBrains Mono',monospace",borderLeft:"2px solid #e0e7ff"};
+          const autoBox = {background:"rgba(99,102,241,.06)",borderRadius:6,padding:"6px 10px",fontFamily:"'JetBrains Mono',monospace",fontWeight:600,fontSize:13,color:"#1f2937",textAlign:"center"};
+          const autoSub = {fontSize:9,color:"#6b7280",textAlign:"center",marginTop:2};
           const resultBox = {background:"rgba(168,85,247,.08)",border:"2px solid rgba(168,85,247,.3)",borderRadius:8,padding:12,marginTop:8};
           const solverBox = (c) => ({background:`rgba(${c},.04)`,border:`1px solid rgba(${c},.2)`,borderRadius:8,padding:10,marginTop:10});
 
@@ -2944,28 +2944,28 @@ function ScopeTab({p,u,onLog}) {
                 <div style={row}><span style={lbl}>Infiltration credit</span><span style={val}>Yes</span></div>
                 <div style={row}><span style={lbl}>Alt. compliance</span><span style={val}>Yes</span></div>
                 <div style={row}><span style={lbl}>Weather station</span><span style={val}>Chicago Midway AP</span></div>
-                <div style={row}><span style={lbl}>wsf [1/hr]</span><span style={{...val,color:"#818cf8"}}>{wsf}</span></div>
+                <div style={row}><span style={lbl}>wsf [1/hr]</span><span style={{...val,color:"#4f46e5"}}>{wsf}</span></div>
               </div>
 
               {/* ══ BUILDING INPUTS ══ */}
               <div style={hdr}>Building Inputs</div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:8}}>
-                <div><div style={{fontSize:10,color:"#94a3b8",marginBottom:3}}>Floor area [ft²]</div><div style={autoBox}>{Afl||"—"}</div><div style={autoSub}>{finBasement > 0 ? `${baseSqft} + ${finBasement} fin. bsmt` : "← Sq Footage"}</div></div>
-                <div><div style={{fontSize:10,color:"#94a3b8",marginBottom:3}}>Nbr (bedrooms)</div><div style={autoBox}>{Nbr}</div><div style={autoSub}>Occupants = Nbr + 1 = {Nbr + 1}</div></div>
-                <div><div style={{fontSize:10,color:"#94a3b8",marginBottom:3}}>Height [ft]</div><div style={autoBox}>{H}</div><div style={autoSub}>{st>=2?"2-story":"1"+(st>=1.5?".5":"")+"-story"}</div></div>
-                <div><div style={{fontSize:10,color:"#94a3b8",marginBottom:3}}>Q50 [CFM]</div><div style={autoBox}>{Q50||"—"}</div><div style={autoSub}>← Diagnostics</div></div>
+                <div><div style={{fontSize:10,color:"#6b7280",marginBottom:3}}>Floor area [ft²]</div><div style={autoBox}>{Afl||"—"}</div><div style={autoSub}>{finBasement > 0 ? `${baseSqft} + ${finBasement} fin. bsmt` : "← Sq Footage"}</div></div>
+                <div><div style={{fontSize:10,color:"#6b7280",marginBottom:3}}>Nbr (bedrooms)</div><div style={autoBox}>{Nbr}</div><div style={autoSub}>Occupants = Nbr + 1 = {Nbr + 1}</div></div>
+                <div><div style={{fontSize:10,color:"#6b7280",marginBottom:3}}>Height [ft]</div><div style={autoBox}>{H}</div><div style={autoSub}>{st>=2?"2-story":"1"+(st>=1.5?".5":"")+"-story"}</div></div>
+                <div><div style={{fontSize:10,color:"#6b7280",marginBottom:3}}>Q50 [CFM]</div><div style={autoBox}>{Q50||"—"}</div><div style={autoSub}>← Diagnostics</div></div>
               </div>
 
               {/* ══ LOCAL VENTILATION ══ */}
               <div style={hdr}>Local Ventilation — Alternative Compliance</div>
-              <div style={{fontSize:9,color:"#64748b",marginBottom:2}}>Blank = no fan = no requirement. Openable window = 20 CFM credit. Kitchen: 100 CFM · Bath: 50 CFM (intermittent rates)</div>
-              <div style={{fontSize:9,color:"#f59e0b",marginBottom:6}}>⚠ If a fan is present but not operational or CFM is unknown, enter 0.</div>
+              <div style={{fontSize:9,color:"#6b7280",marginBottom:2}}>Blank = no fan = no requirement. Openable window = 20 CFM credit. Kitchen: 100 CFM · Bath: 50 CFM (intermittent rates)</div>
+              <div style={{fontSize:9,color:"#b45309",marginBottom:6}}>⚠ If a fan is present but not operational or CFM is unknown, enter 0.</div>
               <div style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",fontSize:11,alignItems:"center"}}>
-                <span style={{fontWeight:600,color:"#64748b"}}></span>
-                <span style={{fontWeight:600,color:"#64748b",textAlign:"center"}}>Fan Flow [CFM]</span>
-                <span style={{fontWeight:600,color:"#64748b",textAlign:"center",fontSize:9}}>Window</span>
-                <span style={{fontWeight:600,color:"#64748b",textAlign:"center"}}>Req'd</span>
-                <span style={{fontWeight:600,color:"#64748b",textAlign:"center"}}>Deficit</span>
+                <span style={{fontWeight:600,color:"#6b7280"}}></span>
+                <span style={{fontWeight:600,color:"#6b7280",textAlign:"center"}}>Fan Flow [CFM]</span>
+                <span style={{fontWeight:600,color:"#6b7280",textAlign:"center",fontSize:9}}>Window</span>
+                <span style={{fontWeight:600,color:"#6b7280",textAlign:"center"}}>Req'd</span>
+                <span style={{fontWeight:600,color:"#6b7280",textAlign:"center"}}>Deficit</span>
               </div>
               {[
                 {n:"Kitchen",v:kCFM,k:"kitchenCFM",ak:"kitchenFan",w:kWin,wk:"kWin",r:kReq,d:kDef,present:kPresent},
@@ -2974,22 +2974,22 @@ function ScopeTab({p,u,onLog}) {
                 {n:"Bath #3",v:b3,k:"bath3CFM",ak:"bathFan3",w:b3Win,wk:"b3Win",r:b3Req,d:b3Def,present:b3Present},
               ].map(f=>(
                 <div key={f.n} style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",alignItems:"center",marginBottom:2}}>
-                  <span style={{fontSize:12,color:"#cbd5e1"}}>{f.n}</span>
+                  <span style={{fontSize:12,color:"#374151"}}>{f.n}</span>
                   <input style={{...S.inp,textAlign:"center",fontSize:12}} value={s.ashrae?.[f.k]??a[f.ak]??""} onChange={e=>sn("ashrae",f.k,e.target.value)} placeholder="blank = none"/>
-                  <div style={{textAlign:"center"}}><input type="checkbox" checked={f.w} onChange={e=>sn("ashrae",f.wk,e.target.checked)} style={{accentColor:"#818cf8"}}/></div>
-                  <div style={{textAlign:"center",fontSize:11,color:f.present?"#64748b":"#475569"}}>{f.present?f.r:"—"}</div>
-                  <div style={{textAlign:"center",fontSize:13,fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:!f.present?"#475569":f.d>0?"#f59e0b":"#22c55e"}}>{f.present?f.d:"—"}</div>
+                  <div style={{textAlign:"center"}}><input type="checkbox" checked={f.w} onChange={e=>sn("ashrae",f.wk,e.target.checked)} style={{accentColor:"#4f46e5"}}/></div>
+                  <div style={{textAlign:"center",fontSize:11,color:f.present?"#6b7280":"#9ca3af"}}>{f.present?f.r:"—"}</div>
+                  <div style={{textAlign:"center",fontSize:13,fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:!f.present?"#9ca3af":f.d>0?"#b45309":"#16a34a"}}>{f.present?f.d:"—"}</div>
                 </div>
               ))}
-              <div style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",borderTop:"1px solid rgba(255,255,255,.1)",paddingTop:4,marginTop:4}}>
-                <span style={{fontSize:12,fontWeight:700,color:"#e2e8f0"}}>Total</span>
+              <div style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",borderTop:"1px solid #d1d5db",paddingTop:4,marginTop:4}}>
+                <span style={{fontSize:12,fontWeight:700,color:"#1f2937"}}>Total</span>
                 <span></span><span></span><span></span>
-                <div style={{textAlign:"center",fontSize:14,fontWeight:800,fontFamily:"'JetBrains Mono',monospace",color:totalDef>0?"#f59e0b":"#22c55e"}}>{Ri(totalDef)}</div>
+                <div style={{textAlign:"center",fontSize:14,fontWeight:800,fontFamily:"'JetBrains Mono',monospace",color:totalDef>0?"#b45309":"#16a34a"}}>{Ri(totalDef)}</div>
               </div>
 
               {/* ══ RESULTS ══ */}
               <div style={resultBox}>
-                <div style={{fontSize:13,fontWeight:700,color:"#a855f7",marginBottom:10}}>Dwelling-Unit Ventilation Results</div>
+                <div style={{fontSize:13,fontWeight:700,color:"#7e22ce",marginBottom:10}}>Dwelling-Unit Ventilation Results</div>
 
                 <div style={row}><span style={lbl}>Infiltration credit, Qinf [CFM]</span><span style={val}>{R(Qinf_eff)}</span></div>
                 <div style={eq}>= 0.052 × Q50 × wsf × (H / 8.2)^0.4<br/>= 0.052 × {Q50} × {wsf} × ({H} / 8.2)^0.4</div>
@@ -3004,55 +3004,55 @@ function ScopeTab({p,u,onLog}) {
                 <div style={eq}>= totalDeficit × 0.25 (intermittent → continuous)<br/>= {Ri(totalDef)} × 0.25</div>
 
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0 4px",borderTop:"2px solid rgba(168,85,247,.4)",marginTop:8}}>
-                  <span style={{fontWeight:700,color:"#e2e8f0",fontSize:13}}>Required mech. ventilation, Qfan [CFM]</span>
-                  <span style={{fontWeight:800,color:"#a855f7",fontSize:18,fontFamily:"'JetBrains Mono',monospace"}}>{R(Qfan)}</span>
+                  <span style={{fontWeight:700,color:"#1f2937",fontSize:13}}>Required mech. ventilation, Qfan [CFM]</span>
+                  <span style={{fontWeight:800,color:"#7e22ce",fontSize:18,fontFamily:"'JetBrains Mono',monospace"}}>{R(Qfan)}</span>
                 </div>
                 <div style={eq}>= Qtot + supplement − Qinf<br/>= {R(Qtot)} + {R(supplement)} − {R(Qinf_credit)}</div>
               </div>
 
               {/* ══ DWELLING-UNIT VENTILATION RUN-TIME SOLVER ══ */}
               <div style={solverBox("99,102,241")}>
-                <div style={{fontSize:12,fontWeight:700,color:"#818cf8",marginBottom:6}}>Dwelling-Unit Ventilation Run-Time Solver</div>
-                <div style={{fontSize:10,color:"#94a3b8",marginBottom:8}}>Select fan setting. Recommended = lowest setting ≥ Qfan ({R(Qfan)} CFM). All fans run continuous.</div>
+                <div style={{fontSize:12,fontWeight:700,color:"#4f46e5",marginBottom:6}}>Dwelling-Unit Ventilation Run-Time Solver</div>
+                <div style={{fontSize:10,color:"#6b7280",marginBottom:8}}>Select fan setting. Recommended = lowest setting ≥ Qfan ({R(Qfan)} CFM). All fans run continuous.</div>
                 <div style={{display:"flex",gap:8,marginBottom:10}}>
                   {FAN_SETTINGS.map(cfm => {
                     const meets = cfm >= Qfan && Qfan > 0;
                     const isRec = cfm === recFan && Qfan > 0;
                     const sel = Number(s.ashrae?.fanSetting) === cfm;
                     return <button key={cfm} type="button" onClick={()=>sn("ashrae","fanSetting",cfm)} style={{
-                      flex:1,padding:"10px 8px",borderRadius:8,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",
-                      border:sel?`2px solid ${isRec?"#22c55e":"#818cf8"}`:`1px solid ${meets?"rgba(34,197,94,.3)":"rgba(255,255,255,.1)"}`,
-                      background:sel?(isRec?"rgba(34,197,94,.15)":"rgba(99,102,241,.15)"):"rgba(255,255,255,.03)",
-                      color:sel?(isRec?"#22c55e":"#a5b4fc"):meets?"#86efac":"#64748b",textAlign:"center"
+                      flex:1,padding:"10px 8px",borderRadius:8,cursor:"pointer",fontFamily:"'Inter',system-ui,sans-serif",
+                      border:sel?`2px solid ${isRec?"#16a34a":"#4f46e5"}`:`1px solid ${meets?"#86efac":"#d1d5db"}`,
+                      background:sel?(isRec?"#dcfce7":"#e0e7ff"):"#f9fafb",
+                      color:sel?(isRec?"#16a34a":"#4338ca"):meets?"#15803d":"#6b7280",textAlign:"center"
                     }}>
                       <div style={{fontSize:18,fontWeight:700}}>{cfm}</div>
                       <div style={{fontSize:10}}>CFM</div>
-                      {isRec && <div style={{fontSize:9,marginTop:2,color:"#22c55e",fontWeight:600}}>✓ REC</div>}
-                      {!meets && Qfan > 0 && <div style={{fontSize:9,marginTop:2,color:"#ef4444"}}>Below Qfan</div>}
+                      {isRec && <div style={{fontSize:9,marginTop:2,color:"#16a34a",fontWeight:600}}>✓ REC</div>}
+                      {!meets && Qfan > 0 && <div style={{fontSize:9,marginTop:2,color:"#dc2626"}}>Below Qfan</div>}
                     </button>;
                   })}
                 </div>
                 {Number(s.ashrae?.fanSetting) > 0 && Qfan > 0 && (() => {
                   const fan = Number(s.ashrae.fanSetting);
                   const minPerHr = R(Qfan / fan * 60);
-                  return <div style={{background:"rgba(99,102,241,.08)",borderRadius:8,padding:10}}>
+                  return <div style={{background:"#eef2ff",borderRadius:8,padding:10}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                      <span style={{fontSize:12,color:"#cbd5e1"}}>Fan capacity</span>
-                      <span style={{fontSize:14,fontWeight:700,color:"#a5b4fc",fontFamily:"'JetBrains Mono',monospace"}}>{fan} CFM</span>
+                      <span style={{fontSize:12,color:"#374151"}}>Fan capacity</span>
+                      <span style={{fontSize:14,fontWeight:700,color:"#4338ca",fontFamily:"'JetBrains Mono',monospace"}}>{fan} CFM</span>
                     </div>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                      <span style={{fontSize:12,color:"#cbd5e1"}}>Min. run-time per hour</span>
-                      <span style={{fontSize:14,fontWeight:700,color:"#818cf8",fontFamily:"'JetBrains Mono',monospace"}}>{minPerHr} min/hr</span>
+                      <span style={{fontSize:12,color:"#374151"}}>Min. run-time per hour</span>
+                      <span style={{fontSize:14,fontWeight:700,color:"#4f46e5",fontFamily:"'JetBrains Mono',monospace"}}>{minPerHr} min/hr</span>
                     </div>
                     <div style={eq}>= Qfan ÷ fan capacity × 60<br/>= {R(Qfan)} ÷ {fan} × 60 = {minPerHr} min/hr</div>
-                    <div style={{marginTop:6,fontSize:10,color:fan >= Qfan ? "#22c55e" : "#f59e0b",fontWeight:600}}>
+                    <div style={{marginTop:6,fontSize:10,color:fan >= Qfan ? "#16a34a" : "#b45309",fontWeight:600}}>
                       {fan >= Qfan ? `✓ Continuous (60 min/hr) exceeds minimum ${minPerHr} min/hr` : `⚠ Fan setting below Qfan — does not meet requirement`}
                     </div>
                   </div>;
                 })()}
               </div>
 
-              <p style={{fontSize:9,color:"#475569",marginTop:10,textAlign:"right"}}>ASHRAE 62.2-2016 · Local Ventilation Alternative Compliance · basc.pnnl.gov/redcalc</p>
+              <p style={{fontSize:9,color:"#9ca3af",marginTop:10,textAlign:"right"}}>ASHRAE 62.2-2016 · Local Ventilation Alternative Compliance · basc.pnnl.gov/redcalc</p>
             </div>
           );
         })()}
@@ -3120,13 +3120,13 @@ function ScopeTab({p,u,onLog}) {
                 else { const nu={...mu}; delete nu[m]; u({measureUnchecked:nu}); if(!inList) tog("measures",m); }
               };
               return <div key={m} style={{display:"flex",alignItems:"center",gap:6}}>
-                <CK checked={checked} onChange={togM} label={m} color={checked?"#22c55e":null}/>
-                {checked && !inList && autoOn && <span style={{fontSize:8,color:"#818cf8"}}>auto</span>}
+                <CK checked={checked} onChange={togM} label={m} color={checked?"#16a34a":null}/>
+                {checked && !inList && autoOn && <span style={{fontSize:8,color:"#4f46e5"}}>auto</span>}
                 {checked && <div style={{display:"flex",alignItems:"center",gap:4,marginLeft:"auto"}}>
-                  <input style={{...S.inp,width:70,textAlign:"center",fontSize:11,background:autoQty?"rgba(99,102,241,.08)":"",color:autoQty?"#a5b4fc":""}} inputMode="decimal" value={q} onChange={e=>{const v=e.target.value;if(v===""||/^-?\d*\.?\d*$/.test(v))setQ(m,v);}} placeholder="qty"/>
-                  <span style={{fontSize:9,color:"#64748b",minWidth:28}}>{unit(m)}</span>
-                  {autoQty && <span style={{fontSize:8,color:"#818cf8"}}>auto</span>}
-                  {!autoQty && aq[m]!==undefined && <span style={{fontSize:8,color:"#818cf8",cursor:"pointer",textDecoration:"underline"}} onClick={()=>{const nq={...mq};delete nq[m];u({measureQty:nq});}} title="Reset to auto-calculated value">↻ auto</span>}
+                  <input style={{...S.inp,width:70,textAlign:"center",fontSize:11,background:autoQty?"#eef2ff":"",color:autoQty?"#4338ca":""}} inputMode="decimal" value={q} onChange={e=>{const v=e.target.value;if(v===""||/^-?\d*\.?\d*$/.test(v))setQ(m,v);}} placeholder="qty"/>
+                  <span style={{fontSize:9,color:"#6b7280",minWidth:28}}>{unit(m)}</span>
+                  {autoQty && <span style={{fontSize:8,color:"#4f46e5"}}>auto</span>}
+                  {!autoQty && aq[m]!==undefined && <span style={{fontSize:8,color:"#4f46e5",cursor:"pointer",textDecoration:"underline"}} onClick={()=>{const nq={...mq};delete nq[m];u({measureQty:nq});}} title="Reset to auto-calculated value">↻ auto</span>}
                 </div>}
               </div>;
             })}
@@ -3162,13 +3162,13 @@ function ScopeTab({p,u,onLog}) {
                 else { const nu={...mu}; delete nu[m]; u({hsUnchecked:nu}); if(!inList) tog("healthSafety",m); }
               };
               return <div key={m} style={{display:"flex",alignItems:"center",gap:6}}>
-                <CK checked={checked} onChange={togM} label={m} color={checked?"#f59e0b":null}/>
-                {checked && !inList && autoOn && <span style={{fontSize:8,color:"#818cf8"}}>auto</span>}
+                <CK checked={checked} onChange={togM} label={m} color={checked?"#b45309":null}/>
+                {checked && !inList && autoOn && <span style={{fontSize:8,color:"#4f46e5"}}>auto</span>}
                 {checked && <div style={{display:"flex",alignItems:"center",gap:4,marginLeft:"auto"}}>
-                  <input style={{...S.inp,width:70,textAlign:"center",fontSize:11,background:autoQty?"rgba(99,102,241,.08)":"",color:autoQty?"#a5b4fc":""}} inputMode="decimal" value={q} onChange={e=>{const v=e.target.value;if(v===""||/^-?\d*\.?\d*$/.test(v))setQ(m,v);}} placeholder="qty"/>
-                  <span style={{fontSize:9,color:"#64748b",minWidth:20}}>ea</span>
-                  {autoQty && <span style={{fontSize:8,color:"#818cf8"}}>auto</span>}
-                  {!autoQty && aq[m]!==undefined && <span style={{fontSize:8,color:"#818cf8",cursor:"pointer",textDecoration:"underline"}} onClick={()=>{const nq={...mq};delete nq[m];u({measureQty:nq});}} title="Reset to auto-calculated value">↻ auto</span>}
+                  <input style={{...S.inp,width:70,textAlign:"center",fontSize:11,background:autoQty?"#eef2ff":"",color:autoQty?"#4338ca":""}} inputMode="decimal" value={q} onChange={e=>{const v=e.target.value;if(v===""||/^-?\d*\.?\d*$/.test(v))setQ(m,v);}} placeholder="qty"/>
+                  <span style={{fontSize:9,color:"#6b7280",minWidth:20}}>ea</span>
+                  {autoQty && <span style={{fontSize:8,color:"#4f46e5"}}>auto</span>}
+                  {!autoQty && aq[m]!==undefined && <span style={{fontSize:8,color:"#4f46e5",cursor:"pointer",textDecoration:"underline"}} onClick={()=>{const nq={...mq};delete nq[m];u({measureQty:nq});}} title="Reset to auto-calculated value">↻ auto</span>}
                 </div>}
               </div>;
             })}
@@ -3358,8 +3358,8 @@ function InstallTab({p,u,onLog,user,role}) {
       </div></div>
       <div class="sec"><h3>Health & Safety Checks</h3>${safetyRows}</div>
       <div class="sec"><h3>Status</h3>
-        <div class="row"><span class="lbl">Final Passed</span><span class="val">${p.finalPassed?"✅ Yes":"No"}</span></div>
-        <div class="row"><span class="lbl">Customer Sign-off</span><span class="val">${p.customerSignoff?"✅ Yes":"No"}</span></div>
+        <div class="row"><span class="lbl">Final Passed</span><span class="val">${p.finalPassed?"Yes":"No"}</span></div>
+        <div class="row"><span class="lbl">Customer Sign-off</span><span class="val">${p.customerSignoff?"Yes":"No"}</span></div>
       </div>`;
     return formPrintHTML("Install Completion & Final Inspection", p, body, fi.inspectorSig);
   };
@@ -3373,7 +3373,7 @@ function InstallTab({p,u,onLog,user,role}) {
         <div style={S.camH}>
           <button style={{...S.back,fontSize:18}} onClick={()=>setPrev(null)}>← Back</button>
           <div style={{flex:1,textAlign:"center",fontWeight:600,fontSize:14}}>{it?.l} {arr.length>1?`(${prev.idx+1}/${arr.length})`:""}</div>
-          <button style={{...S.ghost,color:"#ef4444",borderColor:"#ef4444",padding:"4px 10px"}} onClick={()=>{
+          <button style={{...S.ghost,color:"#dc2626",borderColor:"#dc2626",padding:"4px 10px"}} onClick={()=>{
             const remaining = arr.filter((_,i)=>i!==prev.idx);
             u({photos:{...p.photos,[prev.id]:remaining.length?remaining:undefined}});
             if(onLog)onLog(`🗑️ Removed ${it?.l||prev.id}`);setPrev(null);
@@ -3384,7 +3384,7 @@ function InstallTab({p,u,onLog,user,role}) {
           {arr.length > 1 && prev.idx > 0 && <button onClick={()=>setPrev({...prev,idx:prev.idx-1})} style={{position:"absolute",left:8,top:"50%",transform:"translateY(-50%)",background:"rgba(0,0,0,.5)",color:"#fff",border:"none",borderRadius:"50%",width:36,height:36,fontSize:18,cursor:"pointer"}}>‹</button>}
           {arr.length > 1 && prev.idx < arr.length-1 && <button onClick={()=>setPrev({...prev,idx:prev.idx+1})} style={{position:"absolute",right:8,top:"50%",transform:"translateY(-50%)",background:"rgba(0,0,0,.5)",color:"#fff",border:"none",borderRadius:"50%",width:36,height:36,fontSize:18,cursor:"pointer"}}>›</button>}
         </div>
-        <div style={{padding:12,textAlign:"center",fontSize:11,color:"#94a3b8"}}>{ph?.by} · {ph?.at&&new Date(ph.at).toLocaleString()}</div>
+        <div style={{padding:12,textAlign:"center",fontSize:11,color:"#6b7280"}}>{ph?.by} · {ph?.at&&new Date(ph.at).toLocaleString()}</div>
       </div>
     );
   }
@@ -3397,95 +3397,95 @@ function InstallTab({p,u,onLog,user,role}) {
   return (
     <div>
       {/* ── HEADER + PRINT ── */}
-      <Sec title="🏗️ Install Completion">
+      <Sec title="Install Completion">
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <p style={{fontSize:11,color:"#94a3b8",margin:0}}>Complete all sections before leaving the job site.</p>
+          <p style={{fontSize:11,color:"#6b7280",margin:0}}>Complete all sections before leaving the job site.</p>
           <PrintBtn onClick={()=>savePrint(getInstallHTML())}/>
         </div>
       </Sec>
 
       {/* ── SCOPE OF WORK (read-only from scope tab) ── */}
       <Sec title="Scope of Work">
-        <div style={{fontSize:10,color:"#64748b",marginBottom:8}}>Approved scope from assessment. Request a change order below if modifications are needed.</div>
+        <div style={{fontSize:10,color:"#6b7280",marginBottom:8}}>Approved scope from assessment. Request a change order below if modifications are needed.</div>
         {p.measures.length > 0 && <>
-          <div style={{fontSize:11,fontWeight:700,color:"#22c55e",marginBottom:4}}>Energy Efficiency Measures ({p.measures.length})</div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:8}}>{p.measures.map(m=><span key={m} style={{padding:"3px 8px",borderRadius:5,border:"1px solid rgba(34,197,94,.3)",background:"rgba(34,197,94,.08)",color:"#86efac",fontSize:10}}>✓ {m}{getResolvedQty(p,m)?" ("+getResolvedQty(p,m)+")":""}</span>)}</div>
+          <div style={{fontSize:11,fontWeight:700,color:"#16a34a",marginBottom:4}}>Energy Efficiency Measures ({p.measures.length})</div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:8}}>{p.measures.map(m=><span key={m} style={{padding:"3px 8px",borderRadius:5,border:"1px solid #86efac",background:"rgba(34,197,94,.08)",color:"#15803d",fontSize:10}}>✓ {m}{getResolvedQty(p,m)?" ("+getResolvedQty(p,m)+")":""}</span>)}</div>
         </>}
         {p.healthSafety.length > 0 && <>
-          <div style={{fontSize:11,fontWeight:700,color:"#f59e0b",marginBottom:4}}>Health & Safety Measures ({p.healthSafety.length})</div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:8}}>{p.healthSafety.map(m=><span key={m} style={{padding:"3px 8px",borderRadius:5,border:"1px solid rgba(245,158,11,.3)",background:"rgba(245,158,11,.08)",color:"#fbbf24",fontSize:10}}>✓ {m}</span>)}</div>
+          <div style={{fontSize:11,fontWeight:700,color:"#b45309",marginBottom:4}}>Health & Safety Measures ({p.healthSafety.length})</div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:8}}>{p.healthSafety.map(m=><span key={m} style={{padding:"3px 8px",borderRadius:5,border:"1px solid #fde68a",background:"#fffbeb",color:"#b45309",fontSize:10}}>✓ {m}</span>)}</div>
         </>}
-        {p.measureNotes && <div style={{fontSize:11,color:"#94a3b8",padding:8,background:"rgba(255,255,255,.03)",borderRadius:6,marginBottom:6}}><span style={{color:"#64748b",fontWeight:600}}>Notes:</span> {p.measureNotes}</div>}
+        {p.measureNotes && <div style={{fontSize:11,color:"#6b7280",padding:8,background:"#f9fafb",borderRadius:6,marginBottom:6}}><span style={{color:"#6b7280",fontWeight:600}}>Notes:</span> {p.measureNotes}</div>}
         {s.insulQty && Object.entries(s.insulQty).some(([,v])=>v) && <>
-          <div style={{fontSize:11,fontWeight:700,color:"#818cf8",marginBottom:4,marginTop:6}}>Insulation Quantities</div>
+          <div style={{fontSize:11,fontWeight:700,color:"#4f46e5",marginBottom:4,marginTop:6}}>Insulation Quantities</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"2px 12px",fontSize:11}}>
-            {Object.entries(s.insulQty).filter(([,v])=>v).map(([m,v])=><div key={m} style={{display:"flex",justifyContent:"space-between",padding:"2px 0",borderBottom:"1px solid rgba(255,255,255,.04)"}}>
-              <span style={{color:"#94a3b8"}}>{m}</span><span style={{fontWeight:600,color:"#e2e8f0"}}>{v} {m.includes("Rim Joist")?"LnFt":"SqFt"}</span>
+            {Object.entries(s.insulQty).filter(([,v])=>v).map(([m,v])=><div key={m} style={{display:"flex",justifyContent:"space-between",padding:"2px 0",borderBottom:"1px solid #f3f4f6"}}>
+              <span style={{color:"#6b7280"}}>{m}</span><span style={{fontWeight:600,color:"#1f2937"}}>{v} {m.includes("Rim Joist")?"LnFt":"SqFt"}</span>
             </div>)}
           </div>
         </>}
-        {p.measures.length === 0 && p.healthSafety.length === 0 && <p style={{color:"#64748b",fontSize:12,textAlign:"center",padding:12}}>No measures selected in scope yet.</p>}
+        {p.measures.length === 0 && p.healthSafety.length === 0 && <p style={{color:"#6b7280",fontSize:12,textAlign:"center",padding:12}}>No measures selected in scope yet.</p>}
       </Sec>
 
       {/* ── CUSTOMER SCOPE AUTHORIZATION ── */}
       <Sec title="Customer Scope Authorization">
-        <p style={{fontSize:10,color:"#64748b",marginBottom:6}}>Customer acknowledges and authorizes the scope of work listed above.</p>
+        <p style={{fontSize:10,color:"#6b7280",marginBottom:6}}>Customer acknowledges and authorizes the scope of work listed above.</p>
         <SigPad label="Customer Signature — Scope Authorization" value={fi.scopeAuthSig||""} onChange={v=>uf("scopeAuthSig",v)}/>
       </Sec>
 
       {/* ── CHANGE ORDERS ── */}
       <Sec title={`Change Orders (${co.length})`}>
-        <div style={{fontSize:10,color:"#64748b",marginBottom:8}}>Request scope changes from the field. Admin/Compliance will approve or deny.</div>
+        <div style={{fontSize:10,color:"#6b7280",marginBottom:8}}>Request scope changes from the field. Admin/Compliance will approve or deny.</div>
         <div style={{display:"flex",gap:6,marginBottom:8}}>
           <input style={{...S.inp,flex:1}} value={coText} onChange={e=>setCoText(e.target.value)} placeholder="Describe the scope change needed…" onKeyDown={e=>{if(e.key==="Enter")addCO();}}/>
-          <button type="button" style={{...S.ghost,borderColor:"#f97316",color:"#f97316",padding:"6px 12px",whiteSpace:"nowrap"}} onClick={addCO}>+ Request</button>
+          <button type="button" style={{...S.ghost,borderColor:"#ea580c",color:"#ea580c",padding:"6px 12px",whiteSpace:"nowrap"}} onClick={addCO}>+ Request</button>
         </div>
         {co.map(c => (
-          <div key={c.id} style={{background:c.status==="approved"?"rgba(34,197,94,.06)":c.status==="denied"?"rgba(239,68,68,.06)":"rgba(255,255,255,.03)",border:`1px solid ${c.status==="approved"?"rgba(34,197,94,.2)":c.status==="denied"?"rgba(239,68,68,.2)":"rgba(255,255,255,.08)"}`,borderRadius:8,padding:10,marginBottom:6}}>
+          <div key={c.id} style={{background:c.status==="approved"?"rgba(34,197,94,.06)":c.status==="denied"?"rgba(239,68,68,.06)":"#f9fafb",border:`1px solid ${c.status==="approved"?"rgba(34,197,94,.2)":c.status==="denied"?"rgba(239,68,68,.2)":"#e5e7eb"}`,borderRadius:8,padding:10,marginBottom:6}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:4}}>
-              <div style={{flex:1,fontSize:12,color:"#e2e8f0"}}>{c.text}</div>
+              <div style={{flex:1,fontSize:12,color:"#1f2937"}}>{c.text}</div>
               <span style={{fontSize:9,padding:"2px 6px",borderRadius:4,fontWeight:700,marginLeft:8,flexShrink:0,
-                background:c.status==="approved"?"rgba(34,197,94,.15)":c.status==="denied"?"rgba(239,68,68,.15)":"rgba(245,158,11,.15)",
-                color:c.status==="approved"?"#22c55e":c.status==="denied"?"#ef4444":"#f59e0b"
+                background:c.status==="approved"?"#dcfce7":c.status==="denied"?"#fee2e2":"#fef3c7",
+                color:c.status==="approved"?"#16a34a":c.status==="denied"?"#dc2626":"#b45309"
               }}>{c.status.toUpperCase()}</span>
             </div>
-            <div style={{fontSize:9,color:"#64748b"}}>{c.by} · {new Date(c.at).toLocaleString()}</div>
-            {c.response && <div style={{fontSize:11,color:c.status==="denied"?"#fca5a5":"#86efac",marginTop:4,padding:"4px 8px",background:"rgba(255,255,255,.03)",borderRadius:4}}>{c.response}</div>}
+            <div style={{fontSize:9,color:"#6b7280"}}>{c.by} · {new Date(c.at).toLocaleString()}</div>
+            {c.response && <div style={{fontSize:11,color:c.status==="denied"?"#b91c1c":"#15803d",marginTop:4,padding:"4px 8px",background:"#f9fafb",borderRadius:4}}>{c.response}</div>}
             {c.status === "pending" && (role === "admin" || role === "scope") && (
               <div style={{marginTop:6,display:"flex",gap:4,alignItems:"center"}}>
                 <input style={{...S.inp,flex:1,fontSize:11}} placeholder="Response / explanation…" value={c._resp||""} onChange={e=>u({changeOrders:co.map(x=>x.id===c.id?{...x,_resp:e.target.value}:x)})}/>
-                <button type="button" style={{padding:"4px 8px",borderRadius:5,border:"1px solid rgba(34,197,94,.4)",background:"rgba(34,197,94,.1)",color:"#22c55e",fontSize:10,fontWeight:700,cursor:"pointer"}} onClick={()=>updateCO(c.id,{status:"approved",response:c._resp||""})}>Approve</button>
-                <button type="button" style={{padding:"4px 8px",borderRadius:5,border:"1px solid rgba(239,68,68,.4)",background:"rgba(239,68,68,.1)",color:"#ef4444",fontSize:10,fontWeight:700,cursor:"pointer"}} onClick={()=>updateCO(c.id,{status:"denied",response:c._resp||""})}>Deny</button>
+                <button type="button" style={{padding:"4px 8px",borderRadius:5,border:"1px solid rgba(34,197,94,.4)",background:"#f0fdf4",color:"#16a34a",fontSize:10,fontWeight:700,cursor:"pointer"}} onClick={()=>updateCO(c.id,{status:"approved",response:c._resp||""})}>Approve</button>
+                <button type="button" style={{padding:"4px 8px",borderRadius:5,border:"1px solid rgba(239,68,68,.4)",background:"#fef2f2",color:"#dc2626",fontSize:10,fontWeight:700,cursor:"pointer"}} onClick={()=>updateCO(c.id,{status:"denied",response:c._resp||""})}>Deny</button>
               </div>
             )}
             {c.status === "pending" && role === "installer" && (
-              <div style={{marginTop:4,fontSize:10,color:"#f59e0b",fontStyle:"italic"}}>⏳ Awaiting approval from Scope/Admin</div>
+              <div style={{marginTop:4,fontSize:10,color:"#b45309",fontStyle:"italic"}}>⏳ Awaiting approval from Scope/Admin</div>
             )}
           </div>
         ))}
-        {co.length === 0 && <p style={{color:"#475569",fontSize:11,textAlign:"center"}}>No change orders yet.</p>}
+        {co.length === 0 && <p style={{color:"#9ca3af",fontSize:11,textAlign:"center"}}>No change orders yet.</p>}
       </Sec>
 
       {/* ── POST PHOTOS ── */}
-      <Sec title={<span>Post-Install Photos <span style={{fontWeight:400,color:"#94a3b8",fontFamily:"'JetBrains Mono',monospace"}}>{postTaken}/{postItems.length}</span></span>}>
-        <div style={S.prog}><div style={{...S.progF,width:`${postItems.length?(postTaken/postItems.length)*100:0}%`,background:"linear-gradient(90deg,#f97316,#eab308)"}}/></div>
+      <Sec title={<span>Post-Install Photos <span style={{fontWeight:400,color:"#6b7280",fontFamily:"'JetBrains Mono',monospace"}}>{postTaken}/{postItems.length}</span></span>}>
+        <div style={S.prog}><div style={{...S.progF,width:`${postItems.length?(postTaken/postItems.length)*100:0}%`,background:"linear-gradient(90deg,#ea580c,#ca8a04)"}}/></div>
         {postSections.map(([cat,items]) => (
           <div key={cat} style={{marginTop:10}}>
-            <div style={{fontSize:11,fontWeight:700,color:"#f97316",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em"}}>{cat}</div>
+            <div style={{fontSize:11,fontWeight:700,color:"#ea580c",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em"}}>{cat}</div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(120px,1fr))",gap:6}}>
               {items.map(item => {
                 const arr = getPhotos(p.photos, item.id);
                 const has = arr.length > 0;
-                return <div key={item.id} style={{background:has?"rgba(34,197,94,.08)":"rgba(255,255,255,.03)",border:`1px solid ${has?"rgba(34,197,94,.3)":"rgba(255,255,255,.08)"}`,borderRadius:8,overflow:"hidden"}}>
+                return <div key={item.id} style={{background:has?"rgba(34,197,94,.08)":"#f9fafb",border:`1px solid ${has?"#86efac":"#e5e7eb"}`,borderRadius:8,overflow:"hidden"}}>
                   {has ? <div style={{position:"relative",cursor:"pointer"}} onClick={()=>setPrev({id:item.id,idx:0})}>
                     <img src={arr[0].d} style={{width:"100%",height:70,objectFit:"cover"}} alt=""/>
                     {arr.length>1 && <span style={{position:"absolute",top:2,right:2,background:"rgba(0,0,0,.7)",color:"#fff",fontSize:9,padding:"1px 4px",borderRadius:4}}>{arr.length}</span>}
                   </div> : <div style={{height:70,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                    <label style={{fontSize:10,color:"#64748b",cursor:"pointer",textAlign:"center",padding:4}}>📸 Tap<input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>handleFile(item.id,e.target.files?.[0])}/></label>
+                    <label style={{fontSize:10,color:"#6b7280",cursor:"pointer",textAlign:"center",padding:4}}>Add<input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>handleFile(item.id,e.target.files?.[0])}/></label>
                   </div>}
-                  <div style={{padding:"4px 6px",fontSize:9,color:"#94a3b8",borderTop:"1px solid rgba(255,255,255,.05)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <div style={{padding:"4px 6px",fontSize:9,color:"#6b7280",borderTop:"1px solid #f3f4f6",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                     <span>{item.l}{has&&" ✓"}</span>
-                    {has && <label style={{fontSize:10,color:"#818cf8",cursor:"pointer"}}>＋<input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>handleFile(item.id,e.target.files?.[0])}/></label>}
+                    {has && <label style={{fontSize:10,color:"#4f46e5",cursor:"pointer"}}>＋<input type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={e=>handleFile(item.id,e.target.files?.[0])}/></label>}
                   </div>
                 </div>;
               })}
@@ -3502,21 +3502,21 @@ function InstallTab({p,u,onLog,user,role}) {
           <F label="Pre CFM25" value={p.preCFM25} onChange={v=>u({preCFM25:v})} num/>
           <F label="Post CFM25" value={p.postCFM25} onChange={v=>u({postCFM25:v})} num/>
         </Gr>
-        {red !== null && <div style={S.calc}><span>Air Seal Reduction: <b>{red}%</b></span><span style={{color:red>=25?"#22c55e":"#f59e0b",marginLeft:10}}>{red>=25?"✓ Meets 25%":"⚠ Below 25%"}</span></div>}
+        {red !== null && <div style={S.calc}><span>Air Seal Reduction: <b>{red}%</b></span><span style={{color:red>=25?"#16a34a":"#b45309",marginLeft:10}}>{red>=25?"✓ Meets 25%":"⚠ Below 25%"}</span></div>}
         {p.preCFM25 && p.postCFM25 && (()=>{const r=Math.round((Number(p.preCFM25)-Number(p.postCFM25))/Number(p.preCFM25)*100);return <div style={S.calc}><span>Duct Leakage Reduction: <b>{r}%</b> ({p.preCFM25}→{p.postCFM25} CFM25)</span></div>;})()}
       </Sec>
 
       {/* ── POST-WORK RED CALC ── */}
       <Sec title="Post-Work ASHRAE 62.2-2016 — RED Calc">
-        {!rcPost.Q50 ? <p style={{color:"#64748b",fontSize:12,textAlign:"center",padding:12}}>Enter Post CFM50 above to calculate.</p> : (() => {
+        {!rcPost.Q50 ? <p style={{color:"#6b7280",fontSize:12,textAlign:"center",padding:12}}>Enter Post CFM50 above to calculate.</p> : (() => {
           const {Afl,Nbr,Q50,H,Hr,wsf,st,Qinf,Qtot,totalDef,supplement,Qfan,FAN_SETTINGS,recFan,baseSqft,finBasement,kCFM,b1,b2,b3,kPresent,b1Present,b2Present,b3Present,kWin,b1Win,b2Win,b3Win,kReq,b1Req,b2Req,b3Req,kDef,b1Def,b2Def,b3Def} = rcPost;
-          const hdr = {fontSize:13,fontWeight:700,color:"#818cf8",margin:"14px 0 6px",borderBottom:"1px solid rgba(99,102,241,.25)",paddingBottom:4};
-          const row = {display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0",fontSize:12,borderBottom:"1px solid rgba(255,255,255,.04)"};
-          const lbl = {color:"#94a3b8",flex:1};
-          const val = {fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:"#e2e8f0",textAlign:"right"};
-          const eq = {fontSize:10,color:"#475569",padding:"1px 0 5px 12px",fontFamily:"'JetBrains Mono',monospace",borderLeft:"2px solid rgba(99,102,241,.15)"};
-          const autoBox = {background:"rgba(99,102,241,.06)",borderRadius:6,padding:"6px 10px",fontFamily:"'JetBrains Mono',monospace",fontWeight:600,fontSize:13,color:"#e2e8f0",textAlign:"center"};
-          const autoSub = {fontSize:9,color:"#64748b",textAlign:"center",marginTop:2};
+          const hdr = {fontSize:13,fontWeight:700,color:"#4f46e5",margin:"14px 0 6px",borderBottom:"1px solid rgba(99,102,241,.25)",paddingBottom:4};
+          const row = {display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0",fontSize:12,borderBottom:"1px solid #f3f4f6"};
+          const lbl = {color:"#6b7280",flex:1};
+          const val = {fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:"#1f2937",textAlign:"right"};
+          const eq = {fontSize:10,color:"#9ca3af",padding:"1px 0 5px 12px",fontFamily:"'JetBrains Mono',monospace",borderLeft:"2px solid #e0e7ff"};
+          const autoBox = {background:"rgba(99,102,241,.06)",borderRadius:6,padding:"6px 10px",fontFamily:"'JetBrains Mono',monospace",fontWeight:600,fontSize:13,color:"#1f2937",textAlign:"center"};
+          const autoSub = {fontSize:9,color:"#6b7280",textAlign:"center",marginTop:2};
           const resultBox = {background:"rgba(168,85,247,.08)",border:"2px solid rgba(168,85,247,.3)",borderRadius:8,padding:12,marginTop:8};
 
           return <div>
@@ -3528,27 +3528,27 @@ function InstallTab({p,u,onLog,user,role}) {
               <div style={row}><span style={lbl}>Infiltration credit</span><span style={val}>Yes</span></div>
               <div style={row}><span style={lbl}>Alt. compliance</span><span style={val}>Yes</span></div>
               <div style={row}><span style={lbl}>Weather station</span><span style={val}>Chicago Midway AP</span></div>
-              <div style={row}><span style={lbl}>wsf [1/hr]</span><span style={{...val,color:"#818cf8"}}>{wsf}</span></div>
+              <div style={row}><span style={lbl}>wsf [1/hr]</span><span style={{...val,color:"#4f46e5"}}>{wsf}</span></div>
             </div>
 
             {/* Building Inputs */}
             <div style={hdr}>Building Inputs (Post-Work)</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:8}}>
-              <div><div style={{fontSize:10,color:"#94a3b8",marginBottom:3}}>Floor area [ft²]</div><div style={autoBox}>{Afl||"—"}</div><div style={autoSub}>{finBasement>0?`${baseSqft} + ${finBasement} fin. bsmt`:"← Sq Footage"}</div></div>
-              <div><div style={{fontSize:10,color:"#94a3b8",marginBottom:3}}>Nbr (bedrooms)</div><div style={autoBox}>{Nbr}</div><div style={autoSub}>Occupants = Nbr + 1 = {Nbr + 1}</div></div>
-              <div><div style={{fontSize:10,color:"#94a3b8",marginBottom:3}}>Height [ft]</div><div style={autoBox}>{H}</div><div style={autoSub}>{st>=2?"2-story":"1"+(st>=1.5?".5":"")+"-story"}</div></div>
-              <div><div style={{fontSize:10,color:"#94a3b8",marginBottom:3}}>Post Q50 [CFM]</div><div style={{...autoBox,color:"#22c55e"}}>{Q50}</div><div style={autoSub}>← Post blower door</div></div>
+              <div><div style={{fontSize:10,color:"#6b7280",marginBottom:3}}>Floor area [ft²]</div><div style={autoBox}>{Afl||"—"}</div><div style={autoSub}>{finBasement>0?`${baseSqft} + ${finBasement} fin. bsmt`:"← Sq Footage"}</div></div>
+              <div><div style={{fontSize:10,color:"#6b7280",marginBottom:3}}>Nbr (bedrooms)</div><div style={autoBox}>{Nbr}</div><div style={autoSub}>Occupants = Nbr + 1 = {Nbr + 1}</div></div>
+              <div><div style={{fontSize:10,color:"#6b7280",marginBottom:3}}>Height [ft]</div><div style={autoBox}>{H}</div><div style={autoSub}>{st>=2?"2-story":"1"+(st>=1.5?".5":"")+"-story"}</div></div>
+              <div><div style={{fontSize:10,color:"#6b7280",marginBottom:3}}>Post Q50 [CFM]</div><div style={{...autoBox,color:"#16a34a"}}>{Q50}</div><div style={autoSub}>← Post blower door</div></div>
             </div>
 
             {/* Local Ventilation — read-only from scope */}
-            <div style={hdr}>Local Ventilation — Alternative Compliance <span style={{fontSize:9,fontWeight:400,color:"#64748b"}}>(from Scope)</span></div>
-            <div style={{fontSize:9,color:"#64748b",marginBottom:2}}>Blank = no fan = no requirement. Openable window = 20 CFM credit. Kitchen: 100 CFM · Bath: 50 CFM (intermittent rates)</div>
+            <div style={hdr}>Local Ventilation — Alternative Compliance <span style={{fontSize:9,fontWeight:400,color:"#6b7280"}}>(from Scope)</span></div>
+            <div style={{fontSize:9,color:"#6b7280",marginBottom:2}}>Blank = no fan = no requirement. Openable window = 20 CFM credit. Kitchen: 100 CFM · Bath: 50 CFM (intermittent rates)</div>
             <div style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",fontSize:11,alignItems:"center"}}>
-              <span style={{fontWeight:600,color:"#64748b"}}></span>
-              <span style={{fontWeight:600,color:"#64748b",textAlign:"center"}}>Fan Flow [CFM]</span>
-              <span style={{fontWeight:600,color:"#64748b",textAlign:"center",fontSize:9}}>Window</span>
-              <span style={{fontWeight:600,color:"#64748b",textAlign:"center"}}>Req'd</span>
-              <span style={{fontWeight:600,color:"#64748b",textAlign:"center"}}>Deficit</span>
+              <span style={{fontWeight:600,color:"#6b7280"}}></span>
+              <span style={{fontWeight:600,color:"#6b7280",textAlign:"center"}}>Fan Flow [CFM]</span>
+              <span style={{fontWeight:600,color:"#6b7280",textAlign:"center",fontSize:9}}>Window</span>
+              <span style={{fontWeight:600,color:"#6b7280",textAlign:"center"}}>Req'd</span>
+              <span style={{fontWeight:600,color:"#6b7280",textAlign:"center"}}>Deficit</span>
             </div>
             {[
               {n:"Kitchen",v:kCFM,w:kWin,r:kReq,d:kDef,present:kPresent},
@@ -3557,22 +3557,22 @@ function InstallTab({p,u,onLog,user,role}) {
               {n:"Bath #3",v:b3,w:b3Win,r:b3Req,d:b3Def,present:b3Present},
             ].map(f=>(
               <div key={f.n} style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",alignItems:"center",marginBottom:2}}>
-                <span style={{fontSize:12,color:"#cbd5e1"}}>{f.n}</span>
-                <div style={{textAlign:"center",fontSize:12,fontFamily:"'JetBrains Mono',monospace",color:f.present?"#e2e8f0":"#475569",background:"rgba(255,255,255,.03)",borderRadius:4,padding:"4px 6px"}}>{f.present?f.v:"—"}</div>
-                <div style={{textAlign:"center",fontSize:11,color:f.w?"#818cf8":"#475569"}}>{f.w?"✓":"—"}</div>
-                <div style={{textAlign:"center",fontSize:11,color:f.present?"#64748b":"#475569"}}>{f.present?f.r:"—"}</div>
-                <div style={{textAlign:"center",fontSize:13,fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:!f.present?"#475569":f.d>0?"#f59e0b":"#22c55e"}}>{f.present?f.d:"—"}</div>
+                <span style={{fontSize:12,color:"#374151"}}>{f.n}</span>
+                <div style={{textAlign:"center",fontSize:12,fontFamily:"'JetBrains Mono',monospace",color:f.present?"#1f2937":"#9ca3af",background:"#f9fafb",borderRadius:4,padding:"4px 6px"}}>{f.present?f.v:"—"}</div>
+                <div style={{textAlign:"center",fontSize:11,color:f.w?"#4f46e5":"#9ca3af"}}>{f.w?"✓":"—"}</div>
+                <div style={{textAlign:"center",fontSize:11,color:f.present?"#6b7280":"#9ca3af"}}>{f.present?f.r:"—"}</div>
+                <div style={{textAlign:"center",fontSize:13,fontWeight:700,fontFamily:"'JetBrains Mono',monospace",color:!f.present?"#9ca3af":f.d>0?"#b45309":"#16a34a"}}>{f.present?f.d:"—"}</div>
               </div>
             ))}
-            <div style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",borderTop:"1px solid rgba(255,255,255,.1)",paddingTop:4,marginTop:4}}>
-              <span style={{fontSize:12,fontWeight:700,color:"#e2e8f0"}}>Total</span>
+            <div style={{display:"grid",gridTemplateColumns:"80px 1fr 60px 50px 55px",gap:"2px 6px",borderTop:"1px solid #d1d5db",paddingTop:4,marginTop:4}}>
+              <span style={{fontSize:12,fontWeight:700,color:"#1f2937"}}>Total</span>
               <span></span><span></span><span></span>
-              <div style={{textAlign:"center",fontSize:14,fontWeight:800,fontFamily:"'JetBrains Mono',monospace",color:totalDef>0?"#f59e0b":"#22c55e"}}>{Ri(totalDef)}</div>
+              <div style={{textAlign:"center",fontSize:14,fontWeight:800,fontFamily:"'JetBrains Mono',monospace",color:totalDef>0?"#b45309":"#16a34a"}}>{Ri(totalDef)}</div>
             </div>
 
             {/* Results with full equations */}
             <div style={resultBox}>
-              <div style={{fontSize:13,fontWeight:700,color:"#a855f7",marginBottom:10}}>Post-Work Ventilation Results</div>
+              <div style={{fontSize:13,fontWeight:700,color:"#7e22ce",marginBottom:10}}>Post-Work Ventilation Results</div>
 
               <div style={row}><span style={lbl}>Infiltration credit, Qinf [CFM]</span><span style={val}>{R(Qinf)}</span></div>
               <div style={eq}>= 0.052 × Q50 × wsf × (H / 8.2)^0.4<br/>= 0.052 × {Q50} × {wsf} × ({H} / 8.2)^0.4</div>
@@ -3587,55 +3587,55 @@ function InstallTab({p,u,onLog,user,role}) {
               <div style={eq}>= totalDeficit × 0.25 (intermittent → continuous)<br/>= {Ri(totalDef)} × 0.25</div>
 
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0 4px",borderTop:"2px solid rgba(168,85,247,.4)",marginTop:8}}>
-                <span style={{fontWeight:700,color:"#e2e8f0",fontSize:13}}>Required mech. ventilation, Qfan [CFM]</span>
-                <span style={{fontWeight:800,color:"#a855f7",fontSize:18,fontFamily:"'JetBrains Mono',monospace"}}>{R(Qfan)}</span>
+                <span style={{fontWeight:700,color:"#1f2937",fontSize:13}}>Required mech. ventilation, Qfan [CFM]</span>
+                <span style={{fontWeight:800,color:"#7e22ce",fontSize:18,fontFamily:"'JetBrains Mono',monospace"}}>{R(Qfan)}</span>
               </div>
               <div style={eq}>= Qtot + supplement − Qinf<br/>= {R(Qtot)} + {R(supplement)} − {R(Qinf)}</div>
-              {rcPre.Qfan > 0 && <div style={{fontSize:10,color:"#64748b",marginTop:4,padding:"4px 8px",background:"rgba(255,255,255,.03)",borderRadius:4}}>Pre-work Qfan was {R(rcPre.Qfan)} CFM · Δ {R(Qfan-rcPre.Qfan)} CFM</div>}
+              {rcPre.Qfan > 0 && <div style={{fontSize:10,color:"#6b7280",marginTop:4,padding:"4px 8px",background:"#f9fafb",borderRadius:4}}>Pre-work Qfan was {R(rcPre.Qfan)} CFM · Δ {R(Qfan-rcPre.Qfan)} CFM</div>}
             </div>
 
             {/* Fan Setting + Run-Time Solver */}
             <div style={{background:"rgba(99,102,241,.04)",border:"1px solid rgba(99,102,241,.2)",borderRadius:8,padding:10,marginTop:10}}>
-              <div style={{fontSize:12,fontWeight:700,color:"#818cf8",marginBottom:6}}>Dwelling-Unit Ventilation Run-Time Solver</div>
-              <div style={{fontSize:10,color:"#94a3b8",marginBottom:8}}>Select fan setting. Recommended = lowest setting ≥ Qfan ({R(Qfan)} CFM). All fans run continuous.</div>
+              <div style={{fontSize:12,fontWeight:700,color:"#4f46e5",marginBottom:6}}>Dwelling-Unit Ventilation Run-Time Solver</div>
+              <div style={{fontSize:10,color:"#6b7280",marginBottom:8}}>Select fan setting. Recommended = lowest setting ≥ Qfan ({R(Qfan)} CFM). All fans run continuous.</div>
               <div style={{display:"flex",gap:8,marginBottom:10}}>
                 {FAN_SETTINGS.map(cfm => {
                   const meets = cfm >= Qfan && Qfan > 0;
                   const isRec = cfm === recFan && Qfan > 0;
                   const sel = Number(fi.postFanSetting) === cfm;
                   return <button key={cfm} type="button" onClick={()=>uf("postFanSetting",cfm)} style={{
-                    flex:1,padding:"10px 8px",borderRadius:8,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",
-                    border:sel?`2px solid ${isRec?"#22c55e":"#818cf8"}`:`1px solid ${meets?"rgba(34,197,94,.3)":"rgba(255,255,255,.1)"}`,
-                    background:sel?(isRec?"rgba(34,197,94,.15)":"rgba(99,102,241,.15)"):"rgba(255,255,255,.03)",
-                    color:sel?(isRec?"#22c55e":"#a5b4fc"):meets?"#86efac":"#64748b",textAlign:"center"
+                    flex:1,padding:"10px 8px",borderRadius:8,cursor:"pointer",fontFamily:"'Inter',system-ui,sans-serif",
+                    border:sel?`2px solid ${isRec?"#16a34a":"#4f46e5"}`:`1px solid ${meets?"#86efac":"#d1d5db"}`,
+                    background:sel?(isRec?"#dcfce7":"#e0e7ff"):"#f9fafb",
+                    color:sel?(isRec?"#16a34a":"#4338ca"):meets?"#15803d":"#6b7280",textAlign:"center"
                   }}>
                     <div style={{fontSize:18,fontWeight:700}}>{cfm}</div>
                     <div style={{fontSize:10}}>CFM</div>
-                    {isRec && <div style={{fontSize:9,marginTop:2,color:"#22c55e",fontWeight:600}}>✓ REC</div>}
-                    {!meets && Qfan > 0 && <div style={{fontSize:9,marginTop:2,color:"#ef4444"}}>Below Qfan</div>}
+                    {isRec && <div style={{fontSize:9,marginTop:2,color:"#16a34a",fontWeight:600}}>✓ REC</div>}
+                    {!meets && Qfan > 0 && <div style={{fontSize:9,marginTop:2,color:"#dc2626"}}>Below Qfan</div>}
                   </button>;
                 })}
               </div>
               {Number(fi.postFanSetting) > 0 && Qfan > 0 && (() => {
                 const fan = Number(fi.postFanSetting);
                 const minPerHr = R(Qfan / fan * 60);
-                return <div style={{background:"rgba(99,102,241,.08)",borderRadius:8,padding:10}}>
+                return <div style={{background:"#eef2ff",borderRadius:8,padding:10}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                    <span style={{fontSize:12,color:"#cbd5e1"}}>Fan capacity</span>
-                    <span style={{fontSize:14,fontWeight:700,color:"#a5b4fc",fontFamily:"'JetBrains Mono',monospace"}}>{fan} CFM</span>
+                    <span style={{fontSize:12,color:"#374151"}}>Fan capacity</span>
+                    <span style={{fontSize:14,fontWeight:700,color:"#4338ca",fontFamily:"'JetBrains Mono',monospace"}}>{fan} CFM</span>
                   </div>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                    <span style={{fontSize:12,color:"#cbd5e1"}}>Min. run-time per hour</span>
-                    <span style={{fontSize:14,fontWeight:700,color:"#818cf8",fontFamily:"'JetBrains Mono',monospace"}}>{minPerHr} min/hr</span>
+                    <span style={{fontSize:12,color:"#374151"}}>Min. run-time per hour</span>
+                    <span style={{fontSize:14,fontWeight:700,color:"#4f46e5",fontFamily:"'JetBrains Mono',monospace"}}>{minPerHr} min/hr</span>
                   </div>
                   <div style={eq}>= Qfan ÷ fan capacity × 60<br/>= {R(Qfan)} ÷ {fan} × 60 = {minPerHr} min/hr</div>
-                  <div style={{marginTop:6,fontSize:10,color:fan >= Qfan?"#22c55e":"#f59e0b",fontWeight:600}}>
+                  <div style={{marginTop:6,fontSize:10,color:fan >= Qfan?"#16a34a":"#b45309",fontWeight:600}}>
                     {fan >= Qfan?`✓ Continuous (60 min/hr) exceeds minimum ${minPerHr} min/hr`:`⚠ Fan setting below Qfan — does not meet requirement`}
                   </div>
                 </div>;
               })()}
             </div>
-            <p style={{fontSize:9,color:"#475569",marginTop:10,textAlign:"right"}}>ASHRAE 62.2-2016 · Local Ventilation Alternative Compliance · basc.pnnl.gov/redcalc</p>
+            <p style={{fontSize:9,color:"#9ca3af",marginTop:10,textAlign:"right"}}>ASHRAE 62.2-2016 · Local Ventilation Alternative Compliance · basc.pnnl.gov/redcalc</p>
           </div>;
         })()}
       </Sec>
@@ -3648,7 +3648,7 @@ function InstallTab({p,u,onLog,user,role}) {
             <div key={c.k} style={S.cazR}>
               <span style={{flex:1,fontSize:12,minWidth:110}}>{c.l}</span>
               {c.r && <input style={{...S.inp,width:55,textAlign:"center"}} value={r.reading||""} onChange={e=>sf(c.k,"reading",e.target.value)} placeholder={c.u}/>}
-              <BtnGrp value={r.pf||""} onChange={v=>sf(c.k,"pf",v)} opts={[{v:"P",l:"Pass",c:"#22c55e"},{v:"F",l:"Fail",c:"#ef4444"},{v:"NA",l:"N/A",c:"#64748b"}]}/>
+              <BtnGrp value={r.pf||""} onChange={v=>sf(c.k,"pf",v)} opts={[{v:"P",l:"Pass",c:"#16a34a"},{v:"F",l:"Fail",c:"#dc2626"},{v:"NA",l:"N/A",c:"#6b7280"}]}/>
               <CK checked={r.fu||false} onChange={v=>sf(c.k,"fu",v)} label="F/U" small/>
             </div>
           );
@@ -3663,8 +3663,8 @@ function InstallTab({p,u,onLog,user,role}) {
 
       {/* ── SIGN-OFF ── */}
       <Sec title="Final Sign-off">
-        <CK checked={p.finalPassed} onChange={v=>u({finalPassed:v})} label="✅ Final Inspection Passed"/>
-        <div style={{marginTop:6}}><CK checked={p.customerSignoff} onChange={v=>u({customerSignoff:v})} label="✅ Customer Signature Collected"/></div>
+        <CK checked={p.finalPassed} onChange={v=>u({finalPassed:v})} label="Final Inspection Passed"/>
+        <div style={{marginTop:6}}><CK checked={p.customerSignoff} onChange={v=>u({customerSignoff:v})} label="Customer Signature Collected"/></div>
         <SigPad label="Installer / Inspector Signature" value={fi.inspectorSig||""} onChange={v=>uf("inspectorSig",v)}/>
         <SigPad label="Customer Signature — Work Completion" value={fi.customerSig||""} onChange={v=>uf("customerSig",v)}/>
       </Sec>
@@ -3683,13 +3683,13 @@ function QAQCTab({p,u}) {
     const d = fi[item.k] || {};
     const ud = (f,v) => ufi(item.k,{...d,[f]:v});
     return (
-      <div style={{borderBottom:"1px solid rgba(255,255,255,.06)",padding:"8px 0"}}>
+      <div style={{borderBottom:"1px solid #e5e7eb",padding:"8px 0"}}>
         <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
           <span style={{flex:1,fontSize:11,minWidth:120,...(item.sub?{paddingLeft:16}:{fontWeight:600})}}>{item.l}</span>
-          {item.yn && <BtnGrp value={d.yn||""} onChange={v=>ud("yn",v)} opts={[{v:"Y",l:"Yes",c:"#22c55e"},{v:"N",l:"No",c:"#ef4444"},{v:"NA",l:"N/A",c:"#64748b"}]}/>}
+          {item.yn && <BtnGrp value={d.yn||""} onChange={v=>ud("yn",v)} opts={[{v:"Y",l:"Yes",c:"#16a34a"},{v:"N",l:"No",c:"#dc2626"},{v:"NA",l:"N/A",c:"#6b7280"}]}/>}
           {item.r && <input style={{...S.inp,width:70,fontSize:11}} value={d.reading||""} onChange={e=>ud("reading",e.target.value)} placeholder={item.u||""}/>}
-          <BtnGrp value={d.pf||""} onChange={v=>ud("pf",v)} opts={[{v:"P",l:"P",c:"#22c55e"},{v:"F",l:"F",c:"#ef4444"},{v:"NA",l:"N/A",c:"#64748b"}]}/>
-          <BtnGrp value={d.fu||""} onChange={v=>ud("fu",v)} opts={[{v:"Y",l:"F/U",c:"#f59e0b"},{v:"N",l:"No",c:"#64748b"},{v:"NA",l:"N/A",c:"#475569"}]}/>
+          <BtnGrp value={d.pf||""} onChange={v=>ud("pf",v)} opts={[{v:"P",l:"P",c:"#16a34a"},{v:"F",l:"F",c:"#dc2626"},{v:"NA",l:"N/A",c:"#6b7280"}]}/>
+          <BtnGrp value={d.fu||""} onChange={v=>ud("fu",v)} opts={[{v:"Y",l:"F/U",c:"#b45309"},{v:"N",l:"No",c:"#6b7280"},{v:"NA",l:"N/A",c:"#9ca3af"}]}/>
         </div>
       </div>
     );
@@ -3739,9 +3739,9 @@ function QAQCTab({p,u}) {
   return (
     <div>
       {/* ── FINAL INSPECTION FORM ── */}
-      <Sec title="📋 Home Energy Savings – Retrofits Final Inspection Form">
+      <Sec title="Home Energy Savings – Retrofits Final Inspection Form">
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <p style={{fontSize:11,color:"#94a3b8",margin:0}}>Appendix F</p>
+          <p style={{fontSize:11,color:"#6b7280",margin:0}}>Appendix F</p>
           <PrintBtn onClick={()=>savePrint(getFIhtml())}/>
         </div>
       </Sec>
@@ -3760,17 +3760,17 @@ function QAQCTab({p,u}) {
 
       {/* ── INSTALLATION CONTRACTOR CHECKLIST ── */}
       <Sec title="Installation Contractor Checklist">
-        <p style={{fontSize:10,color:"#94a3b8",margin:0}}>Complete all sections below</p>
+        <p style={{fontSize:10,color:"#6b7280",margin:0}}>Complete all sections below</p>
       </Sec>
 
       {/* ── HEALTH & SAFETY ── */}
       <Sec title="Health & Safety">
-        <div style={{display:"flex",gap:16,fontSize:9,color:"#64748b",marginBottom:4,justifyContent:"flex-end"}}>
+        <div style={{display:"flex",gap:16,fontSize:9,color:"#6b7280",marginBottom:4,justifyContent:"flex-end"}}>
           <span>Pass/Fail</span><span>Follow-up?</span>
         </div>
         {FI_SAFETY.map(item => <PFRow key={item.k} item={item}/>)}
 
-        <div style={{marginTop:10,borderTop:"1px solid rgba(255,255,255,.06)",paddingTop:10}}>
+        <div style={{marginTop:10,borderTop:"1px solid #e5e7eb",paddingTop:10}}>
           <Gr>
             <F label="# Smoke Detectors Installed" value={fi.smokeQty||""} onChange={v=>ufi("smokeQty",v)} num/>
             <F label="# CO Detectors Installed" value={fi.coQty||""} onChange={v=>ufi("coQty",v)} num/>
@@ -3792,8 +3792,8 @@ function QAQCTab({p,u}) {
           const d = fi[ins.k]||{};
           const ud = (f,v) => ufi(ins.k,{...d,[f]:v});
           return (
-            <div key={ins.k} style={{borderBottom:"1px solid rgba(255,255,255,.06)",padding:"8px 0"}}>
-              <div style={{fontSize:12,fontWeight:600,color:"#e2e8f0",marginBottom:4}}>{ins.l}</div>
+            <div key={ins.k} style={{borderBottom:"1px solid #e5e7eb",padding:"8px 0"}}>
+              <div style={{fontSize:12,fontWeight:600,color:"#1f2937",marginBottom:4}}>{ins.l}</div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6}}>
                 <F label="Pre R-value" value={d.preR||""} onChange={v=>ud("preR",v)} num/>
                 <F label="Post R-value" value={d.postR||""} onChange={v=>ud("postR",v)} num/>
@@ -3810,8 +3810,8 @@ function QAQCTab({p,u}) {
           const d = fi[`equip${n}`]||{};
           const ud = (f,v) => ufi(`equip${n}`,{...d,[f]:v});
           return (
-            <div key={n} style={{borderBottom:"1px solid rgba(255,255,255,.06)",padding:"8px 0"}}>
-              <div style={{fontSize:11,fontWeight:600,color:"#94a3b8",marginBottom:4}}>Equipment {n}</div>
+            <div key={n} style={{borderBottom:"1px solid #e5e7eb",padding:"8px 0"}}>
+              <div style={{fontSize:11,fontWeight:600,color:"#6b7280",marginBottom:4}}>Equipment {n}</div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
                 <F label="Equipment Type" value={d.type||""} onChange={v=>ud("type",v)}/>
                 <Sel label="Vent Type" value={d.vent||""} onChange={v=>ud("vent",v)} opts={["Natural Draft","Sealed"]}/>
@@ -3854,7 +3854,7 @@ function QAQCTab({p,u}) {
 
       {/* ── CONTRACTOR CHECKLIST ── */}
       <Sec title="Contractor Checklist">
-        <p style={{fontSize:10,color:"#64748b",marginBottom:6,fontStyle:"italic"}}>To be completed by the contractor:</p>
+        <p style={{fontSize:10,color:"#6b7280",marginBottom:6,fontStyle:"italic"}}>To be completed by the contractor:</p>
         {FI_CONTRACTOR_CK.map(ck => <CK key={ck} checked={fi.ck?.[ck]} onChange={v=>ufi("ck",{...(fi.ck||{}),[ck]:v})} label={ck}/>)}
       </Sec>
 
@@ -3864,9 +3864,9 @@ function QAQCTab({p,u}) {
       </Sec>
 
       {/* ── QAQC OBSERVATION FORM (Appendix G) ── */}
-      <Sec title="🔎 QAQC Observation Form">
+      <Sec title="QAQC Observation Form">
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <p style={{fontSize:11,color:"#94a3b8",margin:0}}>Per Appendix G — post-installation observation</p>
+          <p style={{fontSize:11,color:"#6b7280",margin:0}}>Per Appendix G — post-installation observation</p>
           <PrintBtn onClick={()=>{
             let body = `<div class="sec"><h3>Info</h3><div class="row"><span class="lbl">Date</span><span class="val">${q.date||"—"}</span></div><div class="row"><span class="lbl">Inspector</span><span class="val">${q.inspector||"—"}</span></div></div>`;
             Object.entries(QAQC_SECTIONS).forEach(([cat,items]) => {
@@ -3893,7 +3893,7 @@ function QAQCTab({p,u}) {
             return (
               <div key={i} style={S.qqR}>
                 <span style={{flex:1,fontSize:11,minWidth:100}}>{i+1}. {item}</span>
-                <BtnGrp value={r.v||""} onChange={v=>sr(cat,i,"v",v)} opts={[{v:"Y",l:"Y",c:"#22c55e"},{v:"N",l:"N",c:"#ef4444"},{v:"NA",l:"N/A",c:"#64748b"}]}/>
+                <BtnGrp value={r.v||""} onChange={v=>sr(cat,i,"v",v)} opts={[{v:"Y",l:"Y",c:"#16a34a"},{v:"N",l:"N",c:"#dc2626"},{v:"NA",l:"N/A",c:"#6b7280"}]}/>
                 <input style={{...S.inp,width:90}} value={r.c||""} onChange={e=>sr(cat,i,"c",e.target.value)} placeholder="Comment"/>
               </div>
             );
@@ -3934,7 +3934,7 @@ function CloseoutTab({p,u,onLog}) {
           <PrintBtn onClick={()=>savePrint(getCloseoutHTML())}/>
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:5}}>
-          {DOCS.map(d => <CK key={d} checked={p.docsChecklist?.[d]} onChange={()=>u({docsChecklist:{...p.docsChecklist,[d]:!p.docsChecklist?.[d]}})} label={d} color={p.docsChecklist?.[d]?"#22c55e":null} strike={p.docsChecklist?.[d]}/>)}
+          {DOCS.map(d => <CK key={d} checked={p.docsChecklist?.[d]} onChange={()=>u({docsChecklist:{...p.docsChecklist,[d]:!p.docsChecklist?.[d]}})} label={d} color={p.docsChecklist?.[d]?"#16a34a":null} strike={p.docsChecklist?.[d]}/>)}
         </div>
       </Sec>
       <Sec title="Install Notes"><textarea style={S.ta} value={p.installNotes} onChange={e=>u({installNotes:e.target.value})} rows={3} placeholder="Crew notes…"/></Sec>
@@ -3947,11 +3947,11 @@ function CloseoutTab({p,u,onLog}) {
           <SI l="Stage" v={STAGES[p.currentStage].label}/>
           <SI l="Measures" v={`${p.measures.length} EE + ${p.healthSafety.length} H&S`}/>
           <SI l="Blower Door" v={p.preCFM50&&p.postCFM50?`${p.preCFM50}→${p.postCFM50}`:"—"}/>
-          <SI l="Scope" v={p.scopeApproved?"✓ Approved":"Pending"} c={p.scopeApproved?"#22c55e":"#94a3b8"}/>
-          <SI l="Inspection" v={p.finalPassed?"✓ Passed":"—"} c={p.finalPassed?"#22c55e":"#94a3b8"}/>
-          <SI l="Sign-off" v={p.customerSignoff?"✓":"—"} c={p.customerSignoff?"#22c55e":"#94a3b8"}/>
+          <SI l="Scope" v={p.scopeApproved?"✓ Approved":"Pending"} c={p.scopeApproved?"#16a34a":"#6b7280"}/>
+          <SI l="Inspection" v={p.finalPassed?"✓ Passed":"—"} c={p.finalPassed?"#16a34a":"#6b7280"}/>
+          <SI l="Sign-off" v={p.customerSignoff?"✓":"—"} c={p.customerSignoff?"#16a34a":"#6b7280"}/>
           <SI l="Photos" v={`${Object.keys(p.photos||{}).filter(k=>hasPhoto(p.photos,k)).length} slots`}/>
-          <SI l="Payment" v={p.paymentSubmitted?`$${p.invoiceAmt}`:"Pending"} c={p.paymentSubmitted?"#22c55e":"#94a3b8"}/>
+          <SI l="Payment" v={p.paymentSubmitted?`$${p.invoiceAmt}`:"Pending"} c={p.paymentSubmitted?"#16a34a":"#6b7280"}/>
         </div>
       </Sec>
     </div>
@@ -3969,7 +3969,7 @@ function LogTab({p,onLog}) {
         </div>
       </Sec>
       <Sec title={`History (${p.activityLog.length})`}>
-        {p.activityLog.length === 0 ? <p style={{color:"#64748b",fontSize:12}}>No activity yet.</p> : (
+        {p.activityLog.length === 0 ? <p style={{color:"#6b7280",fontSize:12}}>No activity yet.</p> : (
           p.activityLog.map((a,i) => (
             <div key={i} style={S.logR}>
               <span style={S.logT}>{new Date(a.ts).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}</span>
@@ -4007,28 +4007,28 @@ function UserMgmt({users, onSave, onDelete, onClose}) {
   };
   const doDelete = (id) => { if(onDelete) onDelete(id); setConfirmDel(null); };
 
-  const row = {display:"flex",alignItems:"center",gap:8,padding:"8px 10px",borderBottom:"1px solid rgba(255,255,255,.06)"};
-  const badge = (r) => {const m=ROLES.find(x=>x.key===r); return <span style={{fontSize:9,padding:"2px 6px",borderRadius:4,background:"rgba(99,102,241,.15)",color:"#a5b4fc"}}>{m?.icon} {m?.label||r}</span>;};
+  const row = {display:"flex",alignItems:"center",gap:8,padding:"8px 10px",borderBottom:"1px solid #e5e7eb"};
+  const badge = (r) => {const m=ROLES.find(x=>x.key===r); return <span style={{fontSize:9,padding:"2px 6px",borderRadius:4,background:"#e0e7ff",color:"#4338ca"}}>{m?.icon} {m?.label||r}</span>;};
 
   return (
-    <Sec title={<span>👥 User Management <button type="button" onClick={onClose} style={{float:"right",background:"none",border:"none",color:"#64748b",cursor:"pointer",fontSize:14}}>✕</button></span>}>
+    <Sec title={<span>User Management <button type="button" onClick={onClose} style={{float:"right",background:"none",border:"none",color:"#6b7280",cursor:"pointer",fontSize:14}}>✕</button></span>}>
       {!edit ? <>
         {users.map(u => (
           <div key={u.id} style={row}>
             {confirmDel === u.id ? (
               <div style={{flex:1,display:"flex",alignItems:"center",gap:6}}>
-                <span style={{fontSize:12,color:"#ef4444"}}>Delete {u.name}?</span>
-                <button type="button" onClick={()=>doDelete(u.id)} style={{padding:"3px 8px",borderRadius:4,border:"1px solid rgba(239,68,68,.4)",background:"rgba(239,68,68,.1)",color:"#ef4444",fontSize:10,fontWeight:700,cursor:"pointer"}}>Yes</button>
-                <button type="button" onClick={()=>setConfirmDel(null)} style={{padding:"3px 8px",borderRadius:4,border:"1px solid rgba(255,255,255,.1)",background:"transparent",color:"#94a3b8",fontSize:10,cursor:"pointer"}}>No</button>
+                <span style={{fontSize:12,color:"#dc2626"}}>Delete {u.name}?</span>
+                <button type="button" onClick={()=>doDelete(u.id)} style={{padding:"3px 8px",borderRadius:4,border:"1px solid rgba(239,68,68,.4)",background:"#fef2f2",color:"#dc2626",fontSize:10,fontWeight:700,cursor:"pointer"}}>Yes</button>
+                <button type="button" onClick={()=>setConfirmDel(null)} style={{padding:"3px 8px",borderRadius:4,border:"1px solid #d1d5db",background:"transparent",color:"#6b7280",fontSize:10,cursor:"pointer"}}>No</button>
               </div>
             ) : <>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:13,color:"#e2e8f0",fontWeight:600}}>{u.name}</div>
-                <div style={{fontSize:10,color:"#64748b",fontFamily:"'JetBrains Mono',monospace"}}>{u.username} · PIN: {u.pin}</div>
+                <div style={{fontSize:13,color:"#1f2937",fontWeight:600}}>{u.name}</div>
+                <div style={{fontSize:10,color:"#6b7280",fontFamily:"'JetBrains Mono',monospace"}}>{u.username} · PIN: {u.pin}</div>
               </div>
               {badge(u.role)}
-              <button type="button" onClick={()=>startEdit(u)} style={{background:"none",border:"none",color:"#818cf8",cursor:"pointer",fontSize:12}}>✏️</button>
-              <button type="button" onClick={()=>setConfirmDel(u.id)} style={{background:"none",border:"none",color:"#64748b",cursor:"pointer",fontSize:12}}>🗑️</button>
+              <button type="button" onClick={()=>startEdit(u)} style={{background:"none",border:"none",color:"#4f46e5",cursor:"pointer",fontSize:12}}>Edit</button>
+              <button type="button" onClick={()=>setConfirmDel(u.id)} style={{background:"none",border:"none",color:"#dc2626",cursor:"pointer",fontSize:12}}>Remove</button>
             </>}
           </div>
         ))}
@@ -4078,14 +4078,14 @@ function Hdr({role,user,onSw,onBack,title,sub,badge,actions}) {
 }
 
 function Sec({title,children,danger}) {
-  return <div style={{...S.sec,...(danger?{borderColor:"rgba(239,68,68,.3)"}:{})}}><h3 style={{...S.secT,...(danger?{color:"#ef4444"}:{})}}>{title}</h3>{children}</div>;
+  return <div style={{...S.sec,...(danger?{borderColor:"#fecaca"}:{})}}><h3 style={{...S.secT,...(danger?{color:"#dc2626"}:{})}}>{title}</h3>{children}</div>;
 }
 function Gr({children}) { return <div style={S.gr}>{children}</div>; }
 function F({label,value,onChange,type="text",placeholder,num,computed,suffix}) {
   return <div style={{display:"flex",flexDirection:"column"}}>
     <label style={S.fl}>{label}</label>
     {computed !== undefined ? (
-      <div style={{...S.inp,marginTop:"auto",background:"rgba(99,102,241,.08)",color:"#a5b4fc"}}>{computed}{suffix && <span style={{fontSize:10,color:"#64748b",marginLeft:4}}>{suffix}</span>}</div>
+      <div style={{...S.inp,marginTop:"auto",background:"#eef2ff",color:"#4338ca"}}>{computed}{suffix && <span style={{fontSize:10,color:"#6b7280",marginLeft:4}}>{suffix}</span>}</div>
     ) : (
       <input style={{...S.inp,marginTop:"auto"}} type={type} inputMode={num?"decimal":undefined} value={value||""} onChange={e=>{
         if(num){const v=e.target.value;if(v===""||/^-?\d*\.?\d*$/.test(v))onChange(v);}
@@ -4098,15 +4098,15 @@ function Sel({label,value,onChange,opts}) {
   return (
     <div style={{display:"flex",flexDirection:"column"}}>
       <label style={S.fl}>{label}</label>
-      <select value={value||""} onChange={e=>onChange(e.target.value)} style={{...S.inp,cursor:"pointer",marginTop:"auto",appearance:"auto",WebkitAppearance:"menulist",color:value?"#e2e8f0":"#64748b"}}>
-        <option value="" style={{background:"#1e293b",color:"#64748b"}}>— Select —</option>
-        {opts.map(o => <option key={o} value={o} style={{background:"#1e293b",color:"#e2e8f0"}}>{o}</option>)}
+      <select value={value||""} onChange={e=>onChange(e.target.value)} style={{...S.inp,cursor:"pointer",marginTop:"auto",appearance:"auto",WebkitAppearance:"menulist",color:value?"#1f2937":"#6b7280"}}>
+        <option value="" style={{background:"#ffffff",color:"#6b7280"}}>— Select —</option>
+        {opts.map(o => <option key={o} value={o} style={{background:"#ffffff",color:"#1f2937"}}>{o}</option>)}
       </select>
     </div>
   );
 }
-function CK({checked,onChange,label,color,strike,small}) { return <label style={{...S.ck,fontSize:small?10:12,...(color?{color}:{}),cursor:"pointer",...(strike?{textDecoration:"line-through"}:{})}}><input type="checkbox" checked={!!checked} onChange={e=>onChange(e.target.checked)} style={{marginRight:6,accentColor:"#6366f1",width:small?14:16,height:small?14:16,flexShrink:0}}/><span style={{lineHeight:1.3}}>{label}</span></label>; }
-function BtnGrp({value,onChange,opts}) { return <div style={{display:"flex",gap:2}}>{opts.map(o=><button key={o.v} type="button" onClick={()=>onChange(value===o.v?"":o.v)} style={{padding:"5px 8px",borderRadius:5,border:value===o.v?`2px solid ${o.c}`:"1px solid rgba(255,255,255,.1)",background:value===o.v?`${o.c}22`:"rgba(255,255,255,.03)",color:value===o.v?o.c:"#64748b",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",minWidth:36,minHeight:32}}>{o.l}</button>)}</div>; }
+function CK({checked,onChange,label,color,strike,small}) { return <label style={{...S.ck,fontSize:small?10:12,...(color?{color}:{}),cursor:"pointer",...(strike?{textDecoration:"line-through"}:{})}}><input type="checkbox" checked={!!checked} onChange={e=>onChange(e.target.checked)} style={{marginRight:6,accentColor:"#4f46e5",width:small?14:16,height:small?14:16,flexShrink:0}}/><span style={{lineHeight:1.3}}>{label}</span></label>; }
+function BtnGrp({value,onChange,opts}) { return <div style={{display:"flex",gap:2}}>{opts.map(o=><button key={o.v} type="button" onClick={()=>onChange(value===o.v?"":o.v)} style={{padding:"5px 8px",borderRadius:5,border:value===o.v?`2px solid ${o.c}`:"1px solid #d1d5db",background:value===o.v?`${o.c}22`:"#f9fafb",color:value===o.v?o.c:"#6b7280",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"'Inter',system-ui,sans-serif",minWidth:36,minHeight:32}}>{o.l}</button>)}</div>; }
 
 function SigPad({value, onChange, label}) {
   const [signing, setSigning] = useState(false);
@@ -4118,7 +4118,7 @@ function SigPad({value, onChange, label}) {
     const can = canRef.current; if (!can) return;
     const ctx = can.getContext("2d");
     ctx.fillStyle = "#fff"; ctx.fillRect(0,0,can.width,can.height);
-    ctx.strokeStyle = "#1e293b"; ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.lineJoin = "round";
   };
 
   const getPos = (e) => {
@@ -4154,8 +4154,8 @@ function SigPad({value, onChange, label}) {
           <div style={{flex:1,textAlign:"center",fontWeight:600,fontSize:14}}>{label || "Sign"}</div>
           <button style={{...S.btn,padding:"6px 14px",minHeight:40}} onClick={save}>Done</button>
         </div>
-        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,background:"#0b0e18"}}>
-          <p style={{fontSize:12,color:"#94a3b8",marginBottom:8}}>Sign below with finger or stylus</p>
+        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,background:"#0a0f1c"}}>
+          <p style={{fontSize:12,color:"#6b7280",marginBottom:8}}>Sign below with finger or stylus</p>
           <canvas ref={el=>{canRef.current=el;if(el){el.width=Math.min(600,window.innerWidth-40);el.height=180;startDraw();}}}
             style={{borderRadius:8,border:"2px solid #334155",touchAction:"none",cursor:"crosshair",background:"#fff"}}
             onMouseDown={down} onMouseMove={move} onMouseUp={up} onMouseLeave={up}
@@ -4171,101 +4171,101 @@ function SigPad({value, onChange, label}) {
       <label style={S.fl}>{label || "Signature"}</label>
       {value ? (
         <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{background:"#fff",borderRadius:6,padding:4,border:"1px solid rgba(255,255,255,.1)"}}>
+          <div style={{background:"#fff",borderRadius:6,padding:4,border:"1px solid #d1d5db"}}>
             <img src={value} style={{height:50,objectFit:"contain"}} alt="sig"/>
           </div>
           <button style={{...S.ghost,fontSize:10,padding:"4px 10px",minHeight:36}} onClick={clear}>Clear</button>
           <button style={{...S.ghost,fontSize:10,padding:"4px 10px",minHeight:36}} onClick={()=>setSigning(true)}>Re-sign</button>
         </div>
       ) : (
-        <button style={{...S.btn,padding:"8px 16px",minHeight:44,WebkitTapHighlightColor:"transparent"}} onClick={()=>setSigning(true)}>✍️ Tap to Sign</button>
+        <button style={{...S.btn,padding:"8px 16px",minHeight:44,WebkitTapHighlightColor:"transparent"}} onClick={()=>setSigning(true)}>Tap to Sign</button>
       )}
     </div>
   );
 }
 
 function PrintBtn({onClick,label}) {
-  return <button style={{...S.ghost,fontSize:11,padding:"6px 10px",display:"flex",alignItems:"center",gap:3}} onClick={onClick}>📄 {label||"Save / Print"}</button>;
+  return <button style={{...S.ghost,fontSize:11,padding:"6px 10px",display:"flex",alignItems:"center",gap:3}} onClick={onClick}>{label||"Save / Print"}</button>;
 }
-function SI({l,v,c}) { return <div style={S.si}><span style={{fontSize:9,color:"#64748b",textTransform:"uppercase",letterSpacing:".04em"}}>{l}</span><span style={{fontSize:13,fontWeight:600,color:c||"#e2e8f0",marginTop:2}}>{v}</span></div>; }
+function SI({l,v,c}) { return <div style={S.si}><span style={{fontSize:9,color:"#6b7280",textTransform:"uppercase",letterSpacing:".04em"}}>{l}</span><span style={{fontSize:13,fontWeight:600,color:c||"#1f2937",marginTop:2}}>{v}</span></div>; }
 
 // ═══════════════════════════════════════════════════════════════
 // STYLES - responsive for iPhone/iPad/Laptop
 // ═══════════════════════════════════════════════════════════════
 const S = {
-  app: { fontFamily:"'DM Sans',sans-serif", background:"#0b0e18", minHeight:"100vh", color:"#e2e8f0", paddingBottom:60, maxWidth:1200, margin:"0 auto" },
-  center: { display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100vh", background:"#0b0e18" },
-  spin: { width:24, height:24, border:"3px solid #1e293b", borderTopColor:"#6366f1", borderRadius:"50%", animation:"spin .7s linear infinite" },
+  app: { fontFamily:"'Inter',system-ui,sans-serif", background:"#f4f5f7", minHeight:"100vh", color:"#1f2937", paddingBottom:60, maxWidth:1200, margin:"0 auto" },
+  center: { display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100vh", background:"#f4f5f7" },
+  spin: { width:28, height:28, border:"3px solid #e5e7eb", borderTopColor:"#4f46e5", borderRadius:"50%", animation:"spin .7s linear infinite" },
 
   // Role picker
   rpWrap: { maxWidth:440, margin:"0 auto", padding:"48px 20px" },
-  logoBox: { width:52, height:52, borderRadius:14, background:"linear-gradient(135deg,#6366f1,#a855f7)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, margin:"0 auto" },
-  rCard: { display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.08)", borderRadius:10, cursor:"pointer", color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif", width:"100%" },
+  logoBox: { width:52, height:52, borderRadius:12, background:"#111827", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, fontWeight:700, color:"#fff", letterSpacing:".02em", margin:"0 auto" },
+  rCard: { display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background:"#ffffff", border:"1px solid #e5e7eb", borderRadius:8, cursor:"pointer", color:"#1f2937", fontFamily:"'Inter',system-ui,sans-serif", width:"100%" },
 
   // Header
-  hdr: { display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 16px", borderBottom:"1px solid rgba(255,255,255,.06)", background:"#0b0e18", flexWrap:"wrap", gap:6, position:"sticky", top:0, zIndex:100 },
-  hT: { fontSize:16, fontWeight:700, margin:0, color:"#f1f5f9" },
-  hS: { fontSize:11, color:"#64748b", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
-  back: { background:"none", border:"none", color:"#94a3b8", cursor:"pointer", fontSize:18, fontFamily:"'DM Sans',sans-serif", padding:"4px 6px", minWidth:44, minHeight:44, display:"flex", alignItems:"center", justifyContent:"center" },
-  rChip: { background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:8, padding:"6px 12px", color:"#e2e8f0", fontSize:12, cursor:"pointer", fontFamily:"'DM Sans',sans-serif", minHeight:36 },
-  bdg: { padding:"3px 10px", borderRadius:6, fontSize:11, fontWeight:600, whiteSpace:"nowrap", color:"#fff" },
+  hdr: { display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 16px", borderBottom:"1px solid #e5e7eb", background:"#ffffff", flexWrap:"wrap", gap:6, position:"sticky", top:0, zIndex:100 },
+  hT: { fontSize:15, fontWeight:600, margin:0, color:"#111827", letterSpacing:"-.01em" },
+  hS: { fontSize:11, color:"#6b7280", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
+  back: { background:"none", border:"none", color:"#6b7280", cursor:"pointer", fontSize:18, fontFamily:"'Inter',system-ui,sans-serif", padding:"4px 6px", minWidth:44, minHeight:44, display:"flex", alignItems:"center", justifyContent:"center" },
+  rChip: { background:"#ffffff", border:"1px solid #d1d5db", borderRadius:6, padding:"6px 12px", color:"#374151", fontSize:12, fontWeight:500, cursor:"pointer", fontFamily:"'Inter',system-ui,sans-serif", minHeight:36 },
+  bdg: { padding:"3px 10px", borderRadius:5, fontSize:11, fontWeight:600, whiteSpace:"nowrap", color:"#fff" },
 
   // Buttons
-  btn: { background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"#fff", border:"none", padding:"8px 16px", borderRadius:8, fontWeight:600, cursor:"pointer", fontSize:13, fontFamily:"'DM Sans',sans-serif", minHeight:36 },
-  ghost: { background:"none", border:"1px solid rgba(255,255,255,.12)", color:"#94a3b8", padding:"8px 14px", borderRadius:8, cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", minHeight:36 },
+  btn: { background:"#4f46e5", color:"#fff", border:"1px solid #4f46e5", padding:"8px 16px", borderRadius:6, fontWeight:600, cursor:"pointer", fontSize:13, fontFamily:"'Inter',system-ui,sans-serif", minHeight:36, boxShadow:"0 1px 2px rgba(16,24,40,.08)" },
+  ghost: { background:"#ffffff", border:"1px solid #d1d5db", color:"#374151", padding:"8px 14px", borderRadius:6, cursor:"pointer", fontSize:12, fontWeight:500, fontFamily:"'Inter',system-ui,sans-serif", minHeight:36, boxShadow:"0 1px 2px rgba(16,24,40,.04)" },
 
   // Dashboard
-  readyBan: { display:"flex", alignItems:"center", gap:8, padding:"10px 16px", background:"linear-gradient(135deg,rgba(245,158,11,.1),rgba(234,179,8,.05))", borderBottom:"1px solid rgba(245,158,11,.2)", cursor:"pointer" },
-  alertBar: { padding:"8px 16px", display:"flex", gap:6, flexWrap:"wrap", borderBottom:"1px solid rgba(255,255,255,.04)", background:"rgba(255,255,255,.01)" },
-  alertBox: { display:"flex", alignItems:"flex-start", gap:8, padding:12, background:"rgba(245,158,11,.08)", border:"1px solid rgba(245,158,11,.2)", borderRadius:10, marginBottom:12 },
-  pipe: { display:"flex", gap:4, padding:"8px 16px", overflowX:"auto", borderBottom:"1px solid rgba(255,255,255,.04)", WebkitOverflowScrolling:"touch" },
-  chip: { display:"flex", alignItems:"center", gap:3, padding:"6px 10px", borderRadius:6, border:"1px solid", cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", minHeight:32, whiteSpace:"nowrap" },
-  chipN: { fontSize:10, fontWeight:700, fontFamily:"'JetBrains Mono',monospace" },
-  sRow: { display:"flex", gap:6, padding:"8px 16px" },
-  sInp: { flex:1, background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", borderRadius:8, padding:"10px 12px", color:"#e2e8f0", fontSize:14, fontFamily:"'DM Sans',sans-serif", outline:"none" },
-  list: { display:"flex", flexDirection:"column", gap:4, padding:"4px 16px" },
-  card: { background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.06)", borderRadius:10, padding:"12px 14px", cursor:"pointer", textAlign:"left", fontFamily:"'DM Sans',sans-serif", width:"100%", color:"#e2e8f0", minHeight:44 },
+  readyBan: { display:"flex", alignItems:"center", gap:8, padding:"10px 16px", background:"#fffbeb", borderBottom:"1px solid #fde68a", cursor:"pointer" },
+  alertBar: { padding:"8px 16px", display:"flex", gap:6, flexWrap:"wrap", borderBottom:"1px solid #e5e7eb", background:"#fafafa" },
+  alertBox: { display:"flex", alignItems:"flex-start", gap:8, padding:12, background:"#fffbeb", border:"1px solid #fde68a", borderRadius:8, marginBottom:12 },
+  pipe: { display:"flex", gap:6, padding:"10px 16px", overflowX:"auto", borderBottom:"1px solid #e5e7eb", background:"#ffffff", WebkitOverflowScrolling:"touch" },
+  chip: { display:"flex", alignItems:"center", gap:5, padding:"5px 11px", borderRadius:6, border:"1px solid", cursor:"pointer", fontSize:12, fontFamily:"'Inter',system-ui,sans-serif", fontWeight:500, minHeight:30, whiteSpace:"nowrap" },
+  chipN: { fontSize:11, fontWeight:600, fontFamily:"'JetBrains Mono',monospace" },
+  sRow: { display:"flex", gap:6, padding:"10px 16px 2px" },
+  sInp: { flex:1, background:"#ffffff", border:"1px solid #d1d5db", borderRadius:6, padding:"9px 12px", color:"#1f2937", fontSize:14, fontFamily:"'Inter',system-ui,sans-serif", outline:"none" },
+  list: { display:"flex", flexDirection:"column", gap:8, padding:"10px 16px" },
+  card: { background:"#ffffff", border:"1px solid #e5e7eb", borderRadius:8, padding:"12px 14px", cursor:"pointer", textAlign:"left", fontFamily:"'Inter',system-ui,sans-serif", width:"100%", color:"#1f2937", minHeight:44, boxShadow:"0 1px 2px rgba(16,24,40,.04)" },
   cTop: { display:"flex", justifyContent:"space-between", alignItems:"center", gap:6 },
-  cName: { fontWeight:600, fontSize:14, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
-  cMeta: { display:"flex", gap:8, marginTop:5, fontSize:10, color:"#64748b", fontFamily:"'JetBrains Mono',monospace", flexWrap:"wrap" },
-  tBadge: { fontSize:9, padding:"2px 6px", borderRadius:4, background:"rgba(245,158,11,.15)", color:"#fbbf24", fontWeight:600 },
+  cName: { fontWeight:600, fontSize:14, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", color:"#111827" },
+  cMeta: { display:"flex", gap:8, marginTop:5, fontSize:10, color:"#6b7280", fontFamily:"'JetBrains Mono',monospace", flexWrap:"wrap" },
+  tBadge: { fontSize:9, padding:"2px 7px", borderRadius:4, background:"#fef3c7", color:"#92400e", fontWeight:600, border:"1px solid #fde68a" },
   empty: { textAlign:"center", padding:50 },
 
   // Stage bar
-  stBar: { display:"flex", gap:3, padding:"8px 16px", overflowX:"auto", WebkitOverflowScrolling:"touch" },
-  stStep: { display:"flex", flexDirection:"column", alignItems:"center", gap:2, padding:"4px 3px", borderRadius:5, flex:1, minWidth:36 },
+  stBar: { display:"flex", gap:4, padding:"10px 16px", overflowX:"auto", WebkitOverflowScrolling:"touch", background:"#ffffff", borderBottom:"1px solid #e5e7eb" },
+  stStep: { display:"flex", flexDirection:"column", alignItems:"center", gap:2, padding:"5px 3px", borderRadius:6, flex:1, minWidth:36 },
 
   // Tabs
-  tabR: { display:"flex", gap:0, padding:"0 16px", borderBottom:"1px solid rgba(255,255,255,.06)", overflowX:"auto", WebkitOverflowScrolling:"touch", position:"sticky", top:52, zIndex:99, background:"#0b0e18" },
-  tabB: { padding:"10px 12px", background:"none", border:"none", borderBottom:"2px solid transparent", color:"#64748b", cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", fontWeight:500, whiteSpace:"nowrap", minHeight:40 },
-  tabA: { color:"#e2e8f0", borderBottomColor:"#6366f1" },
-  cnt: { padding:"12px 16px" },
+  tabR: { display:"flex", gap:0, padding:"0 16px", borderBottom:"1px solid #e5e7eb", overflowX:"auto", WebkitOverflowScrolling:"touch", position:"sticky", top:52, zIndex:99, background:"#ffffff" },
+  tabB: { padding:"11px 12px", background:"none", border:"none", borderBottom:"2px solid transparent", color:"#6b7280", cursor:"pointer", fontSize:12, fontFamily:"'Inter',system-ui,sans-serif", fontWeight:500, whiteSpace:"nowrap", minHeight:40 },
+  tabA: { color:"#111827", borderBottomColor:"#4f46e5", fontWeight:600 },
+  cnt: { padding:"14px 16px" },
 
   // Sections
-  sec: { background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:10, padding:"14px 14px 12px", marginBottom:8 },
-  secT: { fontSize:13, fontWeight:600, color:"#f1f5f9", margin:"0 0 10px", lineHeight:1.3 },
+  sec: { background:"#ffffff", border:"1px solid #e5e7eb", borderRadius:8, padding:"16px 16px 14px", marginBottom:10, boxShadow:"0 1px 2px rgba(16,24,40,.04)" },
+  secT: { fontSize:13, fontWeight:600, color:"#111827", margin:"0 0 12px", lineHeight:1.3 },
 
   // Form fields
-  gr: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))", gap:8 },
-  fl: { fontSize:10, fontWeight:500, color:"#94a3b8", marginBottom:3, display:"block", textTransform:"uppercase", letterSpacing:".04em" },
-  inp: { width:"100%", background:"#1e293b", border:"1px solid rgba(255,255,255,.1)", borderRadius:6, padding:"8px 10px", color:"#e2e8f0", fontSize:13, fontFamily:"'DM Sans',sans-serif", outline:"none", boxSizing:"border-box", minHeight:38, WebkitAppearance:"none", colorScheme:"dark" },
-  ta: { width:"100%", background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.1)", borderRadius:6, padding:"8px 10px", color:"#e2e8f0", fontSize:13, fontFamily:"'DM Sans',sans-serif", outline:"none", resize:"vertical", boxSizing:"border-box", minHeight:44 },
-  ck: { fontSize:12, color:"#cbd5e1", cursor:"pointer", display:"flex", alignItems:"center", padding:"4px 0", minHeight:32, gap:0 },
+  gr: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))", gap:10 },
+  fl: { fontSize:10, fontWeight:600, color:"#6b7280", marginBottom:4, display:"block", textTransform:"uppercase", letterSpacing:".05em" },
+  inp: { width:"100%", background:"#ffffff", border:"1px solid #d1d5db", borderRadius:6, padding:"8px 10px", color:"#1f2937", fontSize:13, fontFamily:"'Inter',system-ui,sans-serif", outline:"none", boxSizing:"border-box", minHeight:38, WebkitAppearance:"none", colorScheme:"light" },
+  ta: { width:"100%", background:"#ffffff", border:"1px solid #d1d5db", borderRadius:6, padding:"8px 10px", color:"#1f2937", fontSize:13, fontFamily:"'Inter',system-ui,sans-serif", outline:"none", resize:"vertical", boxSizing:"border-box", minHeight:44 },
+  ck: { fontSize:12, color:"#374151", cursor:"pointer", display:"flex", alignItems:"center", padding:"4px 0", minHeight:32, gap:0 },
   ckG: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))", gap:"0px 8px" },
 
   // Diagnostics
-  calc: { marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,.04)", borderRadius:8, fontSize:12, fontFamily:"'JetBrains Mono',monospace", display:"flex", flexWrap:"wrap", gap:4 },
-  cazR: { display:"flex", alignItems:"center", gap:6, padding:"6px 0", borderBottom:"1px solid rgba(255,255,255,.04)", flexWrap:"wrap" },
-  qqR: { display:"flex", alignItems:"center", gap:6, padding:"5px 0", borderBottom:"1px solid rgba(255,255,255,.04)", flexWrap:"wrap" },
+  calc: { marginTop:8, padding:"9px 12px", background:"#eef2ff", border:"1px solid #c7d2fe", borderRadius:6, fontSize:12, color:"#312e81", fontFamily:"'JetBrains Mono',monospace", display:"flex", flexWrap:"wrap", gap:4 },
+  cazR: { display:"flex", alignItems:"center", gap:6, padding:"6px 0", borderBottom:"1px solid #f3f4f6", flexWrap:"wrap" },
+  qqR: { display:"flex", alignItems:"center", gap:6, padding:"5px 0", borderBottom:"1px solid #f3f4f6", flexWrap:"wrap" },
 
   // Photos
-  phRow: { display:"flex", alignItems:"center", gap:8, padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,.04)" },
-  cBtn: { width:40, height:40, borderRadius:8, border:"1px dashed rgba(99,102,241,.4)", background:"rgba(99,102,241,.08)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:18 },
-  uBtn: { width:40, height:40, borderRadius:8, border:"1px dashed rgba(255,255,255,.15)", background:"rgba(255,255,255,.04)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:18 },
-  thBtn: { width:44, height:44, borderRadius:8, border:"2px solid #22c55e", padding:0, cursor:"pointer", overflow:"hidden", background:"#000" },
+  phRow: { display:"flex", alignItems:"center", gap:8, padding:"8px 0", borderBottom:"1px solid #f3f4f6" },
+  cBtn: { width:40, height:40, borderRadius:6, border:"1px dashed #a5b4fc", background:"#eef2ff", color:"#4f46e5", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:18 },
+  uBtn: { width:40, height:40, borderRadius:6, border:"1px dashed #d1d5db", background:"#f9fafb", color:"#6b7280", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:18 },
+  thBtn: { width:44, height:44, borderRadius:6, border:"2px solid #16a34a", padding:0, cursor:"pointer", overflow:"hidden", background:"#f3f4f6" },
   th: { width:"100%", height:"100%", objectFit:"cover" },
-  camOv: { position:"fixed", top:0, left:0, right:0, bottom:0, background:"#000", zIndex:9999, display:"flex", flexDirection:"column", fontFamily:"'DM Sans',sans-serif", color:"#e2e8f0" },
-  camH: { display:"flex", alignItems:"center", gap:8, padding:"12px 16px", borderBottom:"1px solid rgba(255,255,255,.1)", background:"rgba(0,0,0,.8)" },
+  camOv: { position:"fixed", top:0, left:0, right:0, bottom:0, background:"#000", zIndex:9999, display:"flex", flexDirection:"column", fontFamily:"'Inter',system-ui,sans-serif", color:"#f3f4f6" },
+  camH: { display:"flex", alignItems:"center", gap:8, padding:"12px 16px", borderBottom:"1px solid #d1d5db", background:"rgba(0,0,0,.8)" },
   camB: { flex:1, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" },
   vid: { width:"100%", height:"100%", objectFit:"cover" },
   camF: { display:"flex", justifyContent:"center", padding:"20px 16px 36px", background:"rgba(0,0,0,.8)" },
@@ -4273,15 +4273,15 @@ const S = {
   snapI: { width:"100%", height:"100%", borderRadius:"50%", background:"#fff" },
 
   // Progress
-  prog: { width:"100%", height:4, background:"rgba(255,255,255,.06)", borderRadius:2, overflow:"hidden" },
-  progF: { height:"100%", background:"#22c55e", borderRadius:2, transition:"width .3s" },
+  prog: { width:"100%", height:5, background:"#e5e7eb", borderRadius:3, overflow:"hidden" },
+  progF: { height:"100%", background:"#16a34a", borderRadius:3, transition:"width .3s" },
 
   // Summary
-  sumG: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))", gap:6 },
-  si: { background:"rgba(255,255,255,.03)", borderRadius:8, padding:"8px 10px", border:"1px solid rgba(255,255,255,.06)", display:"flex", flexDirection:"column" },
+  sumG: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))", gap:8 },
+  si: { background:"#f9fafb", borderRadius:6, padding:"9px 11px", border:"1px solid #e5e7eb", display:"flex", flexDirection:"column" },
 
   // Log
-  logR: { display:"flex", gap:6, padding:"6px 0", borderBottom:"1px solid rgba(255,255,255,.04)", alignItems:"baseline", flexWrap:"wrap" },
-  logT: { fontSize:10, color:"#64748b", fontFamily:"'JetBrains Mono',monospace", minWidth:80 },
-  logB: { fontSize:10, color:"#8b5cf6", fontStyle:"italic" },
+  logR: { display:"flex", gap:6, padding:"6px 0", borderBottom:"1px solid #f3f4f6", alignItems:"baseline", flexWrap:"wrap" },
+  logT: { fontSize:10, color:"#6b7280", fontFamily:"'JetBrains Mono',monospace", minWidth:80 },
+  logB: { fontSize:10, color:"#6d28d9", fontStyle:"italic" },
 };
