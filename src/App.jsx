@@ -711,7 +711,7 @@ export default function App() {
     </div>
   );
 
-  const globalCSS = <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');@keyframes spin{to{transform:rotate(360deg)}}*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}html{color-scheme:dark}input,select,textarea,button{font-size:16px;color-scheme:dark}select option{background:#1e293b;color:#e2e8f0}@media(min-width:768px){input,select,textarea,button{font-size:inherit}}`}</style>;
+  const globalCSS = <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');@keyframes spin{to{transform:rotate(360deg)}}*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}html{color-scheme:dark}body{margin:0;background:#05070d}input,select,textarea,button{font-size:16px;color-scheme:dark}select option{background:#151b2c;color:#e2e8f0}@media(min-width:768px){input,select,textarea,button{font-size:inherit}}button{transition:filter .15s ease,box-shadow .15s ease,transform .06s ease}button:hover{filter:brightness(1.12)}button:active{transform:translateY(1px)}input,select,textarea{transition:box-shadow .15s ease,border-color .15s ease}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(99,102,241,.28)}::selection{background:rgba(99,102,241,.45)}::-webkit-scrollbar{width:10px;height:8px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(148,163,184,.22);border-radius:8px;border:2px solid transparent;background-clip:padding-box}::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.35);border:2px solid transparent;background-clip:padding-box}`}</style>;
 
   // ── Login screen ──────────────────────────────────────────
   const doLogin = () => {
@@ -1215,10 +1215,10 @@ const exportProjectForms = async (proj) => {
             onKeyDown={e=>{if(e.key==="Enter")doLogin();}}/>
         </div>
         {loginErr && <div style={{color:"#ef4444",fontSize:12,marginBottom:10,textAlign:"center"}}>{loginErr}</div>}
-        <button type="button" onClick={doLogin} style={{width:"100%",padding:"12px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",color:"#fff",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans',sans-serif"}}>
+        <button type="button" onClick={doLogin} style={{width:"100%",padding:"12px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",color:"#fff",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"'DM Sans',sans-serif",boxShadow:"0 6px 20px rgba(99,102,241,.4), inset 0 1px 0 rgba(255,255,255,.2)",letterSpacing:".02em"}}>
           Sign In
         </button>
-        <div style={{marginTop:20,padding:12,background:"rgba(255,255,255,.03)",borderRadius:8,border:"1px solid rgba(255,255,255,.06)"}}>
+        <div style={{marginTop:20,padding:14,background:"rgba(148,163,184,.05)",borderRadius:12,border:"1px solid rgba(148,163,184,.12)"}}>
           <div style={{fontSize:10,color:"#64748b",marginBottom:6,textTransform:"uppercase",letterSpacing:".05em",fontWeight:600}}>Default Accounts</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"2px 12px",fontSize:11}}>
             <span style={{color:"#64748b",fontWeight:600}}>Username</span>
@@ -4154,7 +4154,7 @@ function SigPad({value, onChange, label}) {
           <div style={{flex:1,textAlign:"center",fontWeight:600,fontSize:14}}>{label || "Sign"}</div>
           <button style={{...S.btn,padding:"6px 14px",minHeight:40}} onClick={save}>Done</button>
         </div>
-        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,background:"#0b0e18"}}>
+        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16,background:"#0a0f1c"}}>
           <p style={{fontSize:12,color:"#94a3b8",marginBottom:8}}>Sign below with finger or stylus</p>
           <canvas ref={el=>{canRef.current=el;if(el){el.width=Math.min(600,window.innerWidth-40);el.height=180;startDraw();}}}
             style={{borderRadius:8,border:"2px solid #334155",touchAction:"none",cursor:"crosshair",background:"#fff"}}
@@ -4193,76 +4193,76 @@ function SI({l,v,c}) { return <div style={S.si}><span style={{fontSize:9,color:"
 // STYLES - responsive for iPhone/iPad/Laptop
 // ═══════════════════════════════════════════════════════════════
 const S = {
-  app: { fontFamily:"'DM Sans',sans-serif", background:"#0b0e18", minHeight:"100vh", color:"#e2e8f0", paddingBottom:60, maxWidth:1200, margin:"0 auto" },
-  center: { display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100vh", background:"#0b0e18" },
-  spin: { width:24, height:24, border:"3px solid #1e293b", borderTopColor:"#6366f1", borderRadius:"50%", animation:"spin .7s linear infinite" },
+  app: { fontFamily:"'DM Sans',sans-serif", background:"radial-gradient(1100px 420px at 50% -120px, rgba(99,102,241,.14), transparent 70%), #0a0f1c", minHeight:"100vh", color:"#e2e8f0", paddingBottom:60, maxWidth:1200, margin:"0 auto", boxShadow:"0 0 0 1px rgba(148,163,184,.06)" },
+  center: { display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100vh", background:"#0a0f1c" },
+  spin: { width:28, height:28, border:"3px solid #1f2839", borderTopColor:"#818cf8", borderRadius:"50%", animation:"spin .7s linear infinite" },
 
   // Role picker
   rpWrap: { maxWidth:440, margin:"0 auto", padding:"48px 20px" },
-  logoBox: { width:52, height:52, borderRadius:14, background:"linear-gradient(135deg,#6366f1,#a855f7)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, margin:"0 auto" },
-  rCard: { display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.08)", borderRadius:10, cursor:"pointer", color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif", width:"100%" },
+  logoBox: { width:56, height:56, borderRadius:16, background:"linear-gradient(135deg,#6366f1,#a855f7)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, margin:"0 auto", boxShadow:"0 10px 30px rgba(99,102,241,.4), inset 0 1px 0 rgba(255,255,255,.25)" },
+  rCard: { display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background:"rgba(148,163,184,.06)", border:"1px solid rgba(148,163,184,.14)", borderRadius:12, cursor:"pointer", color:"#e2e8f0", fontFamily:"'DM Sans',sans-serif", width:"100%" },
 
   // Header
-  hdr: { display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 16px", borderBottom:"1px solid rgba(255,255,255,.06)", background:"#0b0e18", flexWrap:"wrap", gap:6, position:"sticky", top:0, zIndex:100 },
-  hT: { fontSize:16, fontWeight:700, margin:0, color:"#f1f5f9" },
-  hS: { fontSize:11, color:"#64748b", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
+  hdr: { display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 16px", borderBottom:"1px solid rgba(148,163,184,.1)", background:"rgba(10,15,28,.85)", backdropFilter:"blur(14px)", WebkitBackdropFilter:"blur(14px)", flexWrap:"wrap", gap:6, position:"sticky", top:0, zIndex:100 },
+  hT: { fontSize:16, fontWeight:800, margin:0, color:"#f8fafc", letterSpacing:"-.01em" },
+  hS: { fontSize:11, color:"#6b7690", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
   back: { background:"none", border:"none", color:"#94a3b8", cursor:"pointer", fontSize:18, fontFamily:"'DM Sans',sans-serif", padding:"4px 6px", minWidth:44, minHeight:44, display:"flex", alignItems:"center", justifyContent:"center" },
-  rChip: { background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:8, padding:"6px 12px", color:"#e2e8f0", fontSize:12, cursor:"pointer", fontFamily:"'DM Sans',sans-serif", minHeight:36 },
-  bdg: { padding:"3px 10px", borderRadius:6, fontSize:11, fontWeight:600, whiteSpace:"nowrap", color:"#fff" },
+  rChip: { background:"rgba(148,163,184,.08)", border:"1px solid rgba(148,163,184,.16)", borderRadius:10, padding:"6px 12px", color:"#e2e8f0", fontSize:12, cursor:"pointer", fontFamily:"'DM Sans',sans-serif", minHeight:36 },
+  bdg: { padding:"3px 11px", borderRadius:999, fontSize:11, fontWeight:700, whiteSpace:"nowrap", color:"#fff", letterSpacing:".02em", boxShadow:"inset 0 1px 0 rgba(255,255,255,.15)" },
 
   // Buttons
-  btn: { background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"#fff", border:"none", padding:"8px 16px", borderRadius:8, fontWeight:600, cursor:"pointer", fontSize:13, fontFamily:"'DM Sans',sans-serif", minHeight:36 },
-  ghost: { background:"none", border:"1px solid rgba(255,255,255,.12)", color:"#94a3b8", padding:"8px 14px", borderRadius:8, cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", minHeight:36 },
+  btn: { background:"linear-gradient(135deg,#6366f1,#8b5cf6)", color:"#fff", border:"none", padding:"8px 16px", borderRadius:10, fontWeight:700, cursor:"pointer", fontSize:13, fontFamily:"'DM Sans',sans-serif", minHeight:36, boxShadow:"0 4px 14px rgba(99,102,241,.35), inset 0 1px 0 rgba(255,255,255,.2)", letterSpacing:".01em" },
+  ghost: { background:"rgba(148,163,184,.04)", border:"1px solid rgba(148,163,184,.2)", color:"#a5b0c4", padding:"8px 14px", borderRadius:10, cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", minHeight:36 },
 
   // Dashboard
-  readyBan: { display:"flex", alignItems:"center", gap:8, padding:"10px 16px", background:"linear-gradient(135deg,rgba(245,158,11,.1),rgba(234,179,8,.05))", borderBottom:"1px solid rgba(245,158,11,.2)", cursor:"pointer" },
-  alertBar: { padding:"8px 16px", display:"flex", gap:6, flexWrap:"wrap", borderBottom:"1px solid rgba(255,255,255,.04)", background:"rgba(255,255,255,.01)" },
-  alertBox: { display:"flex", alignItems:"flex-start", gap:8, padding:12, background:"rgba(245,158,11,.08)", border:"1px solid rgba(245,158,11,.2)", borderRadius:10, marginBottom:12 },
-  pipe: { display:"flex", gap:4, padding:"8px 16px", overflowX:"auto", borderBottom:"1px solid rgba(255,255,255,.04)", WebkitOverflowScrolling:"touch" },
-  chip: { display:"flex", alignItems:"center", gap:3, padding:"6px 10px", borderRadius:6, border:"1px solid", cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", minHeight:32, whiteSpace:"nowrap" },
+  readyBan: { display:"flex", alignItems:"center", gap:8, padding:"10px 16px", background:"linear-gradient(135deg,rgba(245,158,11,.12),rgba(234,179,8,.04))", borderBottom:"1px solid rgba(245,158,11,.25)", cursor:"pointer" },
+  alertBar: { padding:"8px 16px", display:"flex", gap:6, flexWrap:"wrap", borderBottom:"1px solid rgba(148,163,184,.06)", background:"rgba(148,163,184,.02)" },
+  alertBox: { display:"flex", alignItems:"flex-start", gap:8, padding:12, background:"rgba(245,158,11,.09)", border:"1px solid rgba(245,158,11,.25)", borderRadius:12, marginBottom:12 },
+  pipe: { display:"flex", gap:5, padding:"10px 16px", overflowX:"auto", borderBottom:"1px solid rgba(148,163,184,.06)", WebkitOverflowScrolling:"touch" },
+  chip: { display:"flex", alignItems:"center", gap:4, padding:"6px 12px", borderRadius:999, border:"1px solid", cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", fontWeight:600, minHeight:32, whiteSpace:"nowrap" },
   chipN: { fontSize:10, fontWeight:700, fontFamily:"'JetBrains Mono',monospace" },
   sRow: { display:"flex", gap:6, padding:"8px 16px" },
-  sInp: { flex:1, background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", borderRadius:8, padding:"10px 12px", color:"#e2e8f0", fontSize:14, fontFamily:"'DM Sans',sans-serif", outline:"none" },
-  list: { display:"flex", flexDirection:"column", gap:4, padding:"4px 16px" },
-  card: { background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.06)", borderRadius:10, padding:"12px 14px", cursor:"pointer", textAlign:"left", fontFamily:"'DM Sans',sans-serif", width:"100%", color:"#e2e8f0", minHeight:44 },
+  sInp: { flex:1, background:"rgba(148,163,184,.07)", border:"1px solid rgba(148,163,184,.14)", borderRadius:10, padding:"10px 14px", color:"#e2e8f0", fontSize:14, fontFamily:"'DM Sans',sans-serif", outline:"none" },
+  list: { display:"flex", flexDirection:"column", gap:6, padding:"6px 16px" },
+  card: { background:"linear-gradient(180deg,rgba(148,163,184,.07),rgba(148,163,184,.03))", border:"1px solid rgba(148,163,184,.12)", borderRadius:12, padding:"12px 14px", cursor:"pointer", textAlign:"left", fontFamily:"'DM Sans',sans-serif", width:"100%", color:"#e2e8f0", minHeight:44, boxShadow:"0 1px 3px rgba(0,0,0,.35)" },
   cTop: { display:"flex", justifyContent:"space-between", alignItems:"center", gap:6 },
-  cName: { fontWeight:600, fontSize:14, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" },
-  cMeta: { display:"flex", gap:8, marginTop:5, fontSize:10, color:"#64748b", fontFamily:"'JetBrains Mono',monospace", flexWrap:"wrap" },
-  tBadge: { fontSize:9, padding:"2px 6px", borderRadius:4, background:"rgba(245,158,11,.15)", color:"#fbbf24", fontWeight:600 },
+  cName: { fontWeight:700, fontSize:14, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", letterSpacing:"-.01em" },
+  cMeta: { display:"flex", gap:8, marginTop:5, fontSize:10, color:"#6b7690", fontFamily:"'JetBrains Mono',monospace", flexWrap:"wrap" },
+  tBadge: { fontSize:9, padding:"2px 8px", borderRadius:999, background:"rgba(245,158,11,.16)", color:"#fbbf24", fontWeight:700, border:"1px solid rgba(245,158,11,.25)" },
   empty: { textAlign:"center", padding:50 },
 
   // Stage bar
-  stBar: { display:"flex", gap:3, padding:"8px 16px", overflowX:"auto", WebkitOverflowScrolling:"touch" },
-  stStep: { display:"flex", flexDirection:"column", alignItems:"center", gap:2, padding:"4px 3px", borderRadius:5, flex:1, minWidth:36 },
+  stBar: { display:"flex", gap:4, padding:"10px 16px", overflowX:"auto", WebkitOverflowScrolling:"touch" },
+  stStep: { display:"flex", flexDirection:"column", alignItems:"center", gap:2, padding:"5px 3px", borderRadius:8, flex:1, minWidth:36 },
 
   // Tabs
-  tabR: { display:"flex", gap:0, padding:"0 16px", borderBottom:"1px solid rgba(255,255,255,.06)", overflowX:"auto", WebkitOverflowScrolling:"touch", position:"sticky", top:52, zIndex:99, background:"#0b0e18" },
-  tabB: { padding:"10px 12px", background:"none", border:"none", borderBottom:"2px solid transparent", color:"#64748b", cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", fontWeight:500, whiteSpace:"nowrap", minHeight:40 },
-  tabA: { color:"#e2e8f0", borderBottomColor:"#6366f1" },
-  cnt: { padding:"12px 16px" },
+  tabR: { display:"flex", gap:0, padding:"0 16px", borderBottom:"1px solid rgba(148,163,184,.1)", overflowX:"auto", WebkitOverflowScrolling:"touch", position:"sticky", top:52, zIndex:99, background:"rgba(10,15,28,.85)", backdropFilter:"blur(14px)", WebkitBackdropFilter:"blur(14px)" },
+  tabB: { padding:"10px 12px", background:"none", border:"none", borderBottom:"2px solid transparent", color:"#6b7690", cursor:"pointer", fontSize:12, fontFamily:"'DM Sans',sans-serif", fontWeight:600, whiteSpace:"nowrap", minHeight:40 },
+  tabA: { color:"#f1f5f9", borderBottomColor:"#818cf8" },
+  cnt: { padding:"14px 16px" },
 
   // Sections
-  sec: { background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:10, padding:"14px 14px 12px", marginBottom:8 },
-  secT: { fontSize:13, fontWeight:600, color:"#f1f5f9", margin:"0 0 10px", lineHeight:1.3 },
+  sec: { background:"linear-gradient(180deg,rgba(148,163,184,.05),rgba(148,163,184,.02))", border:"1px solid rgba(148,163,184,.12)", borderRadius:14, padding:"16px 16px 14px", marginBottom:10, boxShadow:"0 1px 3px rgba(0,0,0,.3)" },
+  secT: { fontSize:13, fontWeight:700, color:"#f8fafc", margin:"0 0 12px", lineHeight:1.3, letterSpacing:"-.01em" },
 
   // Form fields
-  gr: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))", gap:8 },
-  fl: { fontSize:10, fontWeight:500, color:"#94a3b8", marginBottom:3, display:"block", textTransform:"uppercase", letterSpacing:".04em" },
-  inp: { width:"100%", background:"#1e293b", border:"1px solid rgba(255,255,255,.1)", borderRadius:6, padding:"8px 10px", color:"#e2e8f0", fontSize:13, fontFamily:"'DM Sans',sans-serif", outline:"none", boxSizing:"border-box", minHeight:38, WebkitAppearance:"none", colorScheme:"dark" },
-  ta: { width:"100%", background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.1)", borderRadius:6, padding:"8px 10px", color:"#e2e8f0", fontSize:13, fontFamily:"'DM Sans',sans-serif", outline:"none", resize:"vertical", boxSizing:"border-box", minHeight:44 },
+  gr: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))", gap:10 },
+  fl: { fontSize:10, fontWeight:600, color:"#8b96ad", marginBottom:4, display:"block", textTransform:"uppercase", letterSpacing:".06em" },
+  inp: { width:"100%", background:"#131a2c", border:"1px solid rgba(148,163,184,.16)", borderRadius:8, padding:"9px 11px", color:"#e2e8f0", fontSize:13, fontFamily:"'DM Sans',sans-serif", outline:"none", boxSizing:"border-box", minHeight:38, WebkitAppearance:"none", colorScheme:"dark" },
+  ta: { width:"100%", background:"rgba(148,163,184,.06)", border:"1px solid rgba(148,163,184,.16)", borderRadius:8, padding:"9px 11px", color:"#e2e8f0", fontSize:13, fontFamily:"'DM Sans',sans-serif", outline:"none", resize:"vertical", boxSizing:"border-box", minHeight:44 },
   ck: { fontSize:12, color:"#cbd5e1", cursor:"pointer", display:"flex", alignItems:"center", padding:"4px 0", minHeight:32, gap:0 },
   ckG: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))", gap:"0px 8px" },
 
   // Diagnostics
-  calc: { marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,.04)", borderRadius:8, fontSize:12, fontFamily:"'JetBrains Mono',monospace", display:"flex", flexWrap:"wrap", gap:4 },
-  cazR: { display:"flex", alignItems:"center", gap:6, padding:"6px 0", borderBottom:"1px solid rgba(255,255,255,.04)", flexWrap:"wrap" },
-  qqR: { display:"flex", alignItems:"center", gap:6, padding:"5px 0", borderBottom:"1px solid rgba(255,255,255,.04)", flexWrap:"wrap" },
+  calc: { marginTop:8, padding:"9px 12px", background:"rgba(99,102,241,.08)", border:"1px solid rgba(99,102,241,.18)", borderRadius:10, fontSize:12, fontFamily:"'JetBrains Mono',monospace", display:"flex", flexWrap:"wrap", gap:4 },
+  cazR: { display:"flex", alignItems:"center", gap:6, padding:"6px 0", borderBottom:"1px solid rgba(148,163,184,.07)", flexWrap:"wrap" },
+  qqR: { display:"flex", alignItems:"center", gap:6, padding:"5px 0", borderBottom:"1px solid rgba(148,163,184,.07)", flexWrap:"wrap" },
 
   // Photos
-  phRow: { display:"flex", alignItems:"center", gap:8, padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,.04)" },
-  cBtn: { width:40, height:40, borderRadius:8, border:"1px dashed rgba(99,102,241,.4)", background:"rgba(99,102,241,.08)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:18 },
-  uBtn: { width:40, height:40, borderRadius:8, border:"1px dashed rgba(255,255,255,.15)", background:"rgba(255,255,255,.04)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:18 },
-  thBtn: { width:44, height:44, borderRadius:8, border:"2px solid #22c55e", padding:0, cursor:"pointer", overflow:"hidden", background:"#000" },
+  phRow: { display:"flex", alignItems:"center", gap:8, padding:"8px 0", borderBottom:"1px solid rgba(148,163,184,.07)" },
+  cBtn: { width:40, height:40, borderRadius:10, border:"1px dashed rgba(99,102,241,.45)", background:"rgba(99,102,241,.1)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:18 },
+  uBtn: { width:40, height:40, borderRadius:10, border:"1px dashed rgba(148,163,184,.25)", background:"rgba(148,163,184,.06)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:18 },
+  thBtn: { width:44, height:44, borderRadius:10, border:"2px solid #22c55e", padding:0, cursor:"pointer", overflow:"hidden", background:"#000", boxShadow:"0 0 10px rgba(34,197,94,.25)" },
   th: { width:"100%", height:"100%", objectFit:"cover" },
   camOv: { position:"fixed", top:0, left:0, right:0, bottom:0, background:"#000", zIndex:9999, display:"flex", flexDirection:"column", fontFamily:"'DM Sans',sans-serif", color:"#e2e8f0" },
   camH: { display:"flex", alignItems:"center", gap:8, padding:"12px 16px", borderBottom:"1px solid rgba(255,255,255,.1)", background:"rgba(0,0,0,.8)" },
@@ -4273,15 +4273,15 @@ const S = {
   snapI: { width:"100%", height:"100%", borderRadius:"50%", background:"#fff" },
 
   // Progress
-  prog: { width:"100%", height:4, background:"rgba(255,255,255,.06)", borderRadius:2, overflow:"hidden" },
-  progF: { height:"100%", background:"#22c55e", borderRadius:2, transition:"width .3s" },
+  prog: { width:"100%", height:5, background:"rgba(148,163,184,.12)", borderRadius:3, overflow:"hidden" },
+  progF: { height:"100%", background:"linear-gradient(90deg,#22c55e,#4ade80)", borderRadius:3, transition:"width .3s" },
 
   // Summary
-  sumG: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))", gap:6 },
-  si: { background:"rgba(255,255,255,.03)", borderRadius:8, padding:"8px 10px", border:"1px solid rgba(255,255,255,.06)", display:"flex", flexDirection:"column" },
+  sumG: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))", gap:8 },
+  si: { background:"linear-gradient(180deg,rgba(148,163,184,.06),rgba(148,163,184,.03))", borderRadius:10, padding:"9px 11px", border:"1px solid rgba(148,163,184,.12)", display:"flex", flexDirection:"column" },
 
   // Log
-  logR: { display:"flex", gap:6, padding:"6px 0", borderBottom:"1px solid rgba(255,255,255,.04)", alignItems:"baseline", flexWrap:"wrap" },
-  logT: { fontSize:10, color:"#64748b", fontFamily:"'JetBrains Mono',monospace", minWidth:80 },
-  logB: { fontSize:10, color:"#8b5cf6", fontStyle:"italic" },
+  logR: { display:"flex", gap:6, padding:"6px 0", borderBottom:"1px solid rgba(148,163,184,.07)", alignItems:"baseline", flexWrap:"wrap" },
+  logT: { fontSize:10, color:"#6b7690", fontFamily:"'JetBrains Mono',monospace", minWidth:80 },
+  logB: { fontSize:10, color:"#a78bfa", fontStyle:"italic" },
 };

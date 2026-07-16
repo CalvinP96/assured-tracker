@@ -58,12 +58,15 @@ export default function Auth({ children }) {
     setSession(null);
   };
 
+  const authCSS = <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');@keyframes spin { to { transform: rotate(360deg) } }body{margin:0;background:#05070d}input:focus{outline:none;box-shadow:0 0 0 3px rgba(220,38,38,.25);border-color:rgba(220,38,38,.5)!important}button{transition:filter .15s ease,transform .06s ease}button:hover{filter:brightness(1.12)}button:active{transform:translateY(1px)}`}</style>;
+  const pageBg = "radial-gradient(900px 400px at 50% -80px, rgba(220,38,38,.12), transparent 70%), #0a0f1c";
+
   // Still checking auth state
   if (session === undefined) {
     return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#18181b" }}>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: pageBg }}>
         <div style={{ fontSize: 32, animation: "spin 1s linear infinite", color: "#fff" }}>⟳</div>
-        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+        {authCSS}
       </div>
     );
   }
@@ -71,61 +74,62 @@ export default function Auth({ children }) {
   // Not logged in — show login form
   if (!session) {
     return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#18181b", fontFamily: "system-ui, sans-serif" }}>
-        <div style={{ width: 380, background: "#27272a", borderRadius: 16, padding: "36px 32px", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", border: "1px solid #3f3f46" }}>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: pageBg, fontFamily: "'DM Sans', system-ui, sans-serif", padding: 16 }}>
+        {authCSS}
+        <div style={{ width: 380, maxWidth: "100%", background: "linear-gradient(180deg, rgba(148,163,184,.07), rgba(148,163,184,.03))", borderRadius: 20, padding: "36px 32px", boxShadow: "0 24px 60px rgba(0,0,0,0.55)", border: "1px solid rgba(148,163,184,.14)", backdropFilter: "blur(10px)" }}>
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
             <div style={{
-              width: 48, height: 48,
+              width: 52, height: 52,
               background: "linear-gradient(135deg, #991b1b 0%, #dc2626 100%)",
-              borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center",
-              fontWeight: 900, fontSize: 26, color: "#fff",
-              border: "2px solid #000", boxShadow: "0 4px 12px rgba(153,27,27,0.5)"
+              borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center",
+              fontWeight: 800, fontSize: 26, color: "#fff",
+              boxShadow: "0 10px 28px rgba(220,38,38,0.4), inset 0 1px 0 rgba(255,255,255,.25)"
             }}>A</div>
             <div>
-              <div style={{ fontWeight: 900, fontSize: 16, color: "#f4f4f5", textTransform: "uppercase", letterSpacing: 1 }}>Assured Energy</div>
-              <div style={{ fontSize: 10, color: "#71717a", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1.2 }}>Project Tracker</div>
+              <div style={{ fontWeight: 800, fontSize: 16, color: "#f8fafc", textTransform: "uppercase", letterSpacing: 1 }}>Assured Energy</div>
+              <div style={{ fontSize: 10, color: "#8b96ad", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1.4 }}>Project Tracker</div>
             </div>
           </div>
 
           <form onSubmit={handleLogin}>
             <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#a1a1aa", marginBottom: 4 }}>Email</label>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#8b96ad", marginBottom: 5, textTransform: "uppercase", letterSpacing: ".06em" }}>Email</label>
               <input
                 type="email" required value={email} onChange={e => setEmail(e.target.value)}
                 placeholder="you@assuredenergy.com"
-                style={{ width: "100%", padding: "10px 14px", background: "#18181b", border: "1px solid #3f3f46", borderRadius: 8, fontSize: 14, color: "#f4f4f5", boxSizing: "border-box" }}
+                style={{ width: "100%", padding: "11px 14px", background: "#131a2c", border: "1px solid rgba(148,163,184,.16)", borderRadius: 10, fontSize: 14, color: "#f4f4f5", boxSizing: "border-box", fontFamily: "inherit" }}
               />
             </div>
 
             {mode === "password" && (
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#a1a1aa", marginBottom: 4 }}>Password</label>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#8b96ad", marginBottom: 5, textTransform: "uppercase", letterSpacing: ".06em" }}>Password</label>
                 <input
                   type="password" required value={password} onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  style={{ width: "100%", padding: "10px 14px", background: "#18181b", border: "1px solid #3f3f46", borderRadius: 8, fontSize: 14, color: "#f4f4f5", boxSizing: "border-box" }}
+                  style={{ width: "100%", padding: "11px 14px", background: "#131a2c", border: "1px solid rgba(148,163,184,.16)", borderRadius: 10, fontSize: 14, color: "#f4f4f5", boxSizing: "border-box", fontFamily: "inherit" }}
                 />
               </div>
             )}
 
             <button type="submit" disabled={loading} style={{
-              width: "100%", padding: "11px 0", fontWeight: 800, fontSize: 14,
-              background: loading ? "#6b7280" : "linear-gradient(135deg, #991b1b, #dc2626)",
-              color: "#fff", border: "2px solid #000", borderRadius: 8, cursor: loading ? "wait" : "pointer",
-              textTransform: "uppercase", letterSpacing: .5,
-              boxShadow: loading ? "none" : "0 4px 12px rgba(153,27,27,0.5)"
+              width: "100%", padding: "12px 0", fontWeight: 800, fontSize: 14,
+              background: loading ? "#3f4a61" : "linear-gradient(135deg, #b91c1c, #dc2626)",
+              color: "#fff", border: "none", borderRadius: 12, cursor: loading ? "wait" : "pointer",
+              textTransform: "uppercase", letterSpacing: .8, fontFamily: "inherit",
+              boxShadow: loading ? "none" : "0 6px 20px rgba(220,38,38,0.4), inset 0 1px 0 rgba(255,255,255,.2)"
             }}>
               {loading ? "Signing in…" : mode === "magic" ? "Send Magic Link" : "Sign In"}
             </button>
           </form>
 
-          {error && <div style={{ marginTop: 12, padding: "8px 12px", background: "#7c2d12", border: "1px solid #dc2626", borderRadius: 8, fontSize: 12, color: "#fca5a5" }}>{error}</div>}
-          {message && <div style={{ marginTop: 12, padding: "8px 12px", background: "#14532d", border: "1px solid #22c55e", borderRadius: 8, fontSize: 12, color: "#86efac" }}>{message}</div>}
+          {error && <div style={{ marginTop: 12, padding: "9px 12px", background: "rgba(220,38,38,.12)", border: "1px solid rgba(220,38,38,.35)", borderRadius: 10, fontSize: 12, color: "#fca5a5" }}>{error}</div>}
+          {message && <div style={{ marginTop: 12, padding: "9px 12px", background: "rgba(34,197,94,.1)", border: "1px solid rgba(34,197,94,.35)", borderRadius: 10, fontSize: 12, color: "#86efac" }}>{message}</div>}
 
-          <div style={{ textAlign: "center", marginTop: 16 }}>
+          <div style={{ textAlign: "center", marginTop: 18 }}>
             <button onClick={() => { setMode(mode === "password" ? "magic" : "password"); setError(""); setMessage(""); }}
-              style={{ background: "none", border: "none", color: "#a1a1aa", cursor: "pointer", fontSize: 12, textDecoration: "underline" }}>
+              style={{ background: "none", border: "none", color: "#8b96ad", cursor: "pointer", fontSize: 12, textDecoration: "underline", fontFamily: "inherit" }}>
               {mode === "password" ? "Use magic link instead" : "Use password instead"}
             </button>
           </div>
