@@ -58,14 +58,13 @@ export default function Auth({ children }) {
     setSession(null);
   };
 
-  const authCSS = <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');@keyframes spin { to { transform: rotate(360deg) } }body{margin:0;background:#05070d}input:focus{outline:none;box-shadow:0 0 0 3px rgba(220,38,38,.25);border-color:rgba(220,38,38,.5)!important}button{transition:filter .15s ease,transform .06s ease}button:hover{filter:brightness(1.12)}button:active{transform:translateY(1px)}`}</style>;
-  const pageBg = "radial-gradient(900px 400px at 50% -80px, rgba(220,38,38,.12), transparent 70%), #0a0f1c";
+  const authCSS = <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');@keyframes spin { to { transform: rotate(360deg) } }body{margin:0;background:#f4f5f7}input:focus{outline:none;border-color:#4f46e5!important;box-shadow:0 0 0 3px rgba(79,70,229,.12)}button{transition:background-color .12s ease,box-shadow .12s ease}button:hover{filter:brightness(.97)}`}</style>;
 
   // Still checking auth state
   if (session === undefined) {
     return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: pageBg }}>
-        <div style={{ fontSize: 32, animation: "spin 1s linear infinite", color: "#fff" }}>⟳</div>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f4f5f7" }}>
+        <div style={{ fontSize: 32, animation: "spin 1s linear infinite", color: "#6b7280" }}>⟳</div>
         {authCSS}
       </div>
     );
@@ -74,62 +73,61 @@ export default function Auth({ children }) {
   // Not logged in — show login form
   if (!session) {
     return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: pageBg, fontFamily: "'DM Sans', system-ui, sans-serif", padding: 16 }}>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f4f5f7", fontFamily: "'Inter', system-ui, sans-serif", padding: 16 }}>
         {authCSS}
-        <div style={{ width: 380, maxWidth: "100%", background: "linear-gradient(180deg, rgba(148,163,184,.07), rgba(148,163,184,.03))", borderRadius: 20, padding: "36px 32px", boxShadow: "0 24px 60px rgba(0,0,0,0.55)", border: "1px solid rgba(148,163,184,.14)", backdropFilter: "blur(10px)" }}>
+        <div style={{ width: 380, maxWidth: "100%", background: "#ffffff", borderRadius: 10, padding: "36px 32px", boxShadow: "0 1px 3px rgba(16,24,40,.08), 0 8px 24px rgba(16,24,40,.06)", border: "1px solid #e5e7eb" }}>
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 13, marginBottom: 28 }}>
             <div style={{
-              width: 52, height: 52,
-              background: "linear-gradient(135deg, #991b1b 0%, #dc2626 100%)",
-              borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center",
-              fontWeight: 800, fontSize: 26, color: "#fff",
-              boxShadow: "0 10px 28px rgba(220,38,38,0.4), inset 0 1px 0 rgba(255,255,255,.25)"
+              width: 46, height: 46,
+              background: "#b91c1c",
+              borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center",
+              fontWeight: 700, fontSize: 21, color: "#fff"
             }}>A</div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: 16, color: "#f8fafc", textTransform: "uppercase", letterSpacing: 1 }}>Assured Energy</div>
-              <div style={{ fontSize: 10, color: "#8b96ad", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1.4 }}>Project Tracker</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: "#111827", letterSpacing: "-.01em" }}>Assured Energy</div>
+              <div style={{ fontSize: 11, color: "#6b7280", fontWeight: 500 }}>Project Tracker</div>
             </div>
           </div>
 
           <form onSubmit={handleLogin}>
             <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#8b96ad", marginBottom: 5, textTransform: "uppercase", letterSpacing: ".06em" }}>Email</label>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#374151", marginBottom: 5 }}>Email</label>
               <input
                 type="email" required value={email} onChange={e => setEmail(e.target.value)}
                 placeholder="you@assuredenergy.com"
-                style={{ width: "100%", padding: "11px 14px", background: "#131a2c", border: "1px solid rgba(148,163,184,.16)", borderRadius: 10, fontSize: 14, color: "#f4f4f5", boxSizing: "border-box", fontFamily: "inherit" }}
+                style={{ width: "100%", padding: "10px 12px", background: "#ffffff", border: "1px solid #d1d5db", borderRadius: 6, fontSize: 14, color: "#1f2937", boxSizing: "border-box", fontFamily: "inherit" }}
               />
             </div>
 
             {mode === "password" && (
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#8b96ad", marginBottom: 5, textTransform: "uppercase", letterSpacing: ".06em" }}>Password</label>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "#374151", marginBottom: 5 }}>Password</label>
                 <input
                   type="password" required value={password} onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  style={{ width: "100%", padding: "11px 14px", background: "#131a2c", border: "1px solid rgba(148,163,184,.16)", borderRadius: 10, fontSize: 14, color: "#f4f4f5", boxSizing: "border-box", fontFamily: "inherit" }}
+                  style={{ width: "100%", padding: "10px 12px", background: "#ffffff", border: "1px solid #d1d5db", borderRadius: 6, fontSize: 14, color: "#1f2937", boxSizing: "border-box", fontFamily: "inherit" }}
                 />
               </div>
             )}
 
             <button type="submit" disabled={loading} style={{
-              width: "100%", padding: "12px 0", fontWeight: 800, fontSize: 14,
-              background: loading ? "#3f4a61" : "linear-gradient(135deg, #b91c1c, #dc2626)",
-              color: "#fff", border: "none", borderRadius: 12, cursor: loading ? "wait" : "pointer",
-              textTransform: "uppercase", letterSpacing: .8, fontFamily: "inherit",
-              boxShadow: loading ? "none" : "0 6px 20px rgba(220,38,38,0.4), inset 0 1px 0 rgba(255,255,255,.2)"
+              width: "100%", padding: "11px 0", fontWeight: 600, fontSize: 14,
+              background: loading ? "#9ca3af" : "#4f46e5",
+              color: "#fff", border: "none", borderRadius: 6, cursor: loading ? "wait" : "pointer",
+              fontFamily: "inherit",
+              boxShadow: "0 1px 2px rgba(16,24,40,.08)"
             }}>
               {loading ? "Signing in…" : mode === "magic" ? "Send Magic Link" : "Sign In"}
             </button>
           </form>
 
-          {error && <div style={{ marginTop: 12, padding: "9px 12px", background: "rgba(220,38,38,.12)", border: "1px solid rgba(220,38,38,.35)", borderRadius: 10, fontSize: 12, color: "#fca5a5" }}>{error}</div>}
-          {message && <div style={{ marginTop: 12, padding: "9px 12px", background: "rgba(34,197,94,.1)", border: "1px solid rgba(34,197,94,.35)", borderRadius: 10, fontSize: 12, color: "#86efac" }}>{message}</div>}
+          {error && <div style={{ marginTop: 12, padding: "9px 12px", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 6, fontSize: 12, color: "#b91c1c" }}>{error}</div>}
+          {message && <div style={{ marginTop: 12, padding: "9px 12px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 6, fontSize: 12, color: "#15803d" }}>{message}</div>}
 
           <div style={{ textAlign: "center", marginTop: 18 }}>
             <button onClick={() => { setMode(mode === "password" ? "magic" : "password"); setError(""); setMessage(""); }}
-              style={{ background: "none", border: "none", color: "#8b96ad", cursor: "pointer", fontSize: 12, textDecoration: "underline", fontFamily: "inherit" }}>
+              style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer", fontSize: 12, textDecoration: "underline", fontFamily: "inherit" }}>
               {mode === "password" ? "Use magic link instead" : "Use password instead"}
             </button>
           </div>
